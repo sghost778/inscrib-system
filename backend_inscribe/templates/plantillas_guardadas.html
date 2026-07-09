@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de Inscripciones</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00b689">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --dark: #0f172a;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        /* CABECERA */
+        .header {
+            margin-bottom: 40px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: var(--dark);
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 18px;
+            margin-top: 5px;
+        }
+
+        /* TARJETAS DE HISTORIAL */
+        .card-registro {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin-bottom: 12px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s;
+        }
+
+        .card-registro:hover {
+            border-color: var(--primary);
+            background-color: #fdfdfd;
+        }
+
+        /* COLUMNAS DE INFORMACIA"N */
+        .col-info b {
+            display: block;
+            color: var(--dark);
+            font-size: 15px;
+        }
+
+        .col-info span {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .badge-nuevo {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-regular {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* BOTA"N DE ACCIA"N */
+        .btn-accion {
+            background: #f1f5f9;
+            color: var(--dark);
+            border: 1px solid #cbd5e1;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .btn-accion:hover {
+            background: var(--dark);
+            color: white;
+        }
+
+        /* NOTIFICACIA"N DE SISTEMA */
+        .sys-notification {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            animation: fadeInRight 0.3s ease-out;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Historial de Plantillas</h1>
+            <p>Registro Central de Inscripciones</p>
+        </div>
+
+        <div class="lista-historial" id="contenedorHistorial">
+            <!-- Tarjetas dinamicas generadas desde la API -->
+        </div>
+    </div>
+
+    <div id="notificacion" class="sys-notification">
+        <i class="fas fa-database" style="color: #60a5fa; margin-right: 10px;"></i>
+        Buscando archivo en base de datos local... (Sin conexion)
+    </div>
+
+    <script>
+        function notificarSistema() {
+            const noti = document.getElementById('notificacion');
+            noti.style.display = 'block';
+            setTimeout(() => {
+                noti.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #fbbf24; margin-right: 10px;"></i> Modulo de plantillas PDF aun no implementado.';
+                setTimeout(() => {
+                    noti.style.display = 'none';
+                    noti.innerHTML = '<i class="fas fa-database" style="color: #60a5fa; margin-right: 10px;"></i> Buscando archivo en base de datos local...';
+                }, 3000);
+            }, 2000);
+        }
+
+        async function cargarHistorial() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('/api/matricula', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                const contenedor = document.getElementById('contenedorHistorial');
+                contenedor.innerHTML = '';
+
+                if (data.length === 0) {
+                    contenedor.innerHTML = '<p style="text-align:center; color: var(--text-muted);">No hay inscripciones registradas.</p>';
+                    return;
+                }
+
+                data.forEach(ins => {
+                    const badgeClass = ins.tipo === 'nuevo' ? 'badge-nuevo' : 'badge-regular';
+                    const tipoTexto = ins.tipo === 'nuevo' ? 'Nuevo Ingreso' : 'Estudiante Regular';
+
+                    contenedor.innerHTML += `
+                <div class="card-registro">
+                    <div class="col-info">
+                        <b>${ins.nombre}</b>
+                        <span>Cédula: ${ins.cedula}</span>
+                    </div>
+                    <div class="col-info">
+                        <span class="badge ${badgeClass}">${tipoTexto}</span>
+                    </div>
+                    <div class="col-info">
+                        <span><i class="far fa-calendar"></i> ${ins.fecha}</span>
+                    </div>
+                    <div class="col-info">
+                        <span><i class="far fa-clock"></i> N/A</span>
+                    </div>
+                    <div>
+                        <button class="btn-accion" onclick="notificarSistema()">
+                            <i class="fas fa-search"></i> VER PLANILLA
+                        </button>
+                    </div>
+                </div>`;
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        window.addEventListener('DOMContentLoaded', cargarHistorial);
+
+        // Registrar el Service Worker para la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registrado con exito:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Error al registrar el ServiceWorker:', error);
+                    });
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>

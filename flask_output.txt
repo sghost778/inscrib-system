@@ -1,0 +1,3 @@
+ * Serving Flask app 'app'
+ * Debug mode: on
+[INFO] No se pudieron inyectar datos públicos: 'clave' is an invalid keyword argument for SiteConfig

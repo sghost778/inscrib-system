@@ -1,0 +1,21 @@
+# Entorno Python
+__pycache__/
+*.py[cod]
+venv/
+env/
+.venv/
+
+# Base de datos (se crea y se precarga solo al ejecutar create_app)
+*.db
+*.sqlite3
+
+# Logs
+*.log
+flask_*.log
+
+# Secretos / variables de producción
+.env
+
+# Archivos temporales de Office
+~$*.docx
+~$*.pptx

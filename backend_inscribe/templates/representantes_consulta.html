@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Expediente del Representante - INSCRIBE SYSTEM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00b689">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
+
+    <style>
+        :root {
+            --primary-color: #00b689; /* Tu verde del sistema */
+            --text-main: #2d3436;
+            --disabled-bg: #f9f9f9;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f8fafb; padding: 30px; }
+        .container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 35px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        .header-expediente { border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
+        .header-expediente h2 { color: var(--primary-color); margin: 0; }
+        .header-expediente p { color: #b2bec3; font-size: 0.8rem; margin: 5px 0 0; font-weight: bold; }
+
+        h4 { color: var(--primary-color); margin-top: 30px; border-left: 4px solid var(--primary-color); padding-left: 10px; text-transform: uppercase; font-size: 0.85rem; }
+
+        .grid-expediente { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .info-box { display: flex; flex-direction: column; }
+        .info-box label { font-weight: 700; font-size: 0.8rem; color: #636e72; margin-bottom: 5px; }
+        
+        /* Contenedor especial para la V permanente */
+        .campo-cedula-contenedor {
+            display: flex;
+            align-items: center;
+            border: 1px solid #dfe4ea;
+            border-radius: 10px;
+            background: var(--disabled-bg);
+            overflow: hidden;
+            transition: 0.3s;
+        }
+        .prefijo-v {
+            padding: 0 12px;
+            font-weight: bold;
+            color: #555;
+            background: #eee;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            border-right: 1px solid #dfe4ea;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid #dfe4ea;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background: var(--disabled-bg);
+            color: #7f8c8d;
+            transition: 0.3s;
+            outline: none;
+        }
+        
+        /* El input de cedula no lleva borde porque lo da el contenedor */
+        .input-cedula { border: none !important; flex: 1; background: transparent !important; }
+
+        /* Estilos cuando se activa la edicion */
+        input.active, .campo-cedula-contenedor.active {
+            background: #fff !important;
+            color: var(--text-main) !important;
+            border-color: var(--primary-color);
+        }
+
+        .btn-main {
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            border: none;
+            font-size: 1rem;
+            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.3s;
+            color: white;
+            background: var(--primary-color); /* Ambos botones ahora son verdes */
+        }
+        
+        #btnGuardar { display: none; } /* Oculto hasta que se pulse modificar */
+
+        /* Modales */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 400px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-expediente">
+        <p>REGISTRO CENTRALIZADO DE DATOS</p>
+        <h2>Expediente del Representante</h2>
+    </div>
+
+    <form id="formExpediente" onsubmit="event.preventDefault(); abrirConfirmacion();">
+        
+        <h4><i class="fas fa-id-card"></i> Identificación del Representante</h4>
+        <div class="grid-expediente">
+            <div class="info-box">
+                <label>Cédula de Identidad</label>
+                <div class="campo-cedula-contenedor" id="contenedorCedula">
+                    <span class="prefijo-v">V-</span>
+                    <input type="text" id="cedula" class="input-cedula" readonly onkeypress="return soloNumeros(event)" maxlength="8">
+                </div>
+            </div>
+            <div class="info-box"><label>Primer Nombre</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
+            <div class="info-box"><label>Segundo Nombre</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
+            <div class="info-box"><label>Primer Apellido</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
+            <div class="info-box"><label>Segundo Apellido</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
+            <div class="info-box"><label>Hijos Inscritos</label><input type="number" class="editable" readonly min="0" onkeypress="return soloNumeros(event)"></div>
+        </div>
+
+        <h4><i class="fas fa-phone-alt"></i> Medios de Contacto</h4>
+        <div class="grid-expediente">
+            <div class="info-box"><label>Teléfono Móvil</label><input type="text" class="editable" readonly onkeypress="return soloNumeros(event)" maxlength="11"></div>
+            <div class="info-box"><label>Teléfono CANTV</label><input type="text" class="editable" readonly onkeypress="return soloNumeros(event)" maxlength="11"></div>
+            <div class="info-box"><label>Correo Electrónico</label><input type="email" class="editable" readonly></div>
+        </div>
+
+        <h4><i class="fas fa-map-marker-alt"></i> Ubicación Geográfica</h4>
+        <div class="grid-expediente">
+            <div class="info-box"><label>País</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
+            <div class="info-box"><label>Estado</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
+            <div class="info-box"><label>Ciudad</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
+        </div>
+
+        <div class="btn-container">
+            <button type="button" id="btnModificar" class="btn-main" onclick="habilitarCampos()">
+                <i class="fas fa-edit"></i> Modificar Información
+            </button>
+            <button type="submit" id="btnGuardar" class="btn-main">
+                <i class="fas fa-save"></i> Guardar Cambios
+            </button>
+        </div>
+    </form>
+</div>
+
+<div id="modalConfirm" class="modal">
+    <div class="modal-content">
+        <i class="fas fa-question-circle" style="font-size: 3rem; color: #f1c40f; margin-bottom: 15px;"></i>
+        <h3>¿Desea aplicar los cambios?</h3>
+        <p>Los datos del representante se actualizarán en el sistema.</p>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button onclick="cerrarModal()" style="flex:1; padding:10px; border-radius:8px; border:none; cursor:pointer;">Cancelar</button>
+            <button onclick="procesarExito()" style="flex:1; padding:10px; border-radius:8px; border:none; background:var(--primary-color); color:white; font-weight:bold; cursor:pointer;">Sí, guardar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalExito" class="modal">
+    <div class="modal-content">
+        <i class="fas fa-check-circle" style="font-size: 3.5rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+        <h3>!Modificacion Exitosa!</h3>
+        <p>La información ha sido procesada correctamente.</p>
+        <button onclick="location.reload()" style="width:100%; padding:12px; margin-top:20px; border-radius:8px; border:none; background:var(--primary-color); color:white; font-weight:bold; cursor:pointer;">Finalizar</button>
+    </div>
+</div>
+
+<script>
+    function habilitarCampos() {
+        const inputs = document.querySelectorAll('.editable');
+        inputs.forEach(input => {
+            input.removeAttribute('readonly');
+            input.classList.add('active');
+        });
+        
+        // Habilitar cedula y su contenedor
+        document.getElementById('cedula').removeAttribute('readonly');
+        document.getElementById('contenedorCedula').classList.add('active');
+        
+        // Cambiar botones
+        document.getElementById('btnModificar').style.display = 'none';
+        document.getElementById('btnGuardar').style.display = 'flex';
+    }
+
+    function abrirConfirmacion() {
+        document.getElementById('modalConfirm').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalConfirm').style.display = 'none';
+    }
+
+    function procesarExito() {
+        document.getElementById('modalConfirm').style.display = 'none';
+        document.getElementById('modalExito').style.display = 'flex';
+    }
+
+    function soloLetras(e) {
+        let key = e.keyCode || e.which;
+        let teclado = String.fromCharCode(key).toLowerCase();
+        let letras = " abcdefghijklmnnopqrstuvwxyzaeiou";
+        return (letras.indexOf(teclado) != -1);
+    }
+
+    function soloNumeros(e) {
+        let key = e.keyCode || e.which;
+        let teclado = String.fromCharCode(key);
+        let numeros = "0123456789";
+        return (numeros.indexOf(teclado) != -1);
+    }
+
+    // Registrar el Service Worker para la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registrado con exito:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Error al registrar el ServiceWorker:', error);
+                    });
+            });
+        }
+        
+</script>
+
+</body>
+</html>

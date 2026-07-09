@@ -1,0 +1,67 @@
+C:\Users\najeeb\AppData\Roaming\Python\Python314\site-packages\flask_limiter\extension.py:333: UserWarning: Using the in-memory storage for tracking rate limits as no storage was explicitly specified. This is not recommended for production use. See: https://flask-limiter.readthedocs.io#configuring-a-storage-backend for documentation about configuring the storage backend.
+  warnings.warn(
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.54.88.128:5000
+Press CTRL+C to quit
+ * Restarting with watchdog (windowsapi)
+C:\Users\najeeb\AppData\Roaming\Python\Python314\site-packages\flask_limiter\extension.py:333: UserWarning: Using the in-memory storage for tracking rate limits as no storage was explicitly specified. This is not recommended for production use. See: https://flask-limiter.readthedocs.io#configuring-a-storage-backend for documentation about configuring the storage backend.
+  warnings.warn(
+ * Debugger is active!
+ * Debugger PIN: 131-410-366
+ * Detected change in 'C:\\Users\\najeeb\\Downloads\\INSCRIB SYSTEM\\INSCRIB SYSTEM\\test_routes.py', reloading
+ * Detected change in 'C:\\Users\\najeeb\\Downloads\\INSCRIB SYSTEM\\INSCRIB SYSTEM\\test_routes.py', reloading
+ * Restarting with watchdog (windowsapi)
+C:\Users\najeeb\AppData\Roaming\Python\Python314\site-packages\flask_limiter\extension.py:333: UserWarning: Using the in-memory storage for tracking rate limits as no storage was explicitly specified. This is not recommended for production use. See: https://flask-limiter.readthedocs.io#configuring-a-storage-backend for documentation about configuring the storage backend.
+  warnings.warn(
+ * Debugger is active!
+ * Debugger PIN: 131-410-366
+ * Detected change in 'C:\\Python314\\Lib\\encodings\\unicode_escape.py', reloading
+ * Restarting with watchdog (windowsapi)
+C:\Users\najeeb\AppData\Roaming\Python\Python314\site-packages\flask_limiter\extension.py:333: UserWarning: Using the in-memory storage for tracking rate limits as no storage was explicitly specified. This is not recommended for production use. See: https://flask-limiter.readthedocs.io#configuring-a-storage-backend for documentation about configuring the storage backend.
+  warnings.warn(
+ * Debugger is active!
+ * Debugger PIN: 131-410-366
+ * Detected change in 'C:\\Users\\najeeb\\Downloads\\INSCRIB SYSTEM\\INSCRIB SYSTEM\\test_routes.py', reloading
+ * Detected change in 'C:\\Users\\najeeb\\Downloads\\INSCRIB SYSTEM\\INSCRIB SYSTEM\\test_routes.py', reloading
+ * Restarting with watchdog (windowsapi)
+C:\Users\najeeb\AppData\Roaming\Python\Python314\site-packages\flask_limiter\extension.py:333: UserWarning: Using the in-memory storage for tracking rate limits as no storage was explicitly specified. This is not recommended for production use. See: https://flask-limiter.readthedocs.io#configuring-a-storage-backend for documentation about configuring the storage backend.
+  warnings.warn(
+ * Debugger is active!
+ * Debugger PIN: 131-410-366
+ * Detected change in 'C:\\Users\\najeeb\\Downloads\\INSCRIB SYSTEM\\INSCRIB SYSTEM\\routes.py', reloading
+ * Detected change in 'C:\\Users\\najeeb\\Downloads\\INSCRIB SYSTEM\\INSCRIB SYSTEM\\routes.py', reloading
+ * Restarting with watchdog (windowsapi)
+C:\Users\najeeb\AppData\Roaming\Python\Python314\site-packages\flask_limiter\extension.py:333: UserWarning: Using the in-memory storage for tracking rate limits as no storage was explicitly specified. This is not recommended for production use. See: https://flask-limiter.readthedocs.io#configuring-a-storage-backend for documentation about configuring the storage backend.
+  warnings.warn(
+ * Debugger is active!
+ * Debugger PIN: 131-410-366
+ * Detected change in 'C:\\Users\\najeeb\\Downloads\\INSCRIB SYSTEM\\INSCRIB SYSTEM\\test_routes.py', reloading
+ * Restarting with watchdog (windowsapi)
+C:\Users\najeeb\AppData\Roaming\Python\Python314\site-packages\flask_limiter\extension.py:333: UserWarning: Using the in-memory storage for tracking rate limits as no storage was explicitly specified. This is not recommended for production use. See: https://flask-limiter.readthedocs.io#configuring-a-storage-backend for documentation about configuring the storage backend.
+  warnings.warn(
+ * Debugger is active!
+ * Debugger PIN: 131-410-366
+ * Detected change in 'C:\\Users\\najeeb\\Downloads\\INSCRIB SYSTEM\\INSCRIB SYSTEM\\generate_placeholders.py', reloading
+ * Detected change in 'C:\\Users\\najeeb\\Downloads\\INSCRIB SYSTEM\\INSCRIB SYSTEM\\generate_placeholders.py', reloading
+ * Restarting with watchdog (windowsapi)
+C:\Users\najeeb\AppData\Roaming\Python\Python314\site-packages\flask_limiter\extension.py:333: UserWarning: Using the in-memory storage for tracking rate limits as no storage was explicitly specified. This is not recommended for production use. See: https://flask-limiter.readthedocs.io#configuring-a-storage-backend for documentation about configuring the storage backend.
+  warnings.warn(
+ * Debugger is active!
+ * Debugger PIN: 131-410-366
+ * Detected change in 'C:\\Users\\najeeb\\Downloads\\INSCRIB SYSTEM\\INSCRIB SYSTEM\\app.py', reloading
+ * Detected change in 'C:\\Users\\najeeb\\Downloads\\INSCRIB SYSTEM\\INSCRIB SYSTEM\\app.py', reloading
+ * Restarting with watchdog (windowsapi)
+C:\Users\najeeb\AppData\Roaming\Python\Python314\site-packages\flask_limiter\extension.py:333: UserWarning: Using the in-memory storage for tracking rate limits as no storage was explicitly specified. This is not recommended for production use. See: https://flask-limiter.readthedocs.io#configuring-a-storage-backend for documentation about configuring the storage backend.
+  warnings.warn(
+ * Debugger is active!
+ * Debugger PIN: 131-410-366
+ * Detected change in 'C:\\Python314\\Lib\\xml\\etree\\__init__.py', reloading
+ * Detected change in 'C:\\Python314\\Lib\\xml\\etree\\ElementTree.py', reloading
+ * Detected change in 'C:\\Python314\\Lib\\xml\\etree\\ElementPath.py', reloading
+ * Restarting with watchdog (windowsapi)
+C:\Users\najeeb\AppData\Roaming\Python\Python314\site-packages\flask_limiter\extension.py:333: UserWarning: Using the in-memory storage for tracking rate limits as no storage was explicitly specified. This is not recommended for production use. See: https://flask-limiter.readthedocs.io#configuring-a-storage-backend for documentation about configuring the storage backend.
+  warnings.warn(
+ * Debugger is active!
+ * Debugger PIN: 131-410-366

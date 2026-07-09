@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticias - U.E. Dr. José Manuel Cova Maza</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; color: #2d3436; }
+        :root { --primary: #00b689; --primary-dark: #009671; }
+
+        nav {
+            background: white; padding: 0 40px; display: flex; align-items: center;
+            justify-content: space-between; height: 75px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+        }
+        nav .logo { display: flex; align-items: center; gap: 10px; }
+        nav .logo img { height: 45px; }
+        nav .logo span { font-weight: 800; color: var(--primary); font-size: 1rem; }
+        nav .menu a {
+            text-decoration: none; color: #555; font-weight: 600; font-size: 0.9rem;
+            margin-left: 25px; transition: 0.3s;
+        }
+        nav .menu a:hover, nav .menu a.active { color: var(--primary); }
+        .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; color: #555; }
+
+        .page-header {
+            margin-top: 75px; background: linear-gradient(135deg, var(--primary), #00d2ad);
+            padding: 60px 40px; text-align: center; color: white;
+        }
+        .page-header h1 { font-size: 2.2rem; }
+
+        section { padding: 60px 40px; max-width: 1100px; margin: 0 auto; }
+
+        .noticias-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px,1fr)); gap: 25px; }
+        .noticia-card {
+            background: white; border-radius: 15px; overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #edf2f7; transition: 0.3s;
+        }
+        .noticia-card:hover { transform: translateY(-3px); }
+        .noticia-card img { width: 100%; height: 200px; object-fit: cover; }
+        .noticia-body { padding: 20px; }
+        .noticia-body .fecha { color: var(--primary); font-size: 0.85rem; font-weight: 600; }
+        .noticia-body h3 { margin: 8px 0; font-size: 1.1rem; }
+        .noticia-body p { color: #636e72; font-size: 0.95rem; line-height: 1.5; }
+
+        footer {
+            background: #2d3436; color: white; text-align: center; padding: 30px;
+        }
+        footer p { opacity: 0.7; font-size: 0.9rem; }
+        footer a { color: var(--primary); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            nav { padding: 0 20px; }
+            nav .menu { display: none; flex-direction: column; position: absolute; top: 75px;
+                left: 0; right: 0; background: white; padding: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+            nav .menu.open { display: flex; }
+            nav .menu a { margin: 10px 0; }
+            .menu-toggle { display: block; }
+            section { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        <span id="navTitle">U.E. Dr. José Manuel Cova Maza</span>
+    </div>
+    <div class="menu" id="navMenu">
+        <a href="/">Inicio</a>
+        <a href="/nosotros">Nosotros</a>
+        <a href="/programas">Programas</a>
+        <a href="/noticias" class="active">Noticias</a>
+        <a href="/galeria">Galería</a>
+        <a href="/contacto">Contacto</a>
+        <a href="/portal" style="color:var(--primary)"><i class="fas fa-user-friends"></i> Representantes</a>
+        
+    </div>
+    <div class="menu-toggle" onclick="document.getElementById('navMenu').classList.toggle('open')">
+        <i class="fas fa-bars"></i>
+    </div>
+</nav>
+
+<div class="page-header">
+    <h1>Noticias y Eventos</h1>
+</div>
+
+<section>
+    <div class="noticias-grid" id="noticiasContainer"></div>
+</section>
+
+<footer>
+    <p id="footerText">&copy; 2026 Unidad Educativa Dr. José Manuel Cova Maza. Todos los derechos reservados.</p>
+    <p style="margin-top:8px;"><a href="/portal" style="margin-right:15px;"><i class="fas fa-user-friends"></i> Portal Representantes</a>
+        <a href="/login"><i class="fas fa-user-shield"></i> Acceso Administrativo</a></p>
+</footer>
+
+<script>
+    async function cargarConfig() {
+        try {
+            const res = await fetch('/api/site-config');
+            const cfg = await res.json();
+            if (cfg.site_name) {
+                document.getElementById('navTitle').textContent = cfg.site_name;
+                document.getElementById('footerText').innerHTML = '&copy; 2026 ' + cfg.site_name + '. Todos los derechos reservados.';
+            }
+        } catch(e) { console.error(e); }
+    }
+    cargarConfig();
+
+    async function cargarNoticias() {
+        try {
+            const res = await fetch('/api/noticias?activas=true');
+            const noticias = await res.json();
+            const container = document.getElementById('noticiasContainer');
+            if (!noticias.length) {
+                container.innerHTML = '<p style="text-align:center;color:#636e72;">No hay noticias disponibles.</p>';
+                return;
+            }
+            container.innerHTML = noticias.map(n => `
+                <div class="noticia-card">
+                    <img src="${n.imagen || 'https://via.placeholder.com/400x200?text=Noticia'}" alt="${n.titulo}" onerror="this.src='https://via.placeholder.com/400x200?text=Noticia'">
+                    <div class="noticia-body">
+                        <div class="fecha"><i class="far fa-calendar-alt"></i> ${n.fecha}</div>
+                        <h3>${n.titulo}</h3>
+                        <p>${n.resumen || n.contenido || ''}</p>
+                    </div>
+                </div>
+            `).join('');
+        } catch(e) { console.error(e); }
+    }
+    cargarNoticias();
+</script>
+</body>
+</html>

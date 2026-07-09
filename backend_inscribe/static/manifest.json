@@ -1,0 +1,21 @@
+{
+  "name": "INSCRIBE SYSTEM",
+  "short_name": "Inscribe",
+  "description": "Sistema de Gestión de Inscripciones",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafb",
+  "theme_color": "#00b689",
+  "icons": [
+    {
+      "src": "/static/logo.png",
+      "sizes": "192x192",
+      "type": "imagen/png"
+    },
+    {
+      "src": "/static/logo.png",
+      "sizes": "512x512",
+      "type": "imagen/png"
+    }
+  ]
+}

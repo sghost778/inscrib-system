@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INSCRIBE SYSTEM</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00b689">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
+
+    <style>
+        :root {
+            --primary-color: #00b689;
+            --primary-soft: rgba(0, 182, 137, 0.1);
+            --sidebar-bg: #ffffff;
+            --main-bg: #f8fafb;
+            --text-main: #2d3436;
+            --text-light: #636e72;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: var(--main-bg);
+            overflow: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid #edf2f7;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        .sidebar-header img {
+            width: 65px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.1rem;
+            margin: 0;
+            color: var(--primary-color);
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .menu-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 15px;
+        }
+
+        .menu-item {
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: 0.3s;
+            border-radius: 12px;
+            margin-bottom: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            justify-content: space-between;
+            font-size: 0.95rem;
+        }
+
+        .menu-item:hover {
+            background: var(--primary-soft);
+            color: var(--primary-color);
+        }
+
+        .menu-item i {
+            width: 25px;
+            font-size: 1.1rem;
+        }
+
+        /* SUBMENAšS */
+        .submenu {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 10px 0;
+            display: none;
+        }
+
+        .submenu li a {
+            padding: 10px 10px 10px 50px;
+            display: block;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.88rem;
+            border-radius: 8px;
+        }
+
+        .submenu li a:hover {
+            color: var(--primary-color);
+            background: #f0fdf4;
+            padding-left: 55px;
+        }
+
+        .menu-group.active .submenu {
+            display: block;
+        }
+
+        .menu-group.active .arrow {
+            transform: rotate(90deg);
+        }
+
+        .arrow {
+            transition: 0.3s;
+            font-size: 0.7rem;
+        }
+
+        /* AREA DERECHA */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            background: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: flex-end;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .user-badge {
+            background: var(--primary-soft);
+            color: var(--primary-color);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        iframe {
+            width: 100%;
+            flex: 1;
+            border: none;
+            background: var(--main-bg);
+        }
+
+        /* MA"VIL - SIDEBAR COLLAPSIBLE */
+        .hamburger {
+            display: none; position: fixed; top: 15px; left: 15px; z-index: 200;
+            background: var(--sidebar-bg); border: 1px solid #edf2f7; border-radius: 10px;
+            padding: 10px 14px; cursor: pointer; font-size: 1.3rem; color: var(--text-light);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4); z-index: 99;
+        }
+
+        @media (max-width: 900px) {
+            .hamburger { display: block; }
+            .sidebar { position: fixed; left: -300px; transition: 0.3s; z-index: 100; }
+            .sidebar.open { left: 0; }
+            .sidebar-overlay.open { display: block; }
+            header { padding: 15px 20px 15px 70px; }
+        }
+
+        .btn-salir {
+            color: #ff5e57 !important;
+            border-top: 1px solid #f8f8f8;
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+
+        /* --- ESTILOS DEL MODAL DE SALIDA --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            /* Oculto por defecto */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-exit {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-exit i {
+            font-size: 3.5rem;
+            color: #ff5e57;
+            margin-bottom: 15px;
+        }
+
+        .modal-exit h2 {
+            margin: 0;
+            color: #2d3436;
+            font-size: 1.4rem;
+        }
+
+        .modal-exit p {
+            color: #636e72;
+            margin: 10px 0 25px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-modal {
+            padding: 10px 25px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .btn-confirm {
+            background: #ff5e57;
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: #e04d47;
+        }
+
+        .btn-cancel {
+            background: #f1f2f6;
+            color: #2d3436;
+        }
+
+        .btn-cancel:hover {
+            background: #dfe4ea;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <div class="modal-overlay" id="exitModal">
+        <div class="modal-exit">
+            <i class="fas fa-question-circle"></i>
+            <h2>¿Cerrar Sesión?</h2>
+            <p>¿Estás seguro de que deseas salir del sistema?</p>
+            <div class="modal-buttons">
+                <button class="btn-modal btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn-modal btn-confirm" onclick="confirmarSalida()">Sí, Salir</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="logo.png" alt="Logo">
+            <h3>INSCRIBE SYSTEM</h3>
+        </div>
+
+        <div class="menu-container">
+            <a href="{{ url_for('view_inicio') }}" target="ventana_central" class="menu-item">
+                <span><i class="fas fa-th-large"></i> Inicio</span>
+            </a>
+
+            <div class="menu-group">
+                <div class="menu-item" onclick="toggleSubmenu(this)">
+                    <span><i class="fas fa-user-graduate"></i> Estudiantes</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <ul class="submenu">
+                    <li><a href="{{ url_for('view_estudiantes_listado') }}" target="ventana_central">Listado General</a>
+                    </li>
+                    <li><a href="{{ url_for('view_estudiantes_consulta') }}" target="ventana_central">Consulta
+                            Individual</a></li>
+                    <li><a href="{{ url_for('view_estudiantes_registro') }}" target="ventana_central">Registrar
+                            Estudiante</a></li>
+                </ul>
+            </div>
+
+            <div class="menu-group">
+                <div class="menu-item" onclick="toggleSubmenu(this)">
+                    <span><i class="fas fa-users"></i> Representante</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <ul class="submenu">
+                    <li><a href="{{ url_for('view_representantes_listado') }}" target="ventana_central">Listado
+                            General</a></li>
+                    <li><a href="{{ url_for('view_representantes_consulta') }}" target="ventana_central">Consulta
+                            Individual</a></li>
+                    <li><a href="{{ url_for('view_representantes_registro') }}" target="ventana_central">Registrar
+                            Representante</a></li>
+                </ul>
+            </div>
+
+            <div class="menu-group">
+                <div class="menu-item" onclick="toggleSubmenu(this)">
+                    <span><i class="fas fa-file-signature"></i> Plantilla Inscripción</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <ul class="submenu">
+                    <li><a href="{{ url_for('view_plantilla_nueva') }}" target="ventana_central">Nueva Plantilla</a>
+                    </li>
+                    <li><a href="{{ url_for('view_plantillas_guardadas') }}" target="ventana_central">Plantillas
+                            Guardadas</a></li>
+                </ul>
+            </div>
+
+            <a href="{{ url_for('view_matricula') }}" target="ventana_central" class="menu-item">
+                <span><i class="fas fa-address-book"></i> Matrícula</span>
+            </a>
+
+            <a href="{{ url_for('view_gestion_ano') }}" target="ventana_central" class="menu-item">
+                <span><i class="fas fa-calendar-alt"></i> Gestión de Año</span>
+            </a>
+
+            <a href="{{ url_for('view_usuarios') }}" target="ventana_central" class="menu-item">
+                <span><i class="fas fa-user-shield"></i> Usuario</span>
+            </a>
+
+            <a href="{{ url_for('view_admin_sitio') }}" target="ventana_central" class="menu-item">
+                <span><i class="fas fa-globe"></i> Configurar Sitio Web</span>
+            </a>
+
+            <div class="menu-item btn-salir" onclick="abrirModal()">
+                <span><i class="fas fa-power-off"></i> Salir del Sistema</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header>
+            <div class="user-badge"><i class="fas fa-user-circle"></i> Administrador</div>
+        </header>
+        <iframe name="ventana_central" src="{{ url_for('view_inicio') }}"></iframe>
+    </main>
+
+
+
+    <script>
+        // Funciones para submenus
+        function toggleSubmenu(element) {
+            element.parentElement.classList.toggle('active');
+        }
+
+        // --- FUNCIONES DEL MODAL ---
+        const modal = document.getElementById('exitModal');
+
+        function abrirModal() {
+            modal.style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            modal.style.display = 'none';
+        }
+
+        function confirmarSalida() {
+            // Cerrar sesion via API y redirigir al login
+            fetch('/api/logout', {method:'POST'}).then(() => {
+                localStorage.removeItem('usuario');
+                window.location.href = '/login';
+            }).catch(() => {
+                window.location.href = '/login';
+            });
+        }
+
+        // Cerrar modal si hacen clic fuera de la cajita blanca
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                cerrarModal();
+            }
+        }
+
+        // Sidebar responsive
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
+
+        // Mostrar nombre de usuario y rol
+        document.addEventListener('DOMContentLoaded', function() {
+            const usuario = localStorage.getItem('usuario') || 'Administrador';
+            const rol = localStorage.getItem('rol') || '';
+            document.querySelector('.user-badge').innerHTML = '<i class="fas fa-user-circle"></i> ' + usuario;
+        });
+        // Registrar el Service Worker para la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registrado con exito:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Error al registrar el ServiceWorker:', error);
+                    });
+            });
+        }
+
+    </script>
+</body>
+
+</html>

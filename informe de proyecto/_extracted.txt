@@ -1,0 +1,329 @@
+================================================================================
+ARCHIVO: BITACORA_ACTIVIDADES (1).docx
+================================================================================
+BITÁCORA DE ACTIVIDADES LABORALES DE PASANTES
+DATOS DE LA EMPRESA
+Nombre: ECM PERFOROSVEN S.A.
+R.I.F.: J-40710863-8
+Dirección: Calle Nro #2, Cruce con Calle Nro #3, Zona Industrial, Municipio Simón Rodríguez, El Tigre, Estado Anzoátegui
+DATOS DEL PASANTE
+Nombre: Marcelo Fernando Campos Anacona
+C.I.: V-32.062.637
+Carrera: Ingeniería de Sistemas - UPTJAA
+Nivel: Trayecto 3, Fase 1
+Período: 01 de Junio al 21 de Agosto de 2026
+DATOS DEL TUTOR INDUSTRIAL
+Nombre: Sol Liliana Romero Gil
+Cargo: Coordinadora de PROCURA
+Correo: Sromero.perforosven@outlook.com
+Teléfono: (0414) 0907345
+DATOS DEL TUTOR ACADÉMICO
+Nombre: Ing. Yalitza Guevara
+C.I.: V-13.498.102
+SEMANA N° 1 - (01 al 05 de Junio 2026)
+SEMANA N° 2 - (08 al 12 de Junio 2026)
+SEMANA N° 3 - (15 al 19 de Junio 2026)
+SEMANA N° 4 - (22 al 26 de Junio 2026)
+SEMANA N° 5 - (29 de Junio al 03 de Julio 2026)
+SEMANA N° 6 - (06 al 10 de Julio 2026)
+SEMANA N° 7 - (13 al 17 de Julio 2026)
+SEMANA N° 8 - (20 al 24 de Julio 2026)
+SEMANA N° 9 - (27 al 31 de Julio 2026)
+SEMANA N° 10 - (03 al 07 de Agosto 2026)
+SEMANA N° 11 - (10 al 14 de Agosto 2026)
+SEMANA N° 12 - (17 al 21 de Agosto 2026)
+
+--- TABLA 1 ---
+Día / Fecha | Actividades Realizadas
+Lunes 01/06 | Presentación al tutor industrial y personal involucrado en la pasantía. Recorrido por las instalaciones de la empresa.
+Martes 02/06 | Participación en charlas de higiene, seguridad industrial y ambiente (PSA). Entrega de equipos de protección personal (EPP).
+Miércoles 03/06 | Inducción al área de PROCURA. Conocimiento de los procesos de almacén y flujo de materiales.
+Jueves 04/06 | Revisión de procedimientos operativos del almacén. Documentación de procesos actuales.
+Viernes 05/06 | Asignación del tema de pasantías por parte del tutor industrial. Definición del alcance del proyecto.
+
+--- TABLA 2 ---
+Día / Fecha | Actividades Realizadas
+Lunes 08/06 | Elaboración del plan de trabajo en conjunto con el tutor industrial.
+Martes 09/06 | Culminación del plan de trabajo. Definición de cronograma y actividades.
+Miércoles 10/06 | Visita a la planta compresora de gas Guico. Inducciones por parte de los operadores.
+Jueves 11/06 | Continuación de la visita a la planta. Identificación de procesos operativos.
+Viernes 12/06 | Identificación de las partes del motor y compresor. Documentación fotográfica.
+
+--- TABLA 3 ---
+Día / Fecha | Actividades Realizadas
+Lunes 15/06 | Identificación de las partes del motor. Análisis de componentes mecánicos.
+Martes 16/06 | Identificación de las partes del compresor. Documentación técnica.
+Miércoles 17/06 | Análisis del sistema de enfriamiento. Diagramas de flujo.
+Jueves 18/06 | Realización del esquema del recorrido del gas a comprimir.
+Viernes 19/06 | Análisis de requerimientos para el sistema WMS. Documentación de especificaciones.
+
+--- TABLA 4 ---
+Día / Fecha | Actividades Realizadas
+Lunes 22/06 | Revisión de los procedimientos operacionales en conjunto con los operadores.
+Martes 23/06 | Análisis de flujo de información del almacén. Identificación de problemas.
+Miércoles 24/06 | Diseño de la arquitectura del sistema WMS. Selección de tecnologías.
+Jueves 25/06 | Diseño de la base de datos. Modelamiento Entidad-Relación.
+Viernes 26/06 | Inicio del desarrollo del proyecto. Configuración del entorno de desarrollo.
+
+--- TABLA 5 ---
+Día / Fecha | Actividades Realizadas
+Lunes 29/06 | Desarrollo del módulo de Gestión de Materiales y Activos.
+Martes 30/06 | Implementación del modelo de datos para materiales.
+Miércoles 01/07 | Desarrollo de formularios de registro de materiales.
+Jueves 02/07 | Implementación de generación de códigos QR.
+Viernes 03/07 | Pruebas del módulo de materiales. Ajustes.
+
+--- TABLA 6 ---
+Día / Fecha | Actividades Realizadas
+Lunes 06/07 | Desarrollo del módulo de Recepción de Materiales.
+Martes 07/07 | Implementación de Reportes de Recepción (RP).
+Miércoles 08/07 | Desarrollo de Control de Entradas (EM/EA/EDG).
+Jueves 09/07 | Integración con el módulo de proveedores.
+Viernes 10/07 | Pruebas del módulo de recepción. Correcciones.
+
+--- TABLA 7 ---
+Día / Fecha | Actividades Realizadas
+Lunes 13/07 | Desarrollo del módulo de Despachos y Salidas.
+Martes 14/07 | Implementación de Guías de Traslado.
+Miércoles 15/07 | Desarrollo del sistema FIFO para despachos.
+Jueves 16/07 | Implementación de generación de PDF para guías.
+Viernes 17/07 | Pruebas del módulo de despachos.
+
+--- TABLA 8 ---
+Día / Fecha | Actividades Realizadas
+Lunes 20/07 | Desarrollo del módulo de Órdenes de Compra.
+Martes 21/07 | Implementación de Requisiciones.
+Miércoles 22/07 | Desarrollo del módulo de Kardex.
+Jueves 23/07 | Implementación de Alertas de Stock.
+Viernes 24/07 | Pruebas del módulo de inventario.
+
+--- TABLA 9 ---
+Día / Fecha | Actividades Realizadas
+Lunes 27/07 | Desarrollo de Reportes Financieros.
+Martes 28/07 | Implementación de Notificaciones (Email y WhatsApp).
+Miércoles 29/07 | Desarrollo del módulo de Auditoría.
+Jueves 30/07 | Implementación de Roles y Permisos.
+Viernes 31/07 | Pruebas integrales del sistema.
+
+--- TABLA 10 ---
+Día / Fecha | Actividades Realizadas
+Lunes 03/08 | Pruebas de funcionamiento del sistema completo.
+Martes 04/08 | Corrección de errores identificados en las pruebas.
+Miércoles 05/08 | Optimización de consultas y rendimiento.
+Jueves 06/08 | Ajustes finales de la interfaz de usuario.
+Viernes 07/08 | Documentación técnica del sistema.
+
+--- TABLA 11 ---
+Día / Fecha | Actividades Realizadas
+Lunes 10/08 | Puesta en marcha del sistema en ambiente de producción.
+Martes 11/08 | Capacitación al personal del área de PROCURA.
+Miércoles 12/08 | Capacitación a usuarios del sistema.
+Jueves 13/08 | Resolución de dudas y soporte técnico.
+Viernes 14/08 | Documentación de usuario y manuales.
+
+--- TABLA 12 ---
+Día / Fecha | Actividades Realizadas
+Lunes 17/08 | Revisión final del sistema. Ajustes menores.
+Martes 18/08 | Elaboración del informe de pasantías.
+Miércoles 19/08 | Continuación del informe. Inclusión de resultados.
+Jueves 20/08 | Revisión y corrección del informe.
+Viernes 21/08 | Entrega del informe y cierre de pasantías.
+
+================================================================================
+ARCHIVO: DIAGRAMA_GANTT (1).docx
+================================================================================
+DIAGRAMA DE GANTT
+Proyecto: Sistema Automatizado de Gestión de Almacén
+PERFOROSVEN S.A. - Pasantías 2026
+Marcelo Fernando Campos Anacona | Ing. Yalitza Guevara
+Leyenda: ■ = Actividad programada para esa semana
+Período total: 12 semanas (480 horas) | 01 de Junio al 21 de Agosto de 2026
+
+--- TABLA 1 ---
+Estudiante: | Marcelo F. Campos Anacona | Tutor Académico: | Ing. Yalitza Guevara
+Empresa: | ECM PERFOROSVEN S.A. | Tutor Industrial: | Sol L. Romero Gil
+Período: | 01 Jun - 21 Ago 2026 | Duración: | 12 semanas (480 horas)
+
+--- TABLA 2 ---
+N° | Actividad | S1 | S2 | S3 | S4 | S5 | S6 | S7 | S8 | S9 | S10 | S11 | S12
+1 | Inducción y presentación | ■ |  |  |  |  |  |  |  |  |  |  | 
+2 | Charlas de seguridad (PSA) | ■ |  |  |  |  |  |  |  |  |  |  | 
+3 | Conocimiento del área PROCURA | ■ | ■ |  |  |  |  |  |  |  |  |  | 
+4 | Análisis de procesos de almacén |  | ■ | ■ |  |  |  |  |  |  |  |  | 
+5 | Elaboración del plan de trabajo |  | ■ |  |  |  |  |  |  |  |  |  | 
+6 | Diseño de arquitectura del sistema |  |  |  | ■ |  |  |  |  |  |  |  | 
+7 | Diseño de base de datos |  |  |  | ■ |  |  |  |  |  |  |  | 
+8 | Desarrollo: Módulo Materiales |  |  |  |  | ■ | ■ |  |  |  |  |  | 
+9 | Desarrollo: Módulo Activos |  |  |  |  | ■ |  |  |  |  |  |  | 
+10 | Desarrollo: Módulo Recepción |  |  |  |  |  | ■ | ■ |  |  |  |  | 
+11 | Desarrollo: Módulo Despachos |  |  |  |  |  |  | ■ | ■ |  |  |  | 
+12 | Desarrollo: Módulo Órdenes Compra |  |  |  |  |  |  |  | ■ |  |  |  | 
+13 | Desarrollo: Módulo Requisiciones |  |  |  |  |  |  |  | ■ | ■ |  |  | 
+14 | Desarrollo: Módulo Inventario |  |  |  |  |  |  |  |  | ■ |  |  | 
+15 | Desarrollo: Reportes y Notificaciones |  |  |  |  |  |  |  |  | ■ | ■ |  | 
+16 | Desarrollo: Seguridad y Auditoría |  |  |  |  |  |  |  |  |  | ■ |  | 
+17 | Pruebas y ajustes |  |  |  |  |  |  |  |  |  | ■ |  | 
+18 | Puesta en marcha |  |  |  |  |  |  |  |  |  |  | ■ | 
+19 | Capacitación al personal |  |  |  |  |  |  |  |  |  |  | ■ | 
+20 | Documentación y cierre |  |  |  |  |  |  |  |  |  |  |  | ■
+
+================================================================================
+ARCHIVO: FORMATO DE EVALUACION DEL PASANTE  ING LIC o TSU POR TUTOR INDUSTRIAL.docx
+================================================================================
+EVALUACIÓN DEL DESEMPEÑO DEL (DE LA) ESTUDIANTE POR
+TUTOR(A) INDUSTRIAL
+LICENCIADO-INGENIERÍA
+______________________________
+Lcdo/  Ing… Nombres y Apellidos
+Tutor(a) Industrial                                                                                 Sello de la empresa
+EVALUACIÓN DEL DESEMPEÑO DEL (DE LA) ESTUDIANTE POR
+TUTOR(A) INDUSTRIAL
+TSU
+______________________________
+TSU/Lcdo/  Ing… Nombres y Apellidos
+Tutor(a) Industrial                                                                                 Sello de la empresa
+
+--- TABLA 1 ---
+Apellido y Nombres: | Apellido y Nombres: | Cédula de Identidad: | Período: | Período: | PNF  que cursa: | PNF  que cursa:
+Nombre de la institución: | Nombre de la institución: | Departamento  donde se efectuó la Práctica Profesional:
+
+Apellido y Nombre del (de la) Tutor(a) Institucional:
+
+C .I.  del (de la) Tutor(a) Institucional: | Departamento  donde se efectuó la Práctica Profesional:
+
+Apellido y Nombre del (de la) Tutor(a) Institucional:
+
+C .I.  del (de la) Tutor(a) Institucional: | Departamento  donde se efectuó la Práctica Profesional:
+
+Apellido y Nombre del (de la) Tutor(a) Institucional:
+
+C .I.  del (de la) Tutor(a) Institucional: | Fechas de la Práctica Profesional:
+
+ Inicio:
+
+Culminación: | Fechas de la Práctica Profesional:
+
+ Inicio:
+
+Culminación:
+ |  |  |  |  |  | 
+Ítems | Aspectos Evaluados | Aspectos Evaluados | Aspectos Evaluados | Intervalo de
+Ponderación | Intervalo de
+Ponderación | Calificación parcial
+1 | Cumplimiento del horario normal de trabajo | Cumplimiento del horario normal de trabajo | Cumplimiento del horario normal de trabajo | 0-2 | 0-2 | 
+2 | Capacidad para proponer espontánea y oportunamente sugerencias útiles para la organización, | Capacidad para proponer espontánea y oportunamente sugerencias útiles para la organización, | Capacidad para proponer espontánea y oportunamente sugerencias útiles para la organización, | 0-2 | 0-2 | 
+3 | Facilidad de comunicación verbal y escrita; habilidad para dar a conocer y defender sus ideas. | Facilidad de comunicación verbal y escrita; habilidad para dar a conocer y defender sus ideas. | Facilidad de comunicación verbal y escrita; habilidad para dar a conocer y defender sus ideas. | 0-2 | 0-2 | 
+4 | Receptividad a planteamientos diferentes a los presentados por él. | Receptividad a planteamientos diferentes a los presentados por él. | Receptividad a planteamientos diferentes a los presentados por él. | 0-2 | 0-2 | 
+5 | Responsabilidad y puntualidad en la ejecución de las actividades cumpliendo con las condiciones de tiempo y calidad preestablecidas. | Responsabilidad y puntualidad en la ejecución de las actividades cumpliendo con las condiciones de tiempo y calidad preestablecidas. | Responsabilidad y puntualidad en la ejecución de las actividades cumpliendo con las condiciones de tiempo y calidad preestablecidas. | 0-2 | 0-2 | 
+6 | Cumplimiento y aplicación de normas de seguridad y de prevención de accidentes. | Cumplimiento y aplicación de normas de seguridad y de prevención de accidentes. | Cumplimiento y aplicación de normas de seguridad y de prevención de accidentes. | 0-2 | 0-2 | 
+7 | Disposición para colaborar con los (las) compañeros (as) de trabajo y con los (las) supervisores(as) en forma permanente y espontánea. | Disposición para colaborar con los (las) compañeros (as) de trabajo y con los (las) supervisores(as) en forma permanente y espontánea. | Disposición para colaborar con los (las) compañeros (as) de trabajo y con los (las) supervisores(as) en forma permanente y espontánea. | 0-2 | 0-2 | 
+8 | Adaptación a situaciones cambiantes o demandas del entorno. | Adaptación a situaciones cambiantes o demandas del entorno. | Adaptación a situaciones cambiantes o demandas del entorno. | 0-2 | 0-2 | 
+9 | Productividad en función de las metas planificadas y alcanzadas durante el periodo de prácticas. | Productividad en función de las metas planificadas y alcanzadas durante el periodo de prácticas. | Productividad en función de las metas planificadas y alcanzadas durante el periodo de prácticas. | 0-2 | 0-2 | 
+10 | Calidad de los resultados que presenta como producto de su trabajo. | Calidad de los resultados que presenta como producto de su trabajo. | Calidad de los resultados que presenta como producto de su trabajo. | 0-2 | 0-2 | 
+11 | Manejo y conocimientos de técnicas y procedimientosinherentes a las actividades asignadas. | Manejo y conocimientos de técnicas y procedimientosinherentes a las actividades asignadas. | Manejo y conocimientos de técnicas y procedimientosinherentes a las actividades asignadas. | 0-2 | 0-2 | 
+12 | Habilidad y destreza en el manejo de herramientas informáticas para la solución de problemas. | Habilidad y destreza en el manejo de herramientas informáticas para la solución de problemas. | Habilidad y destreza en el manejo de herramientas informáticas para la solución de problemas. | 0-2 | 0-2 | 
+13 | Compromiso con las metas de la empresa u organización. | Compromiso con las metas de la empresa u organización. | Compromiso con las metas de la empresa u organización. | 0-2 | 0-2 | 
+14 | Habilidades para establecer relaciones interpersonales y facilidad para el trabajo en equipo. | Habilidades para establecer relaciones interpersonales y facilidad para el trabajo en equipo. | Habilidades para establecer relaciones interpersonales y facilidad para el trabajo en equipo. | 0-2 | 0-2 | 
+15 | Capacidad de aprendizaje rápido,  para el Trabajo en equipo y bajo presión | Capacidad de aprendizaje rápido,  para el Trabajo en equipo y bajo presión | Capacidad de aprendizaje rápido,  para el Trabajo en equipo y bajo presión | 0-2 | 0-2 | 
+Calificación Final 
+(Sumatoria de todos los Aspectos Evaluados) | Calificación Final 
+(Sumatoria de todos los Aspectos Evaluados) | Calificación Final 
+(Sumatoria de todos los Aspectos Evaluados) | Calificación Final 
+(Sumatoria de todos los Aspectos Evaluados) | Calificación Final 
+(Sumatoria de todos los Aspectos Evaluados) | Calificación Final 
+(Sumatoria de todos los Aspectos Evaluados) | _____
+30
+
+--- TABLA 2 ---
+Apellido y Nombres: | Apellido y Nombres: | Cédula de Identidad: | Período: | Período: | PNF que cursa: | PNF que cursa:
+Nombre de la institución: | Nombre de la institución: | Departamento donde se efectuó la Práctica Profesional:
+
+Apellido y Nombre del (de la) Tutor(a) Institucional:
+
+C .I.  del (de la) Tutor(a) Institucional: | Departamento donde se efectuó la Práctica Profesional:
+
+Apellido y Nombre del (de la) Tutor(a) Institucional:
+
+C .I.  del (de la) Tutor(a) Institucional: | Departamento donde se efectuó la Práctica Profesional:
+
+Apellido y Nombre del (de la) Tutor(a) Institucional:
+
+C .I.  del (de la) Tutor(a) Institucional: | Fechas de la Práctica Profesional:
+
+ Inicio:
+
+Culminación: | Fechas de la Práctica Profesional:
+
+ Inicio:
+
+Culminación:
+ |  |  |  |  |  | 
+Ítems | Aspectos Evaluados | Aspectos Evaluados | Aspectos Evaluados | Intervalo de
+Ponderación | Intervalo de
+Ponderación | Calificación parcial
+1 | Cumplimiento del horario normal de trabajo | Cumplimiento del horario normal de trabajo | Cumplimiento del horario normal de trabajo | 0-3 | 0-3 | 
+2 | Capacidad para proponer espontánea y oportunamente sugerencias útiles para la organización, | Capacidad para proponer espontánea y oportunamente sugerencias útiles para la organización, | Capacidad para proponer espontánea y oportunamente sugerencias útiles para la organización, | 0-3 | 0-3 | 
+3 | Facilidad de comunicación verbal y escrita; habilidad para dar a conocer y defender sus ideas. | Facilidad de comunicación verbal y escrita; habilidad para dar a conocer y defender sus ideas. | Facilidad de comunicación verbal y escrita; habilidad para dar a conocer y defender sus ideas. | 0-3 | 0-3 | 
+4 | Responsabilidad, Puntualidad Y Personalidad. | Responsabilidad, Puntualidad Y Personalidad. | Responsabilidad, Puntualidad Y Personalidad. | 0-3 | 0-3 | 
+5 | Capacidad Y Disposición Para Relacionarse Con Los Miembros De La Organización. | Capacidad Y Disposición Para Relacionarse Con Los Miembros De La Organización. | Capacidad Y Disposición Para Relacionarse Con Los Miembros De La Organización. | 0-3 | 0-3 | 
+6 | Dominio De Conocimientos Básicos Relacionados Con Las Tareas A Ejecutar. | Dominio De Conocimientos Básicos Relacionados Con Las Tareas A Ejecutar. | Dominio De Conocimientos Básicos Relacionados Con Las Tareas A Ejecutar. | 0-3 | 0-3 | 
+7 | Capacidad Para Detectar Problemas. Iniciativa Para Ayudar A Resolver Problemas. | Capacidad Para Detectar Problemas. Iniciativa Para Ayudar A Resolver Problemas. | Capacidad Para Detectar Problemas. Iniciativa Para Ayudar A Resolver Problemas. | 0-3 | 0-3 | 
+8 | Destrezas En La Realización De Las Tareas Asignadas. | Destrezas En La Realización De Las Tareas Asignadas. | Destrezas En La Realización De Las Tareas Asignadas. | 0-3 | 0-3 | 
+9 | Habilidades para establecer relaciones interpersonales y facilidad para el trabajo en equipo. | Habilidades para establecer relaciones interpersonales y facilidad para el trabajo en equipo. | Habilidades para establecer relaciones interpersonales y facilidad para el trabajo en equipo. | 0-3 | 0-3 | 
+10 | Capacidad de aprendizaje rápido, para el Trabajo en equipo y bajo presión | Capacidad de aprendizaje rápido, para el Trabajo en equipo y bajo presión | Capacidad de aprendizaje rápido, para el Trabajo en equipo y bajo presión | 0-3 | 0-3 | 
+Calificación Final 
+(Sumatoria de todos los Aspectos Evaluados) | Calificación Final 
+(Sumatoria de todos los Aspectos Evaluados) | Calificación Final 
+(Sumatoria de todos los Aspectos Evaluados) | Calificación Final 
+(Sumatoria de todos los Aspectos Evaluados) | Calificación Final 
+(Sumatoria de todos los Aspectos Evaluados) | Calificación Final 
+(Sumatoria de todos los Aspectos Evaluados) | _____
+30
+
+================================================================================
+ARCHIVO: UPTJAA estructura del informe de prácticas profesionales TSU-3 (1).docx
+================================================================================
+ESTRUCTURA DEL INFORME DE PRÁCTICAS PROFESIONALES PARA TÉCNICO SUPERIOR UNIVERSITARIO, (TSU)
+PORTADA
+CONTRAPORTADA
+EVALUACIÓN DEL TUTOR INDUSTRIAL
+EVALUACIÓN DEL TUTOR ACADÉMICO
+RESUMEN DE EVALUACIONES
+DEDICATORIA
+AGRADECIMIENTO
+ÍNDICE GENERAL
+ÍNDICE DE TABLAS
+ÍNDICE DE FIGURAS
+RESUMEN
+INTRODUCCIÓN
+CAPÍTULO I: DESCRIPCIÓN DE LA ORGANIZACIÓN
+Nombre de la Organización
+Razón Social
+Reseña Histórica de la Organización
+Ubicación Geográfica de la Organización
+Visión de la Organización
+Misión de la Organización
+Organigrama de la Organización
+Estructura Organizativa
+Estructura Organizativa de la Unidad o Departamento donde se desarrolló la práctica profesional
+Descripción de la actividad productiva
+CAPÍTULO II: DESCRIPCIÓN DE LA SITUACIÓN ORGANIZACIONAL
+Situación Organizacional
+Práctica Profesional
+Propósito de la Práctica Profesional
+Objetivo General
+Objetivos Específicos
+Actividades Planificadas
+Cronograma de Actividades
+Justificación
+Factibilidad de Ejecución
+CAPÍTULO III: ACTIVIDADES EJECUTADAS Y RESULTADOS
+Descripción de las Actividades Ejecutadas
+Resultados
+CAPÍTULO IV: CONCLUSIONES Y RECOMENDACIONES
+Conclusiones
+Recomendaciones
+REFERENCIAS
+ANEXOS
+Formatos varios y memoria fotográfica
+
