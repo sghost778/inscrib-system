@@ -28,7 +28,9 @@ class ProductionConfig:
 
     # Misma base SQLite local; en producción con más carga se recomienda
     # cambiar esto a MySQL/PostgreSQL (ej. mysql+pymysql://...).
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(BASE_DIR, 'test.db')}"
+    # Se puede sobreescribir con la variable de entorno DATABASE_URL.
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        'DATABASE_URL', f"sqlite:///{os.path.join(BASE_DIR, 'test.db')}")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Almacenamiento de rate limiting en memoria (evita el aviso de Flask-Limiter).

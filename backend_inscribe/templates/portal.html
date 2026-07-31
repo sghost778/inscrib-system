@@ -452,7 +452,7 @@
         container.innerHTML = '<table><thead><tr><th>Cédula Escolar</th><th>Nombre</th><th>Grado</th><th>Período</th><th>Estado</th><th>Acción</th></tr></thead><tbody>' +
             estudiantes.map(e => '<tr><td>' + e.cedula_escolar + '</td><td>' + e.nombres + ' ' + e.apellidos + '</td><td>' + e.grado + '</td><td>' + e.periodo + '</td><td><span class="badge ' + (e.estado === 'REGULAR' ? 'badge-s' : 'badge-n') + '">' + e.estado + '</span></td><td><div style="display:flex;gap:5px;">' +
             (e.estado !== 'REGULAR' ? '<button class="btn btn-primary btn-sm" onclick="mostrarInscripcion(\'' + e.cedula_escolar + '\')"><i class="fas fa-pen"></i> Inscribir</button>' : '<span style="color:#16a34a;font-size:0.85rem;">Inscrito</span>') +
-            (e.estado === 'REGULAR' ? '<button class="btn btn-outline btn-sm" onclick="imprimirConstancia(\'' + e.cedula_escolar + '\')"><i class="fas fa-print"></i> Imprimir</button>' : '') +
+            (e.estado === 'REGULAR' ? '<button class="btn btn-outline btn-sm" onclick="descargarConstancia(\'' + e.cedula_escolar + '\')"><i class="fas fa-download"></i> Descargar</button>' : '') +
             '</div></td></tr>').join('') + '</tbody></table>';
     }
 
@@ -581,15 +581,27 @@
         } catch(e) { mostrarToast('Error de conexion', true); }
     }
 
-    async function imprimirConstancia(cedula) {
-        try {
-            const res = await fetch('/api/portal/constancia/' + cedula);
-            const data = await res.json();
-            if (data.success === false) { mostrarToast(data.message, true); return; }
-            const win = window.open('', '_blank');
-            win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Constancia de Inscripcion</title><style>body{font-family:"Times New Roman",serif;padding:40px;color:#2d3436}.header{text-align:center;margin-bottom:30px;border-bottom:2px solid #2d3436;padding-bottom:15px}.header h1{font-size:1.5rem;margin:5px 0}.header p{color:#555;font-size:.9rem}table{width:100%;border-collapse:collapse;margin:20px 0}td{padding:10px 8px;border-bottom:1px solid #ccc;font-size:.95rem}td.label{font-weight:700;width:40%}.firma{margin-top:50px;text-align:center;border-top:1px solid #2d3436;padding-top:15px}.firma p{margin:5px 0;color:#555;font-size:.9rem}</style></head><body><div class="header"><h1>UNIDAD EDUCATIVA</h1><h2>Dr. José Manuel Cova Maza</h2><p>CONSTANCIA DE INSCRIPCIÓN</p></div><table><tr><td class="label">Estudiante:</td><td>' + data.estudiante + '</td></tr><tr><td class="label">Cédula Escolar:</td><td>' + data.cedula_escolar + '</td></tr><tr><td class="label">Grado:</td><td>' + data.grado + '</td></tr><tr><td class="label">Período Escolar:</td><td>' + data.periodo + '</td></tr><tr><td class="label">Estado:</td><td>' + data.estado + '</td></tr><tr><td class="label">Fecha de Inscripción:</td><td>' + data.fecha + '</td></tr><tr><td class="label">Representante:</td><td>' + data.representante + '</td></tr><tr><td class="label">Cédula del Representante:</td><td>' + data.rep_cedula + '</td></tr></table><div class="firma"><p>_______________________________</p><p>Directivo / Secretaria</p><p>Sello de la Institución</p></div><script>window.onload=function(){window.print()}<\/script></body></html>');
-            win.document.close();
-        } catch(e) { mostrarToast('Error al generar constancia', true); }
+    function descargarConstancia(cedula) {
+        fetch('/api/portal/constancia/' + cedula)
+            .then(function (r) {
+                const ct = r.headers.get('content-type') || '';
+                if (ct.indexOf('application/json') !== -1) {
+                    return r.json().then(function (d) { mostrarToast(d.message || 'Error al generar constancia', true); return null; });
+                }
+                return r.blob();
+            })
+            .then(function (blob) {
+                if (!blob) return;
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'constancia_' + cedula + '.pdf';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            })
+            .catch(function () { mostrarToast('Error al descargar constancia', true); });
     }
 
     // Init

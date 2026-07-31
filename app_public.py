@@ -70,6 +70,14 @@ def create_app():
     def view_requisitos():
         return render_template('requisitos.html')
 
+    @app.route('/registro')
+    def view_registro():
+        return render_template('registro.html')
+
+    @app.route('/recuperar')
+    def view_recuperar():
+        return render_template('recuperar.html')
+
     @app.route('/portal')
     def view_portal():
         return render_template('portal.html')

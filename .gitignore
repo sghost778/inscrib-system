@@ -1,21 +1,42 @@
-# Entorno Python
-__pycache__/
-*.py[cod]
-venv/
+# Entorno virtual
 env/
+venv/
 .venv/
 
-# Base de datos (se crea y se precarga solo al ejecutar create_app)
+# Base de datos local (se crea en el hosting)
+test.db
 *.db
-*.sqlite3
 
 # Logs
 *.log
+adm_err.log
+adm.log
+pub_err.log
+pub.log
+comb_err.log
+comb.log
+bat_log.txt
 flask_*.log
 
-# Secretos / variables de producción
-.env
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.Python
 
-# Archivos temporales de Office
-~$*.docx
-~$*.pptx
+# Editor / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Archivos de usuario locales
+*.xlsx
+jeglys*.xlsx
+
+# Backups locales
+backups/
+
+# Archivos temporales de Flask
+flask_error.txt
+flask_output.txt

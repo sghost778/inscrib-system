@@ -1,9 +1,36 @@
 from datetime import datetime
-from flask import Blueprint, jsonify, request, session
+from io import BytesIO
+from flask import Blueprint, jsonify, request, session, Response
 
 import models
+from security import hash_password, check_password, generate_jwt, portal_token_required
 
 api_public = Blueprint("api_public", __name__)
+
+
+@api_public.route("/registro", methods=["POST"])
+def registro_usuario():
+    """Registro público de cuentas de personal (secretario/docente)."""
+    data = request.get_json()
+    nombre = (data.get("nombre") or "").strip()
+    apellido = (data.get("apellido") or "").strip()
+    usuario = (data.get("usuario") or "").strip()
+    password = data.get("password", "")
+    if not nombre or not apellido or not usuario or not password:
+        return jsonify({"success": False, "message": "Todos los campos son requeridos"}), 400
+    if models.Usuario.query.filter_by(usuario=usuario).first():
+        return jsonify({"success": False, "message": "El usuario ya existe"}), 400
+    from security import hash_password
+    u = models.Usuario(
+        nombre=nombre,
+        apellido=apellido,
+        usuario=usuario,
+        password_hash=hash_password(password),
+        rol=data.get("rol", "secretario")
+    )
+    models.db.session.add(u)
+    models.db.session.commit()
+    return jsonify({"success": True, "message": "Usuario registrado correctamente"}), 201
 
 
 # ============================
@@ -64,6 +91,8 @@ def galeria_listar():
 @api_public.route("/contacto", methods=["POST"])
 def contacto_publico():
     data = request.get_json()
+    if not data or not (data.get("nombre") or "").strip() or not (data.get("email") or "").strip() or not (data.get("mensaje") or "").strip():
+        return jsonify({"success": False, "message": "Nombre, email y mensaje son requeridos"}), 400
     m = models.MensajeContacto(nombre=data["nombre"], email=data["email"],
                                 telefono=data.get("telefono"), mensaje=data["mensaje"])
     models.db.session.add(m)
@@ -139,7 +168,9 @@ def portal_login():
     session['portal_rep_nombre'] = f"{rep.nombres} {rep.apellidos}"
     session['portal_rep_id'] = rep.id_representante
 
-    return jsonify({"success": True, "nombre": f"{rep.nombres} {rep.apellidos}", "cedula": rep.cedula})
+    token = generate_jwt(user, tipo='portal') if user else None
+    return jsonify({"success": True, "nombre": f"{rep.nombres} {rep.apellidos}",
+                    "cedula": rep.cedula, "token": token})
 
 
 @api_public.route("/portal/logout", methods=["POST"])
@@ -166,27 +197,37 @@ def portal_grados():
 
 
 @api_public.route("/portal/estudiantes", methods=["POST"])
+@portal_token_required
 def portal_crear_estudiante():
-    cedula_rep = session.get('portal_rep_cedula')
-    if not cedula_rep:
-        return jsonify({"success": False, "message": "Debes iniciar sesión"}), 401
+    cedula_rep = request.portal_rep_cedula
     data = request.get_json()
-    cedula_escolar = data.get("cedula_escolar", "").strip()
-    if not cedula_escolar:
-        return jsonify({"success": False, "message": "Cédula escolar es requerida"}), 400
+    if not data:
+        return jsonify({"success": False, "message": "Datos no recibidos"}), 400
+    cedula_escolar = (data.get("cedula_escolar") or "").strip()
+    nombres = (data.get("nombres") or "").strip()
+    apellidos = (data.get("apellidos") or "").strip()
+    fecha = (data.get("fecha_nacimiento") or "").strip()
+    if not cedula_escolar or not nombres or not apellidos or not fecha:
+        return jsonify({"success": False, "message": "Cédula escolar, nombres, apellidos y fecha de nacimiento son requeridos"}), 400
+    try:
+        fecha_dt = datetime.strptime(fecha, "%Y-%m-%d")
+    except ValueError:
+        return jsonify({"success": False, "message": "La fecha de nacimiento no es válida (use AAAA-MM-DD)"}), 400
     if models.Estudiante.query.get(cedula_escolar):
         return jsonify({"success": False, "message": "Ya existe un estudiante con esta cédula escolar"}), 400
-    ci = data.get("cedula_identidad", "").strip()
+    ci = (data.get("cedula_identidad") or "").strip()
     if ci and models.Estudiante.query.filter_by(cedula_identidad=ci).first():
         return jsonify({"success": False, "message": "Ya existe un estudiante con esta cédula de identidad"}), 400
     try:
+        orden = data.get("orden_nacimiento")
+        orden = int(orden) if orden not in (None, "") else None
         nuevo_est = models.Estudiante(
             cedula_escolar=cedula_escolar,
             cedula_identidad=ci or None,
-            nombres=data.get("nombres", ""),
-            apellidos=data.get("apellidos", ""),
-            fecha_nacimiento=datetime.strptime(data["fecha_nacimiento"], "%Y-%m-%d") if data.get("fecha_nacimiento") else None,
-            orden_nacimiento=data.get("orden_nacimiento", 1)
+            nombres=nombres,
+            apellidos=apellidos,
+            fecha_nacimiento=fecha_dt,
+            orden_nacimiento=orden
         )
         models.db.session.add(nuevo_est)
         models.db.session.commit()
@@ -197,13 +238,10 @@ def portal_crear_estudiante():
 
 
 @api_public.route("/portal/estudiantes", methods=["GET"])
+@portal_token_required
 def portal_mis_estudiantes():
-    cedula_rep = session.get('portal_rep_cedula')
-    if not cedula_rep:
-        return jsonify({"success": False, "message": "Debes iniciar sesión"}), 401
-    rep = models.Representante.query.filter_by(cedula=cedula_rep).first()
-    if not rep:
-        return jsonify({"success": False, "message": "Representante no encontrado"}), 404
+    cedula_rep = request.portal_rep_cedula
+    rep = request.portal_rep
     inscripciones = models.Inscripcion.query.filter_by(id_representante=rep.id_representante).all()
     resultado = []
     for ins in inscripciones:
@@ -221,30 +259,35 @@ def portal_mis_estudiantes():
 
 
 @api_public.route("/portal/inscripcion", methods=["POST"])
+@portal_token_required
 def portal_inscribir():
-    cedula_rep = session.get('portal_rep_cedula')
-    if not cedula_rep:
-        return jsonify({"success": False, "message": "Debes iniciar sesión"}), 401
+    cedula_rep = request.portal_rep_cedula
     data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "Datos no recibidos"}), 400
+    cedula_escolar = (data.get("cedula_escolar") or "").strip()
+    if not cedula_escolar:
+        return jsonify({"success": False, "message": "Cédula escolar es requerida"}), 400
     try:
+        id_grado = int(data.get("id_grado", 1))
         ano_activo = models.AnoEscolar.query.filter_by(estado="ACTIVO").first()
         if not ano_activo:
             return jsonify({"success": False, "message": "No hay año escolar activo"}), 400
         rep = models.Representante.query.filter_by(cedula=cedula_rep).first()
         if not rep:
             return jsonify({"success": False, "message": "Representante no encontrado"}), 404
-        estudiante = models.Estudiante.query.get(data["cedula_escolar"])
+        estudiante = models.Estudiante.query.get(cedula_escolar)
         if not estudiante:
             return jsonify({"success": False, "message": "Estudiante no encontrado. Regístralo primero."}), 404
         existe = models.Inscripcion.query.filter_by(
-            cedula_escolar=data["cedula_escolar"], id_ano_escolar=ano_activo.id_ano
+            cedula_escolar=cedula_escolar, id_ano_escolar=ano_activo.id_ano
         ).first()
         if existe:
             return jsonify({"success": False, "message": "Este estudiante ya está inscrito en el año escolar activo"}), 400
         inscripcion = models.Inscripcion(
-            cedula_escolar=data["cedula_escolar"],
+            cedula_escolar=cedula_escolar,
             id_representante=rep.id_representante,
-            id_grado=data.get("id_grado", 1),
+            id_grado=id_grado,
             id_ano_escolar=ano_activo.id_ano,
             id_usuario=1,
             estado='REGULAR'
@@ -252,19 +295,18 @@ def portal_inscribir():
         models.db.session.add(inscripcion)
         models.db.session.commit()
         return jsonify({"success": True, "message": "Inscripción realizada exitosamente"}), 201
+    except (ValueError, TypeError):
+        return jsonify({"success": False, "message": "El grado seleccionado no es válido"}), 400
     except Exception as e:
         models.db.session.rollback()
         return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
 
 
 @api_public.route("/portal/perfil", methods=["GET", "PUT"])
+@portal_token_required
 def portal_perfil():
-    cedula_rep = session.get('portal_rep_cedula')
-    if not cedula_rep:
-        return jsonify({"success": False, "message": "Debes iniciar sesión"}), 401
-    rep = models.Representante.query.filter_by(cedula=cedula_rep).first()
-    if not rep:
-        return jsonify({"success": False, "message": "Representante no encontrado"}), 404
+    cedula_rep = request.portal_rep_cedula
+    rep = request.portal_rep
     if request.method == "GET":
         return jsonify({"cedula": rep.cedula, "nombres": rep.nombres, "apellidos": rep.apellidos,
                         "email": rep.email or "", "telefono": rep.telefono or "", "direccion": rep.direccion_habitacion or ""})
@@ -288,10 +330,9 @@ def portal_perfil():
 
 
 @api_public.route("/portal/password", methods=["PUT"])
+@portal_token_required
 def portal_password():
-    cedula_rep = session.get('portal_rep_cedula')
-    if not cedula_rep:
-        return jsonify({"success": False, "message": "Debes iniciar sesión"}), 401
+    cedula_rep = request.portal_rep_cedula
     data = request.get_json()
     current = data.get('current', '')
     new_pass = data.get('new_password', '')
@@ -322,20 +363,29 @@ def portal_recuperar():
 
 
 @api_public.route("/portal/constancia/<cedula_escolar>", methods=["GET"])
+@portal_token_required
 def portal_constancia(cedula_escolar):
-    cedula_rep = session.get('portal_rep_cedula')
-    if not cedula_rep:
-        return jsonify({"success": False, "message": "Debes iniciar sesión"}), 401
-    rep = models.Representante.query.filter_by(cedula=cedula_rep).first()
-    if not rep:
-        return jsonify({"success": False, "message": "Representante no encontrado"}), 404
+    cedula_rep = request.portal_rep_cedula
+    rep = request.portal_rep
     inscripcion = models.Inscripcion.query.filter_by(
         cedula_escolar=cedula_escolar, id_representante=rep.id_representante
     ).first()
     if not inscripcion:
         return jsonify({"success": False, "message": "Inscripción no encontrada"}), 404
     est = inscripcion.estudiante
-    return jsonify({
+
+    from models import SiteConfig
+    from xml.sax.saxutils import escape
+    _n = SiteConfig.query.filter_by(key='nombre_institucion').first()
+    inst_name = escape(_n.value) if _n else "Dr. Jos&eacute; Manuel Cova Maza"
+
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib.units import cm
+    from reportlab.lib import colors
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+
+    datos = {
         "estudiante": f"{est.nombres} {est.apellidos}",
         "cedula_escolar": est.cedula_escolar,
         "grado": inscripcion.grado.nombre if inscripcion.grado else "N/A",
@@ -343,5 +393,54 @@ def portal_constancia(cedula_escolar):
         "estado": inscripcion.estado or "REGULAR",
         "fecha": inscripcion.fecha_inscripcion.strftime("%d/%m/%Y") if inscripcion.fecha_inscripcion else "",
         "representante": f"{rep.nombres} {rep.apellidos}",
-        "rep_cedula": rep.cedula
-    })
+        "rep_cedula": rep.cedula,
+    }
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter,
+                            topMargin=2.5 * cm, bottomMargin=2.5 * cm,
+                            leftMargin=2.5 * cm, rightMargin=2.5 * cm,
+                            title="Constancia de Inscripcion")
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name="Centro", parent=styles["Title"], alignment=1))
+    styles.add(ParagraphStyle(name="CentroSub", parent=styles["Normal"], alignment=1, textColor=colors.HexColor("#555555")))
+    styles.add(ParagraphStyle(name="Etiqueta", parent=styles["Normal"], fontName="Helvetica-Bold"))
+
+    contenido = []
+    contenido.append(Paragraph("UNIDAD EDUCATIVA", styles["Centro"]))
+    contenido.append(Paragraph(inst_name, styles["Centro"]))
+    contenido.append(Paragraph("CONSTANCIA DE INSCRIPCI&Oacute;N", styles["CentroSub"]))
+    contenido.append(Spacer(1, 1.2 * cm))
+
+    filas = [
+        ["Estudiante:", datos["estudiante"]],
+        ["Cédula Escolar:", datos["cedula_escolar"]],
+        ["Grado:", datos["grado"]],
+        ["Período Escolar:", datos["periodo"]],
+        ["Estado:", datos["estado"]],
+        ["Fecha de Inscripción:", datos["fecha"]],
+        ["Representante:", datos["representante"]],
+        ["Cédula del Representante:", datos["rep_cedula"]],
+    ]
+    tabla = Table([[Paragraph(f, styles["Etiqueta"]), Paragraph(v, styles["Normal"])] for f, v in filas],
+                  colWidths=[6 * cm, 10 * cm])
+    tabla.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("LINEBELOW", (0, 0), (-1, -1), 0.5, colors.HexColor("#cccccc")),
+    ]))
+    contenido.append(tabla)
+    contenido.append(Spacer(1, 2.5 * cm))
+    contenido.append(Paragraph("_______________________________", styles["Centro"]))
+    contenido.append(Paragraph("Directivo / Secretaria", styles["CentroSub"]))
+    contenido.append(Paragraph("Sello de la Institución", styles["CentroSub"]))
+
+    doc.build(contenido)
+    pdf = buffer.getvalue()
+
+    return Response(
+        pdf,
+        mimetype="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename=constancia_{datos['cedula_escolar']}.pdf"},
+    )

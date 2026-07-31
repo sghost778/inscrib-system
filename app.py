@@ -53,6 +53,10 @@ def create_app():
     def view_login():
         return render_template('login.html')
 
+    @app.route('/recuperar')
+    def view_recuperar():
+        return render_template('recuperar.html')
+
     @app.route('/logout')
     def view_logout():
         return redirect('/login')
@@ -281,6 +285,7 @@ def create_app():
                     ("contact_phone", "+58 412-1234567"),
                     ("contact_email", "info@uejmcm.edu.ve"),
                     ("contact_hours", "Lunes a Viernes: 7:00 AM - 3:00 PM"),
+                    ("nombre_institucion", "U.E. Dr. Jose Manuel Cova Maza"),
                     ("requisitos_inscripcion", "Partida de Nacimiento\nCédula del Estudiante\nCédula del Representante\nFotos tipo carnet (2)\nCertificado de Estudios"),
                 ]:
                     db.session.add(SiteConfig(key=k, value=v))

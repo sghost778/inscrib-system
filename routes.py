@@ -1,4 +1,5 @@
 from datetime import datetime
+import secrets
 from flask import Blueprint, jsonify, request, session
 
 import models
@@ -24,7 +25,7 @@ def _hacer_sesion_y_responder(user):
 
     log_audit(uid, "LOGIN", "Inicio de sesión exitoso")
 
-    return jsonify({"success": True, "usuario": nombre, "rol": rol})
+    return jsonify({"success": True, "usuario": nombre, "rol": rol, "token": secrets.token_hex(16)})
 
 
 # ============================
@@ -43,6 +44,9 @@ def login():
         
         if not user:
             return jsonify({"success": False, "message": "Usuario no encontrado"}), 401
+
+        if not check_password(password, user.password_hash):
+            return jsonify({"success": False, "message": "Contraseña incorrecta"}), 401
 
         return _hacer_sesion_y_responder(user)
 

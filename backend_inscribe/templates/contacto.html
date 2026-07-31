@@ -137,6 +137,10 @@
                 <i class="fas fa-clock"></i>
                 <div><h4>Horario de Atención</h4><p id="contactHours">Lunes a Viernes: 7:00 AM - 1:00 PM</p></div>
             </div>
+            <div class="contacto-detalle">
+                <i class="fas fa-id-card"></i>
+                <div><h4>RIF</h4><p id="contactRif">J-407995910</p></div>
+            </div>
             <div class="mapa">
                 <div style="text-align:center;">
                     <i class="fas fa-map-marked-alt"></i>
@@ -183,6 +187,7 @@
             if (cfg.contact_phone) document.getElementById('contactPhone').textContent = cfg.contact_phone;
             if (cfg.contact_email) document.getElementById('contactEmail').textContent = cfg.contact_email;
             if (cfg.contact_hours) document.getElementById('contactHours').textContent = cfg.contact_hours;
+            if (cfg.rif) document.getElementById('contactRif').textContent = cfg.rif;
         } catch(e) { console.error(e); }
     }
     cargarConfig();

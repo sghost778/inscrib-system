@@ -101,7 +101,14 @@
 <div class="container">
     <div class="header-expediente">
         <p>REGISTRO CENTRALIZADO DE DATOS</p>
-        <h2>Expediente del Representante</h2>
+        <h2>Expediente del Representante</h2>
+
+    </div>
+
+    <div class="toolbar-busqueda" style="display:flex; gap:10px; margin:20px 0 30px 0; flex-wrap:wrap;">
+        <input type="text" id="busquedaCedula" placeholder="Cédula del representante (ej. V-12345678)" style="flex:1; min-width:220px; padding:12px; border:1px solid #dfe4ea; border-radius:10px; font-size:0.95rem;">
+        <button type="button" class="btn-main" style="width:auto; padding:12px 24px; margin:0;" onclick="buscarDesdeToolbar()"><i class="fas fa-search"></i> Buscar</button>
+    </div>
     </div>
 
     <form id="formExpediente" onsubmit="event.preventDefault(); abrirConfirmacion();">
@@ -115,18 +122,18 @@
                     <input type="text" id="cedula" class="input-cedula" readonly onkeypress="return soloNumeros(event)" maxlength="8">
                 </div>
             </div>
-            <div class="info-box"><label>Primer Nombre</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
-            <div class="info-box"><label>Segundo Nombre</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
-            <div class="info-box"><label>Primer Apellido</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
-            <div class="info-box"><label>Segundo Apellido</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
+            <div class="info-box"><label>Primer Nombre</label><input type="text" id="nombre1" class="editable" readonly onkeypress="return soloLetras(event)"></div>
+            <div class="info-box"><label>Segundo Nombre</label><input type="text" id="nombre2" class="editable" readonly onkeypress="return soloLetras(event)"></div>
+            <div class="info-box"><label>Primer Apellido</label><input type="text" id="apellido1" class="editable" readonly onkeypress="return soloLetras(event)"></div>
+            <div class="info-box"><label>Segundo Apellido</label><input type="text" id="apellido2" class="editable" readonly onkeypress="return soloLetras(event)"></div>
             <div class="info-box"><label>Hijos Inscritos</label><input type="number" class="editable" readonly min="0" onkeypress="return soloNumeros(event)"></div>
         </div>
 
         <h4><i class="fas fa-phone-alt"></i> Medios de Contacto</h4>
         <div class="grid-expediente">
-            <div class="info-box"><label>Teléfono Móvil</label><input type="text" class="editable" readonly onkeypress="return soloNumeros(event)" maxlength="11"></div>
+            <div class="info-box"><label>Teléfono Móvil</label><input type="text" id="telefono" class="editable" readonly onkeypress="return soloNumeros(event)" maxlength="11"></div>
             <div class="info-box"><label>Teléfono CANTV</label><input type="text" class="editable" readonly onkeypress="return soloNumeros(event)" maxlength="11"></div>
-            <div class="info-box"><label>Correo Electrónico</label><input type="email" class="editable" readonly></div>
+            <div class="info-box"><label>Correo Electrónico</label><input type="email" id="email" class="editable" readonly></div>
         </div>
 
         <h4><i class="fas fa-map-marker-alt"></i> Ubicación Geográfica</h4>
@@ -193,10 +200,77 @@
         document.getElementById('modalConfirm').style.display = 'none';
     }
 
-    function procesarExito() {
-        document.getElementById('modalConfirm').style.display = 'none';
-        document.getElementById('modalExito').style.display = 'flex';
-    }
+    function procesarExito() {
+        guardarCambios();
+    }
+
+    async function cargarRepresentante(cedula) {
+        if (!cedula) return;
+        try {
+            const res = await fetch('/api/representantes/' + encodeURIComponent(cedula));
+            if (res.status === 404) {
+                alert('Representante no encontrado: ' + cedula);
+                return;
+            }
+            const r = await res.json();
+            document.getElementById('cedula').value = (r.cedula || '').replace(/^V-/, '');
+            const nombres = (r.nombres || '').split(' ');
+            const apellidos = (r.apellidos || '').split(' ');
+            document.getElementById('nombre1').value = nombres[0] || '';
+            document.getElementById('nombre2').value = nombres.slice(1).join(' ') || '';
+            document.getElementById('apellido1').value = apellidos[0] || '';
+            document.getElementById('apellido2').value = apellidos.slice(1).join(' ') || '';
+            document.getElementById('telefono').value = r.telefono || '';
+            document.getElementById('email').value = r.email || '';
+        } catch (e) {
+            console.error(e);
+            alert('Error al cargar el representante');
+        }
+    }
+
+    function buscarDesdeToolbar() {
+        const ced = document.getElementById('busquedaCedula').value.trim();
+        if (!ced) { alert('Ingrese una cédula'); return; }
+        const norm = ced.startsWith('V-') || ced.startsWith('E-') ? ced : 'V-' + ced;
+        cargarRepresentante(norm);
+    }
+
+    async function guardarCambios() {
+        const cedula = document.getElementById('cedula').value.trim();
+        if (!cedula) { alert('Primero busque un representante.'); return; }
+        const norm = cedula.startsWith('V-') || cedula.startsWith('E-') ? cedula : 'V-' + cedula;
+        const nombres = (document.getElementById('nombre1').value + ' ' + document.getElementById('nombre2').value).trim();
+        const apellidos = (document.getElementById('apellido1').value + ' ' + document.getElementById('apellido2').value).trim();
+        const data = {
+            nombres: nombres,
+            apellidos: apellidos,
+            telefono: document.getElementById('telefono').value.trim(),
+            email: document.getElementById('email').value.trim()
+        };
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('/api/representantes/' + encodeURIComponent(norm), {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const r = await res.json();
+            if (r.success) {
+                document.getElementById('modalExito').style.display = 'flex';
+            } else {
+                alert('Error al guardar: ' + (r.message || ''));
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Error de conexión al guardar');
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        const ced = params.get('cedula');
+        if (ced) cargarRepresentante(ced);
+    });
 
     function soloLetras(e) {
         let key = e.keyCode || e.which;

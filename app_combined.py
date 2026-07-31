@@ -67,12 +67,25 @@ def view_portal():
     return render_template('portal.html')
 
 
+@app.route('/registro')
+def view_registro():
+    return render_template('registro.html')
+
+
+@app.route('/recuperar')
+def view_recuperar_pub():
+    return render_template('recuperar.html')
+
+
 # --- La raíz '/' muestra el sitio público (el panel admin entra por /login) ---
 def _public_home():
     return render_template('inicio_publico.html')
 
 
 app.view_functions['view_root'] = _public_home
+
+# Alias WSGI/gunicorn: `gunicorn app_combined:application`
+application = app
 
 
 if __name__ == '__main__':

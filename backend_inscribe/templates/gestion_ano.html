@@ -699,22 +699,22 @@
                 anos.forEach(a => {
                     const badgeClass = a.estado === 'ACTIVO' ? 'badge-active' : 'badge-closed';
                     const botonesActivo = `
-                    <button class="btn-modificar" onclick="abrirModificar(${a.id_ano}, '${a.período}')">
+                    <button class="btn-modificar" onclick="abrirModificar(${a.id_ano}, '${a.periodo}')">
                         <i class="fas fa-edit"></i> Modificar
                     </button>
-                    <button class="btn-cerrar" onclick="confirmarCierre(${a.id_ano}, '${a.período}')">
+                    <button class="btn-cerrar" onclick="confirmarCierre(${a.id_ano}, '${a.periodo}')">
                         <i class="fas fa-lock"></i> Cerrar Año
                     </button>
                 `;
 
                     tbody.innerHTML += `
                     <tr id="ano-${a.id_ano}">
-                        <td><b class="txt-ano">${a.período}</b></td>
+                        <td><b class="txt-ano">${a.periodo}</b></td>
                         <td class="txt-inicio">Referencial</td>
                         <td>${a.matricula} Estudiantes</td>
                         <td><span class="badge ${badgeClass}">${a.estado}</span></td>
                         <td>
-                            <button class="btn-reporte" onclick="abrirReporte('${a.período}')">
+                            <button class="btn-reporte" onclick="abrirReporte('${a.periodo}')">
                                 <i class="fas fa-file-pdf"></i> Reporte
                             </button>
                             ${a.estado === 'ACTIVO' ? botonesActivo : '<button class="btn-modificar" style="color:#64748b;"><i class="fas fa-eye"></i> Ver Historial</button>'}
@@ -754,7 +754,7 @@
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ período: nuevoPeríodo })
+                    body: JSON.stringify({ periodo: nuevoPeríodo })
                 });
                 const data = await response.json();
                 if (data.success) {
@@ -779,7 +779,7 @@
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ período: períodoInput, cerrar_anteriores: true }) // Auto-cerrar
+                    body: JSON.stringify({ periodo: períodoInput, cerrar_anteriores: true }) // Auto-cerrar
                 });
                 const data = await response.json();
                 if (data.success) {

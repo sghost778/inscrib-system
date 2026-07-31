@@ -1,490 +1,1441 @@
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Gestion de Usuarios - Sistema Escolar</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#00b689">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
-
-    <style>
-        :root {
-            --primary: #1e40af;
-            --danger: #dc2626;
-            --success: #16a34a;
-            --warning: #f59e0b;
-            --bg: #f8fafc;
-            --white: #ffffff;
-            --gray: #64748b;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: auto;
-        }
-
-        /* CABECERA */
-        .header-section {
-            background: var(--white);
-            padding: 20px 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-            border-left: 6px solid var(--primary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn-nuevo {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* TABLA */
-        .table-container {
-            background: var(--white);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: #f1f5f9;
-            padding: 15px;
-            text-align: left;
-            font-size: 13px;
-            color: #475569;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 14px;
-        }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .badge-active {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .badge-inactive {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-edit {
-            background: #f1f5f9;
-            color: var(--primary);
-            border: 1px solid #cbd5e1;
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .btn-delete {
-            background: #fff1f2;
-            color: var(--danger);
-            border: 1px solid #fecdd3;
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        /* MODALES */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 11px;
-            font-weight: bold;
-            margin-bottom: 4px;
-            color: var(--gray);
-            text-transform: uppercase;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
-            box-sizing: border-box;
-        }
-
-        .section-title {
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--primary);
-            margin: 15px 0 10px 0;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .confirm-icon {
-            font-size: 50px;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="container">
-        <div class="header-section">
-            <div>
-                <h1 style="margin:0; font-size: 24px;">Gestion de Usuarios</h1>
-                <p style="margin:5px 0 0 0; color:var(--gray);">Administre los accesos y credenciales del personal</p>
-            </div>
-            <button class="btn-nuevo" onclick="abrirModal('modalUsuario')">
-                <i class="fas fa-user-plus"></i> Agregar Nuevo Usuario
-            </button>
-        </div>
-
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre Completo</th>
-                        <th>Usuario</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="listaUsuarios">
-                    <!-- Se poblara dinamicamente con JS -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div id="modalUsuario" class="modal">
-        <div class="modal-content">
-            <h2 id="tituloModal" style="margin-top:0; color:var(--primary);"><i class="fas fa-user-circle"></i> Nuevo
-                Usuario</h2>
-            <hr style="border:0; border-top:1px solid #eee; margin-bottom:15px;">
-
-            <form id="formUsuario">
-                <div class="section-title"><i class="fas fa-id-card"></i> Datos Personales</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nombre y Apellido</label>
-                        <input type="text" id="nombreCompleto" placeholder="Ej: Carlos Sosa" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Nombre de Usuario</label>
-                        <input type="text" id="username" placeholder="Ej: csosa88" required>
-                    </div>
-                </div>
-
-                <div class="section-title"><i class="fas fa-key"></i> Seguridad de Acceso</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Contraseña</label>
-                        <input type="password" id="pass" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Confirmar Contraseña</label>
-                        <input type="password" id="passConfirm" required>
-                    </div>
-                </div>
-
-                <div class="section-title"><i class="fas fa-shield-alt"></i> Preguntas de Recuperacion</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Color Favorito</label>
-                        <input type="text" id="pregunta1" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Comida Favorita</label>
-                        <input type="text" id="pregunta2" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Nombre de Mascota</label>
-                        <input type="text" id="pregunta3" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Nombre Materno</label>
-                        <input type="text" id="pregunta4" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Estado de Usuario</label>
-                        <select id="estadoUser">
-                            <option value="activo">Activo</option>
-                            <option value="inactivo">Inactivo</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div style="display:flex; gap:10px; margin-top:20px;">
-                    <button type="button" onclick="guardarUsuario()"
-                        style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Guardar
-                        Usuario</button>
-                    <button type="button" onclick="cerrarModal('modalUsuario')"
-                        style="flex:1; background:#e2e8f0; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modalEliminar" class="modal">
-        <div class="modal-content" style="width: 400px; text-align: center;">
-            <div class="confirm-icon" style="color:var(--danger)"><i class="fas fa-user-times"></i></div>
-            <h3>?Eliminar Usuario?</h3>
-            <p>?Estas seguro que deseas eliminar a <b id="nombreEliminar"></b>? Esta accion no se puede deshacer.</p>
-            <div style="display:flex; gap:10px; margin-top:25px;">
-                <button onclick="ejecutarEliminacion()"
-                    style="flex:1; background:var(--danger); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Si,
-                    Eliminar</button>
-                <button onclick="cerrarModal('modalEliminar')"
-                    style="flex:1; background:#e2e8f0; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">No,
-                    Volver</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modalExito" class="modal">
-        <div class="modal-content" style="width: 350px; text-align: center;">
-            <div class="confirm-icon" style="color:var(--success)"><i class="fas fa-check-circle"></i></div>
-            <h3 id="mensajeExito">!Operacion Exitosa!</h3>
-            <button onclick="cerrarModal('modalExito')"
-                style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Aceptar</button>
-        </div>
-    </div>
-
-    <script>
-        let usuarioAEditar = null;
-
-        function abrirModal(id) {
-            usuarioAEditar = null;
-            document.getElementById('formUsuario').reset();
-            document.getElementById('tituloModal').innerHTML = '<i class="fas fa-user-plus"></i> Nuevo Usuario';
-            // En modo nuevo, password y confirm. son obligatorios
-            document.getElementById('pass').required = true;
-            document.getElementById('passConfirm').required = true;
-            document.getElementById(id).style.display = 'flex';
-        }
-
-        function cerrarModal(id) {
-            document.getElementById(id).style.display = 'none';
-            if (id === 'modalExito') cargarUsuarios();
-        }
-
-        async function cargarUsuarios() {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('/api/usuarios', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
-                if (data.success) {
-                    const tbody = document.getElementById('listaUsuarios');
-                    tbody.innerHTML = '';
-                    data.usuarios.forEach(u => {
-                        tbody.innerHTML += `
-                        <tr id="user-${u.id_usuario}">
-                            <td><b>${u.nombre_completo}</b></td>
-                            <td>${u.usuario}</td>
-                            <td><span class="badge badge-active">${u.estado}</span></td>
-                            <td class="actions">
-                                <button class="btn-edit" onclick="editarUsuario(${u.id_usuario}, '${u.nombre_completo}', '${u.usuario}')"><i class="fas fa-edit"></i> Modificar</button>
-                                <button class="btn-delete" onclick="confirmarEliminar('${u.usuario}', ${u.id_usuario})"><i class="fas fa-trash"></i> Eliminar</button>
-                            </td>
-                        </tr>
-                    `;
-                    });
-                } else {
-                    alert("Error al cargar usuarios: " + data.message);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-
-        // CARGAR AL INICIO
-        window.addEventListener('DOMContentLoaded', cargarUsuarios);
-
-        // MODIFICAR USUARIO
-        function editarUsuario(id, nombre, user) {
-            usuarioAEditar = id;
-            document.getElementById('tituloModal').innerHTML = '<i class="fas fa-user-edit"></i> Modificar Usuario';
-            document.getElementById('nombreCompleto').value = nombre;
-            document.getElementById('username').value = user;
-            // En modo edicion, el password es opcional
-            document.getElementById('pass').required = false;
-            document.getElementById('passConfirm').required = false;
-            document.getElementById('pregunta1').value = "Azul";
-            document.getElementById('modalUsuario').style.display = 'flex';
-        }
-
-        // GUARDAR (CREAR O MODIFICAR)
-        async function guardarUsuario() {
-            const nombre = document.getElementById('nombreCompleto').value.trim();
-            const user = document.getElementById('username').value.trim();
-            const p1 = document.getElementById('pass').value;
-            const p2 = document.getElementById('passConfirm').value;
-
-            if (!nombre || !user) { alert("Nombre y Usuario requeridos."); return; }
-            if (!usuarioAEditar && !p1) { alert("Contraseña requerida al crear."); return; }
-            if (p1 !== p2 && p1 !== "") { alert("Las contraseñas no coinciden"); return; }
-
-            try {
-                const payload = { nombre_completo: nombre, usuario: user };
-                if (p1) payload.password = p1; // Si envió contraseñas
-                // Si hay que crear (Fase 2, de momento usamos /api/registro para crear como en login)
-                const token = localStorage.getItem('token');
-                let endpoint = '/api/registro'; // Usamos el que hicimos antes para crear, ajustando campos 'nombre' 'apellido' en registro... 
-                let metodo = 'POST';
-
-                if (usuarioAEditar) {
-                    endpoint = `/api/usuarios/${usuarioAEditar}`;
-                    metodo = 'PUT';
-                } else {
-                    // Adaptamos a /api/registro (espera nombre y apellido por separado)
-                    const nombres = nombre.split(" ");
-                    payload.nombre = nombres[0];
-                    payload.apellido = nombres.slice(1).join(" ") || "";
-                }
-
-                const response = await fetch(endpoint, {
-                    method: metodo,
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    cerrarModal('modalUsuario');
-                    document.getElementById('mensajeExito').innerText = data.message;
-                    document.getElementById('modalExito').style.display = 'flex';
-                } else {
-                    alert("Error: " + data.message);
-                }
-            } catch (error) {
-                console.error(error);
-                alert("Hubo un error de conexion.");
-            }
-        }
-
-        // ELIMINAR
-        function confirmarEliminar(nombre, idFila) {
-            usuarioAEliminar = idFila;
-            document.getElementById('nombreEliminar').innerText = nombre;
-            document.getElementById('modalEliminar').style.display = 'flex';
-        }
-
-        async function ejecutarEliminacion() {
-            if (usuarioAEliminar) {
-                try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`/api/usuarios/${usuarioAEliminar}`, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const data = await response.json();
-
-                    if (data.success) {
-                        cerrarModal('modalEliminar');
-                        document.getElementById('mensajeExito').innerText = data.message;
-                        document.getElementById('modalExito').style.display = 'flex';
-                    } else {
-                        alert("No se pudo eliminar: " + data.message);
-                        cerrarModal('modalEliminar');
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert("Error de red");
-                }
-            }
-        }
-
-        // Registrar el Service Worker para la PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registrado con exito:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('Error al registrar el ServiceWorker:', error);
-                    });
-            });
-        }
-    </script>
-
-</body>
-
+<!DOCTYPE html>
+
+
+<html lang="es">
+
+
+
+
+
+<head>
+
+
+    <meta charset="UTF-8">
+
+
+    <title>Gestion de Usuarios - Sistema Escolar</title>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+    <link rel="manifest" href="/manifest.json">
+
+
+    <meta name="theme-color" content="#00b689">
+
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
+
+
+
+
+
+    <style>
+
+
+        :root {
+
+
+            --primary: #1e40af;
+
+
+            --danger: #dc2626;
+
+
+            --success: #16a34a;
+
+
+            --warning: #f59e0b;
+
+
+            --bg: #f8fafc;
+
+
+            --white: #ffffff;
+
+
+            --gray: #64748b;
+
+
+        }
+
+
+
+
+
+        body {
+
+
+            font-family: 'Segoe UI', sans-serif;
+
+
+            background-color: var(--bg);
+
+
+            margin: 0;
+
+
+            padding: 20px;
+
+
+        }
+
+
+
+
+
+        .container {
+
+
+            max-width: 1100px;
+
+
+            margin: auto;
+
+
+        }
+
+
+
+
+
+        /* CABECERA */
+
+
+        .header-section {
+
+
+            background: var(--white);
+
+
+            padding: 20px 25px;
+
+
+            border-radius: 12px;
+
+
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+
+            margin-bottom: 20px;
+
+
+            border-left: 6px solid var(--primary);
+
+
+            display: flex;
+
+
+            justify-content: space-between;
+
+
+            align-items: center;
+
+
+        }
+
+
+
+
+
+        .btn-nuevo {
+
+
+            background: var(--primary);
+
+
+            color: white;
+
+
+            border: none;
+
+
+            padding: 10px 18px;
+
+
+            border-radius: 8px;
+
+
+            cursor: pointer;
+
+
+            font-weight: bold;
+
+
+            display: flex;
+
+
+            align-items: center;
+
+
+            gap: 8px;
+
+
+        }
+
+
+
+
+
+        /* TABLA */
+
+
+        .table-container {
+
+
+            background: var(--white);
+
+
+            border-radius: 12px;
+
+
+            overflow: hidden;
+
+
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+
+
+        }
+
+
+
+
+
+        table {
+
+
+            width: 100%;
+
+
+            border-collapse: collapse;
+
+
+        }
+
+
+
+
+
+        th {
+
+
+            background: #f1f5f9;
+
+
+            padding: 15px;
+
+
+            text-align: left;
+
+
+            font-size: 13px;
+
+
+            color: #475569;
+
+
+        }
+
+
+
+
+
+        td {
+
+
+            padding: 15px;
+
+
+            border-bottom: 1px solid #f1f5f9;
+
+
+            font-size: 14px;
+
+
+        }
+
+
+
+
+
+        .badge {
+
+
+            padding: 4px 10px;
+
+
+            border-radius: 20px;
+
+
+            font-size: 11px;
+
+
+            font-weight: bold;
+
+
+        }
+
+
+
+
+
+        .badge-active {
+
+
+            background: #dcfce7;
+
+
+            color: #166534;
+
+
+        }
+
+
+
+
+
+        .badge-inactive {
+
+
+            background: #fee2e2;
+
+
+            color: #991b1b;
+
+
+        }
+
+
+
+
+
+        .actions {
+
+
+            display: flex;
+
+
+            gap: 8px;
+
+
+        }
+
+
+
+
+
+        .btn-edit {
+
+
+            background: #f1f5f9;
+
+
+            color: var(--primary);
+
+
+            border: 1px solid #cbd5e1;
+
+
+            padding: 6px 10px;
+
+
+            border-radius: 6px;
+
+
+            cursor: pointer;
+
+
+        }
+
+
+
+
+
+        .btn-delete {
+
+
+            background: #fff1f2;
+
+
+            color: var(--danger);
+
+
+            border: 1px solid #fecdd3;
+
+
+            padding: 6px 10px;
+
+
+            border-radius: 6px;
+
+
+            cursor: pointer;
+
+
+        }
+
+
+
+
+
+        /* MODALES */
+
+
+        .modal {
+
+
+            display: none;
+
+
+            position: fixed;
+
+
+            top: 0;
+
+
+            left: 0;
+
+
+            width: 100%;
+
+
+            height: 100%;
+
+
+            background: rgba(15, 23, 42, 0.7);
+
+
+            justify-content: center;
+
+
+            align-items: center;
+
+
+            z-index: 1000;
+
+
+        }
+
+
+
+
+
+        .modal-content {
+
+
+            background: white;
+
+
+            padding: 25px;
+
+
+            border-radius: 15px;
+
+
+            width: 600px;
+
+
+            max-height: 90vh;
+
+
+            overflow-y: auto;
+
+
+        }
+
+
+
+
+
+        .form-grid {
+
+
+            display: grid;
+
+
+            grid-template-columns: 1fr 1fr;
+
+
+            gap: 15px;
+
+
+        }
+
+
+
+
+
+        .form-group {
+
+
+            margin-bottom: 12px;
+
+
+        }
+
+
+
+
+
+        .form-group label {
+
+
+            display: block;
+
+
+            font-size: 11px;
+
+
+            font-weight: bold;
+
+
+            margin-bottom: 4px;
+
+
+            color: var(--gray);
+
+
+            text-transform: uppercase;
+
+
+        }
+
+
+
+
+
+        .form-group input,
+
+
+        .form-group select {
+
+
+            width: 100%;
+
+
+            padding: 8px 12px;
+
+
+            border-radius: 6px;
+
+
+            border: 1px solid #cbd5e1;
+
+
+            box-sizing: border-box;
+
+
+        }
+
+
+
+
+
+        .section-title {
+
+
+            font-size: 14px;
+
+
+            font-weight: bold;
+
+
+            color: var(--primary);
+
+
+            margin: 15px 0 10px 0;
+
+
+            border-bottom: 1px solid #eee;
+
+
+            padding-bottom: 5px;
+
+
+            display: flex;
+
+
+            align-items: center;
+
+
+            gap: 5px;
+
+
+        }
+
+
+
+
+
+        .confirm-icon {
+
+
+            font-size: 50px;
+
+
+            text-align: center;
+
+
+            margin-bottom: 15px;
+
+
+        }
+
+
+    </style>
+
+
+</head>
+
+
+
+
+
+<body>
+
+
+
+
+
+    <div class="container">
+
+
+        <div class="header-section">
+
+
+            <div>
+
+
+                <h1 style="margin:0; font-size: 24px;">Gestion de Usuarios</h1>
+
+
+                <p style="margin:5px 0 0 0; color:var(--gray);">Administre los accesos y credenciales del personal</p>
+
+
+            </div>
+
+
+            <button class="btn-nuevo" onclick="abrirModal('modalUsuario')">
+
+
+                <i class="fas fa-user-plus"></i> Agregar Nuevo Usuario
+
+
+            </button>
+
+
+        </div>
+
+
+
+
+
+        <div class="table-container">
+
+
+            <table>
+
+
+                <thead>
+
+
+                    <tr>
+
+
+                        <th>Nombre Completo</th>
+
+
+                        <th>Usuario</th>
+
+
+                        <th>Estado</th>
+
+
+                        <th>Acciones</th>
+
+
+                    </tr>
+
+
+                </thead>
+
+
+                <tbody id="listaUsuarios">
+
+
+                    <!-- Se poblara dinamicamente con JS -->
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <div id="modalUsuario" class="modal">
+
+
+        <div class="modal-content">
+
+
+            <h2 id="tituloModal" style="margin-top:0; color:var(--primary);"><i class="fas fa-user-circle"></i> Nuevo
+
+
+                Usuario</h2>
+
+
+            <hr style="border:0; border-top:1px solid #eee; margin-bottom:15px;">
+
+
+
+
+
+            <form id="formUsuario">
+
+
+                <div class="section-title"><i class="fas fa-id-card"></i> Datos Personales</div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+
+                        <label>Nombre y Apellido</label>
+
+
+                        <input type="text" id="nombreCompleto" placeholder="Ej: Carlos Sosa" required>
+
+
+                    </div>
+
+
+                    <div class="form-group">
+
+
+                        <label>Nombre de Usuario</label>
+
+
+                        <input type="text" id="username" placeholder="Ej: csosa88" required>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+
+
+                <div class="section-title"><i class="fas fa-key"></i> Seguridad de Acceso</div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+
+                        <label>Contraseña</label>
+
+
+                        <input type="password" id="pass" required>
+
+
+                    </div>
+
+
+                    <div class="form-group">
+
+
+                        <label>Confirmar Contraseña</label>
+
+
+                        <input type="password" id="passConfirm" required>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+
+
+                <div class="section-title"><i class="fas fa-shield-alt"></i> Preguntas de Recuperacion</div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+
+                        <label>Color Favorito</label>
+
+
+                        <input type="text" id="pregunta1" required>
+
+
+                    </div>
+
+
+                    <div class="form-group">
+
+
+                        <label>Comida Favorita</label>
+
+
+                        <input type="text" id="pregunta2" required>
+
+
+                    </div>
+
+
+                    <div class="form-group">
+
+
+                        <label>Nombre de Mascota</label>
+
+
+                        <input type="text" id="pregunta3" required>
+
+
+                    </div>
+
+
+                    <div class="form-group">
+
+
+                        <label>Nombre Materno</label>
+
+
+                        <input type="text" id="pregunta4" required>
+
+
+                    </div>
+
+
+                    <div class="form-group">
+
+
+                        <label>Estado de Usuario</label>
+
+
+                        <select id="estadoUser">
+
+
+                            <option value="activo">Activo</option>
+
+
+                            <option value="inactivo">Inactivo</option>
+
+
+                        </select>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+
+
+                <div style="display:flex; gap:10px; margin-top:20px;">
+
+
+                    <button type="button" onclick="guardarUsuario()"
+
+
+                        style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Guardar
+
+
+                        Usuario</button>
+
+
+                    <button type="button" onclick="cerrarModal('modalUsuario')"
+
+
+                        style="flex:1; background:#e2e8f0; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Cancelar</button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <div id="modalEliminar" class="modal">
+
+
+        <div class="modal-content" style="width: 400px; text-align: center;">
+
+
+            <div class="confirm-icon" style="color:var(--danger)"><i class="fas fa-user-times"></i></div>
+
+
+            <h3>?Eliminar Usuario?</h3>
+
+
+            <p>?Estas seguro que deseas eliminar a <b id="nombreEliminar"></b>? Esta accion no se puede deshacer.</p>
+
+
+            <div style="display:flex; gap:10px; margin-top:25px;">
+
+
+                <button onclick="ejecutarEliminacion()"
+
+
+                    style="flex:1; background:var(--danger); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Si,
+
+
+                    Eliminar</button>
+
+
+                <button onclick="cerrarModal('modalEliminar')"
+
+
+                    style="flex:1; background:#e2e8f0; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">No,
+
+
+                    Volver</button>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <div id="modalExito" class="modal">
+
+
+        <div class="modal-content" style="width: 350px; text-align: center;">
+
+
+            <div class="confirm-icon" style="color:var(--success)"><i class="fas fa-check-circle"></i></div>
+
+
+            <h3 id="mensajeExito">!Operacion Exitosa!</h3>
+
+
+            <button onclick="cerrarModal('modalExito')"
+
+
+                style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Aceptar</button>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <script>
+
+
+        let usuarioAEditar = null;
+
+
+
+
+
+        function abrirModal(id) {
+
+
+            usuarioAEditar = null;
+
+
+            document.getElementById('formUsuario').reset();
+
+
+            document.getElementById('tituloModal').innerHTML = '<i class="fas fa-user-plus"></i> Nuevo Usuario';
+
+
+            // En modo nuevo, password y confirm. son obligatorios
+
+
+            document.getElementById('pass').required = true;
+
+
+            document.getElementById('passConfirm').required = true;
+
+
+            document.getElementById(id).style.display = 'flex';
+
+
+        }
+
+
+
+
+
+        function cerrarModal(id) {
+
+
+            document.getElementById(id).style.display = 'none';
+
+
+            if (id === 'modalExito') cargarUsuarios();
+
+
+        }
+
+
+
+
+
+        async function cargarUsuarios() {
+
+
+            try {
+
+
+                const token = localStorage.getItem('token');
+
+
+                const response = await fetch('/api/usuarios', {
+
+
+                    headers: { 'Authorization': `Bearer ${token}` }
+
+
+                });
+
+
+                const data = await response.json();
+
+
+                if (data.success) {
+
+
+                    const tbody = document.getElementById('listaUsuarios');
+
+
+                    tbody.innerHTML = '';
+
+
+                    data.usuarios.forEach(u => {
+
+
+                        tbody.innerHTML += `
+
+
+                        <tr id="user-${u.id_usuario}">
+
+
+                            <td><b>${u.nombre_completo}</b></td>
+
+
+                            <td>${u.usuario}</td>
+
+
+                            <td><span class="badge badge-active">${u.estado}</span></td>
+
+
+                            <td class="actions">
+
+
+                                <button class="btn-edit" onclick="editarUsuario(${u.id_usuario}, '${u.nombre_completo}', '${u.usuario}')"><i class="fas fa-edit"></i> Modificar</button>
+
+
+                                <button class="btn-delete" onclick="confirmarEliminar('${u.usuario}', ${u.id_usuario})"><i class="fas fa-trash"></i> Eliminar</button>
+
+
+                            </td>
+
+
+                        </tr>
+
+
+                    `;
+
+
+                    });
+
+
+                } else {
+
+
+                    alert("Error al cargar usuarios: " + data.message);
+
+
+                }
+
+
+            } catch (error) {
+
+
+                console.error(error);
+
+
+            }
+
+
+        }
+
+
+
+
+
+        // CARGAR AL INICIO
+
+
+        window.addEventListener('DOMContentLoaded', cargarUsuarios);
+
+
+
+
+
+        // MODIFICAR USUARIO
+
+
+        function editarUsuario(id, nombre, user) {
+
+
+            usuarioAEditar = id;
+
+
+            document.getElementById('tituloModal').innerHTML = '<i class="fas fa-user-edit"></i> Modificar Usuario';
+
+
+            document.getElementById('nombreCompleto').value = nombre;
+
+
+            document.getElementById('username').value = user;
+
+
+            // En modo edicion, el password es opcional
+
+
+            document.getElementById('pass').required = false;
+
+
+            document.getElementById('passConfirm').required = false;
+
+
+            document.getElementById('pregunta1').value = "Azul";
+
+
+            document.getElementById('modalUsuario').style.display = 'flex';
+
+
+        }
+
+
+
+
+
+        // GUARDAR (CREAR O MODIFICAR)
+
+
+        async function guardarUsuario() {
+
+
+            const nombre = document.getElementById('nombreCompleto').value.trim();
+
+
+            const user = document.getElementById('username').value.trim();
+
+
+            const p1 = document.getElementById('pass').value;
+
+
+            const p2 = document.getElementById('passConfirm').value;
+
+
+
+
+
+            if (!nombre || !user) { alert("Nombre y Usuario requeridos."); return; }
+
+
+            if (!usuarioAEditar && !p1) { alert("Contraseña requerida al crear."); return; }
+
+
+            if (p1 !== p2 && p1 !== "") { alert("Las contraseñas no coinciden"); return; }
+
+
+
+
+
+            try {
+
+
+                const nombres = nombre.split(" ");
+                const payload = {
+                    usuario: user,
+                    nombre: nombres[0],
+                    apellido: nombres.slice(1).join(" ") || ""
+                };
+
+                if (p1) payload.password = p1; // Si envió contraseñas
+
+                const token = localStorage.getItem('token');
+
+                let endpoint, metodo;
+                if (usuarioAEditar) {
+                    endpoint = `/api/usuarios/${usuarioAEditar}`;
+                    metodo = 'PUT';
+                } else {
+                    endpoint = '/api/usuarios';
+                    metodo = 'POST';
+                }
+
+
+
+
+
+                const response = await fetch(endpoint, {
+
+
+                    method: metodo,
+
+
+                    headers: {
+
+
+                        'Authorization': `Bearer ${token}`,
+
+
+                        'Content-Type': 'application/json'
+
+
+                    },
+
+
+                    body: JSON.stringify(payload)
+
+
+                });
+
+
+
+
+
+                const data = await response.json();
+
+
+                if (data.success) {
+
+
+                    cerrarModal('modalUsuario');
+
+
+                    document.getElementById('mensajeExito').innerText = data.message;
+
+
+                    document.getElementById('modalExito').style.display = 'flex';
+
+
+                } else {
+
+
+                    alert("Error: " + data.message);
+
+
+                }
+
+
+            } catch (error) {
+
+
+                console.error(error);
+
+
+                alert("Hubo un error de conexion.");
+
+
+            }
+
+
+        }
+
+
+
+
+
+        // ELIMINAR
+
+
+        function confirmarEliminar(nombre, idFila) {
+
+
+            usuarioAEliminar = idFila;
+
+
+            document.getElementById('nombreEliminar').innerText = nombre;
+
+
+            document.getElementById('modalEliminar').style.display = 'flex';
+
+
+        }
+
+
+
+
+
+        async function ejecutarEliminacion() {
+
+
+            if (usuarioAEliminar) {
+
+
+                try {
+
+
+                    const token = localStorage.getItem('token');
+
+
+                    const response = await fetch(`/api/usuarios/${usuarioAEliminar}`, {
+
+
+                        method: 'DELETE',
+
+
+                        headers: { 'Authorization': `Bearer ${token}` }
+
+
+                    });
+
+
+                    const data = await response.json();
+
+
+
+
+
+                    if (data.success) {
+
+
+                        cerrarModal('modalEliminar');
+
+
+                        document.getElementById('mensajeExito').innerText = data.message;
+
+
+                        document.getElementById('modalExito').style.display = 'flex';
+
+
+                    } else {
+
+
+                        alert("No se pudo eliminar: " + data.message);
+
+
+                        cerrarModal('modalEliminar');
+
+
+                    }
+
+
+                } catch (err) {
+
+
+                    console.error(err);
+
+
+                    alert("Error de red");
+
+
+                }
+
+
+            }
+
+
+        }
+
+
+
+
+
+        // Registrar el Service Worker para la PWA
+
+
+        if ('serviceWorker' in navigator) {
+
+
+            window.addEventListener('load', () => {
+
+
+                navigator.serviceWorker.register('/sw.js')
+
+
+                    .then(registration => {
+
+
+                        console.log('ServiceWorker registrado con exito:', registration.scope);
+
+
+                    })
+
+
+                    .catch(error => {
+
+
+                        console.log('Error al registrar el ServiceWorker:', error);
+
+
+                    });
+
+
+            });
+
+
+        }
+
+
+    </script>
+
+
+
+
+
+</body>
+
+
+
+
+
 </html>
