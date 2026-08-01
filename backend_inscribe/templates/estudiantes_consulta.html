@@ -104,7 +104,7 @@
     <div id="modalConfirm" class="modal-overlay">
         <div class="modal-content">
             <i id="modalIcon" class="fas fa-question-circle" style="font-size: 3rem; color: var(--secondary); margin-bottom: 15px; display: block;"></i>
-            <h3 id="modalTitle">Confirmacion</h3>
+            <h3 id="modalTitle">Confirmación</h3>
             <p id="modalMsg"></p>
             <div class="modal-btns">
                 <button class="btn-cancel" onclick="cerrarModal()">No, cancelar</button>
@@ -122,16 +122,16 @@
 
     <div class="container">
         <div class="header-ficha">
-            <div class="header-title"><h1>Expediente Academico</h1><p>Registro centralizado de datos estudiantiles</p></div>
+            <div class="header-title"><h1>Expediente Académico</h1><p>Registro centralizado de datos estudiantiles</p></div>
             <div id="statusModo" style="background: #ecf0f1; padding: 10px 18px; border-radius: 30px; font-size: 0.7rem; font-weight: 800;">
                 <i class="fas fa-lock"></i> MODO CONSULTA
             </div>
         </div>
 
         <form id="formConsulta">
-            <div class="section-title"><i class="fas fa-user-graduate"></i> Identificacion del Alumno</div>
+            <div class="section-title"><i class="fas fa-user-graduate"></i> Identificación del Alumno</div>
             <div class="grid-form">
-                <div class="campo"><label>Cedula Escolar</label><input type="text" class="dato-input solo-numeros" readonly></div>
+                <div class="campo"><label>Cédula Escolar</label><input type="text" class="dato-input solo-numeros" readonly></div>
                 <div class="campo"><label>Primer Nombre</label><input type="text" class="dato-input solo-letras" readonly></div>
                 <div class="campo"><label>Segundo Nombre</label><input type="text" class="dato-input solo-letras" readonly></div>
                 <div class="campo"><label>Primer Apellido</label><input type="text" class="dato-input solo-letras" readonly></div>
@@ -142,34 +142,34 @@
                 <div class="campo"><label>Orden de Nacimiento</label><input type="number" class="dato-input solo-numeros" min="1" readonly></div>
             </div>
 
-            <div class="section-title"><i class="fas fa-map-marker-alt"></i> Procedencia y Ubicacion</div>
+            <div class="section-title"><i class="fas fa-map-marker-alt"></i> Procedencia y Ubicación</div>
             <div class="grid-form">
                 <div class="campo"><label>Plantel de Procedencia</label><input type="text" class="dato-input" readonly></div>
                 <div class="campo"><label>Ciudad</label><input type="text" class="dato-input solo-letras" readonly></div>
                 <div class="campo"><label>Estado</label><input type="text" class="dato-input solo-letras" readonly></div>
-                <div class="campo"><label>Pais</label><input type="text" class="dato-input solo-letras" readonly></div>
+                <div class="campo"><label>País</label><input type="text" class="dato-input solo-letras" readonly></div>
             </div>
 
             <div class="section-title"><i class="fas fa-users"></i> Datos de los Padres</div>
             <div class="grid-form">
                 <div class="campo"><label>Nombre de la Madre</label><input type="text" class="dato-input solo-letras" readonly></div>
-                <div class="campo"><label>Cedula Madre</label><div class="cedula-wrapper"><span class="prefix">V-</span><input type="text" class="dato-input solo-numeros" readonly style="width:100%"></div></div>
-                <div class="campo"><label>Telefono Madre</label><input type="text" class="dato-input solo-numeros" readonly></div>
+                <div class="campo"><label>Cédula Madre</label><div class="cedula-wrapper"><span class="prefix">V-</span><input type="text" class="dato-input solo-numeros" readonly style="width:100%"></div></div>
+                <div class="campo"><label>Teléfono Madre</label><input type="text" class="dato-input solo-numeros" readonly></div>
                 <div class="campo"><label>Nombre del Padre</label><input type="text" class="dato-input solo-letras" readonly></div>
-                <div class="campo"><label>Cedula Padre</label><div class="cedula-wrapper"><span class="prefix">V-</span><input type="text" class="dato-input solo-numeros" readonly style="width:100%"></div></div>
-                <div class="campo"><label>Telefono Padre</label><input type="text" class="dato-input solo-numeros" readonly></div>
+                <div class="campo"><label>Cédula Padre</label><div class="cedula-wrapper"><span class="prefix">V-</span><input type="text" class="dato-input solo-numeros" readonly style="width:100%"></div></div>
+                <div class="campo"><label>Teléfono Padre</label><input type="text" class="dato-input solo-numeros" readonly></div>
             </div>
 
             <div class="section-title"><i class="fas fa-heartbeat"></i> Salud y Diversidad</div>
             <div class="grid-form">
-                <div class="campo"><label>?Toma algun medicamento?</label>
+                <div class="campo"><label>¿Toma algun medicamento?</label>
                     <select class="dato-input" disabled>
                         <option value="no">No</option>
                         <option value="si">Si</option>
                     </select>
                 </div>
                 <div class="campo"><label>Diversidad Funcional</label><input type="text" class="dato-input solo-letras" readonly></div>
-                <div class="campo"><label>Correo Electronico</label><input type="email" class="dato-input" readonly></div>
+                <div class="campo"><label>Correo Electrónico</label><input type="email" class="dato-input" readonly></div>
             </div>
 
             <div class="botones-footer">

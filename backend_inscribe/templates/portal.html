@@ -107,7 +107,7 @@
     <div>
         <span id="userBadge" style="margin-right:15px;font-weight:600;display:none;"></span>
         <button class="btn-outline hidden" id="btnPerfil" onclick="mostrarPerfil()" style="margin-right:8px;"><i class="fas fa-user-edit"></i> Mi Perfil</button>
-        <button class="btn-outline hidden" id="btnCerrarSesion" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesion</button>
+        <button class="btn-outline hidden" id="btnCerrarSesion" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
     </div>
 </div>
 
@@ -119,8 +119,8 @@
         <div class="hero">
             <div class="icon"><i class="fas fa-school"></i></div>
             <h2 id="heroTitle">Escuela José Manuel Cova Maza</h2>
-            <p id="heroDesc">Formando lideres para el futuro con excelencia educativa. Accede al portal para registrar a tus representados, realizar inscripciones y consultar el estatus.</p>
-            <button class="btn-hero" onclick="document.getElementById('authSection').scrollIntoView({behavior:'smooth'})"><i class="fas fa-user-plus"></i> Registrarse o Iniciar Sesion</button>
+            <p id="heroDesc">Formando líderes para el futuro con excelencia educativa. Accede al portal para registrar a tus representados, realizar inscripciones y consultar el estatus.</p>
+            <button class="btn-hero" onclick="document.getElementById('authSection').scrollIntoView({behavior:'smooth'})"><i class="fas fa-user-plus"></i> Registrarse o Iniciar Sesión</button>
         </div>
 
         <div id="noticiasSection" class="hidden">
@@ -129,12 +129,12 @@
         </div>
 
         <div id="programasSection" class="hidden">
-            <h3 class="section-title"><i class="fas fa-graduation-cap"></i> Programas Academicos</h3>
+            <h3 class="section-title"><i class="fas fa-graduation-cap"></i> Programas Académicos</h3>
             <div class="prog-grid" id="programsContainer"></div>
         </div>
 
         <div id="galeriaSection" class="hidden">
-            <h3 class="section-title"><i class="fas fa-images"></i> Galeria</h3>
+            <h3 class="section-title"><i class="fas fa-images"></i> Galería</h3>
             <div class="gallery-grid" id="galleryContainer"></div>
         </div>
 
@@ -143,30 +143,30 @@
             <h3><i class="fas fa-user-lock"></i> Acceso al Portal</h3>
             <p>Ingresa tus datos para acceder o crea una cuenta nueva.</p>
             <div class="tabs">
-                <button class="active" onclick="cambiarAuthTab('login',this)">Iniciar Sesion</button>
+                <button class="active" onclick="cambiarAuthTab('login',this)">Iniciar Sesión</button>
                 <button onclick="cambiarAuthTab('registro',this)">Registrarse</button>
             </div>
 
             <div id="authLogin">
-                <div class="form-group"><label>Cedula de Identidad</label><input type="text" id="loginCedula" placeholder="V-12345678"></div>
-                <div class="form-group"><label>Contrasena</label><input type="password" id="loginPassword" placeholder="********"></div>
-                <button class="btn btn-primary" onclick="iniciarSesion()"><i class="fas fa-sign-in-alt"></i> Iniciar Sesion</button>
-                <p style="margin-top:10px;font-size:0.85rem;text-align:center;"><a href="#" onclick="mostrarRecuperar();return false;" style="color:var(--primary);text-decoration:none;">Olvidaste tu contrasena?</a></p>
+                <div class="form-group"><label>Cédula de Identidad</label><input type="text" id="loginCedula" placeholder="V-12345678"></div>
+                <div class="form-group"><label>Contraseña</label><input type="password" id="loginPassword" placeholder="********"></div>
+                <button class="btn btn-primary" onclick="iniciarSesion()"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</button>
+                <p style="margin-top:10px;font-size:0.85rem;text-align:center;"><a href="#" onclick="mostrarRecuperar();return false;" style="color:var(--primary);text-decoration:none;">Olvidaste tu contraseña?</a></p>
                 <p id="loginError" style="color:#dc2626;margin-top:10px;font-size:0.85rem;display:none;"></p>
             </div>
 
             <div id="authRegistro" class="hidden">
                 <div class="grid-2">
-                    <div class="form-group"><label>Cedula</label><input type="text" id="regCedula" placeholder="V-12345678"></div>
-                    <div class="form-group"><label>Telefono</label><input type="text" id="regTelefono" placeholder="0412-1234567"></div>
+                    <div class="form-group"><label>Cédula</label><input type="text" id="regCedula" placeholder="V-12345678"></div>
+                    <div class="form-group"><label>Teléfono</label><input type="text" id="regTelefono" placeholder="0412-1234567"></div>
                 </div>
                 <div class="grid-2">
                     <div class="form-group"><label>Nombres</label><input type="text" id="regNombres" placeholder="Juan Carlos"></div>
                     <div class="form-group"><label>Apellidos</label><input type="text" id="regApellidos" placeholder="Perez Silva"></div>
                 </div>
-                <div class="form-group"><label>Correo Electronico</label><input type="email" id="regEmail" placeholder="correo@ejemplo.com"></div>
-                <div class="form-group"><label>Direccion de Habitacion</label><input type="text" id="regDireccion" placeholder="Ciudad, Sector, Calle"></div>
-                <div class="form-group"><label>Contrasena</label><input type="password" id="regPassword" placeholder="Minimo 6 caracteres"></div>
+                <div class="form-group"><label>Correo Electrónico</label><input type="email" id="regEmail" placeholder="correo@ejemplo.com"></div>
+                <div class="form-group"><label>Dirección de Habitacion</label><input type="text" id="regDireccion" placeholder="Ciudad, Sector, Calle"></div>
+                <div class="form-group"><label>Contraseña</label><input type="password" id="regPassword" placeholder="Minimo 6 caracteres"></div>
                 <button class="btn btn-primary" onclick="registrarme()"><i class="fas fa-user-plus"></i> Crear Cuenta</button>
                 <p id="regError" style="color:#dc2626;margin-top:10px;font-size:0.85rem;display:none;"></p>
             </div>
@@ -178,7 +178,7 @@
         <div class="stats">
             <div class="stat-card"><i class="fas fa-users"></i><h3 id="statEstudiantes">0</h3><p>Estudiantes</p></div>
             <div class="stat-card"><i class="fas fa-check-circle"></i><h3 id="statInscritos">0</h3><p>Inscritos</p></div>
-            <div class="stat-card"><i class="fas fa-school"></i><h3 id="statPeriodo">-</h3><p>Ano Escolar</p></div>
+            <div class="stat-card"><i class="fas fa-school"></i><h3 id="statPeriodo">-</h3><p>Año Escolar</p></div>
         </div>
 
         <div class="card">
@@ -192,8 +192,8 @@
         <div class="card hidden" id="formEstudianteCard">
             <h3><i class="fas fa-plus-circle"></i> <span id="tituloFormEstudiante">Registrar Estudiante</span></h3>
             <div class="grid-2">
-                <div class="form-group"><label>Cedula Escolar</label><input type="text" id="estCedulaEscolar" placeholder="V-12345678"></div>
-                <div class="form-group"><label>Cedula de Identidad</label><input type="text" id="estCedulaIdentidad" placeholder="V-12345678 (opcional)"></div>
+                <div class="form-group"><label>Cédula Escolar</label><input type="text" id="estCedulaEscolar" placeholder="V-12345678"></div>
+                <div class="form-group"><label>Cédula de Identidad</label><input type="text" id="estCedulaIdentidad" placeholder="V-12345678 (opcional)"></div>
             </div>
             <div class="grid-2">
                 <div class="form-group"><label>Nombres</label><input type="text" id="estNombres" placeholder="Nombres del estudiante"></div>
@@ -222,9 +222,9 @@
 <!-- ============ MODALS ============ -->
 <div class="modal" id="modalRecuperar">
     <div class="modal-content">
-        <h3><i class="fas fa-key"></i> Recuperar Contrasena</h3>
-        <p style="margin:10px 0;color:#636e72;font-size:0.9rem;">Ingresa tu cedula para verificar si tienes una cuenta registrada.</p>
-        <div class="form-group"><label>Cedula</label><input type="text" id="recCedula" placeholder="V-12345678"></div>
+        <h3><i class="fas fa-key"></i> Recuperar Contraseña</h3>
+        <p style="margin:10px 0;color:#636e72;font-size:0.9rem;">Ingresa tu cédula para verificar si tienes una cuenta registrada.</p>
+        <div class="form-group"><label>Cédula</label><input type="text" id="recCedula" placeholder="V-12345678"></div>
         <p id="recError" style="color:#dc2626;font-size:0.85rem;display:none;"></p>
         <p id="recSuccess" style="color:#16a34a;font-size:0.85rem;display:none;"></p>
         <div class="modal-actions">
@@ -241,14 +241,14 @@
             <div class="form-group"><label>Nombres</label><input type="text" id="perNombres"></div>
             <div class="form-group"><label>Apellidos</label><input type="text" id="perApellidos"></div>
         </div>
-        <div class="form-group"><label>Correo Electronico</label><input type="email" id="perEmail"></div>
+        <div class="form-group"><label>Correo Electrónico</label><input type="email" id="perEmail"></div>
         <div class="grid-2">
-            <div class="form-group"><label>Telefono</label><input type="text" id="perTelefono"></div>
-            <div class="form-group"><label>Direccion</label><input type="text" id="perDireccion"></div>
+            <div class="form-group"><label>Teléfono</label><input type="text" id="perTelefono"></div>
+            <div class="form-group"><label>Dirección</label><input type="text" id="perDireccion"></div>
         </div>
         <p id="perError" style="color:#dc2626;font-size:0.85rem;display:none;"></p>
         <div class="modal-actions">
-            <button class="btn btn-outline" onclick="mostrarPassword()" style="width:auto;"><i class="fas fa-lock"></i> Cambiar Contrasena</button>
+            <button class="btn btn-outline" onclick="mostrarPassword()" style="width:auto;"><i class="fas fa-lock"></i> Cambiar Contraseña</button>
             <button class="btn btn-outline" onclick="cerrarModal('modalPerfil')">Cerrar</button>
             <button class="btn btn-primary" onclick="guardarPerfil()" style="width:auto;">Guardar Cambios</button>
         </div>
@@ -257,14 +257,14 @@
 
 <div class="modal" id="modalPassword">
     <div class="modal-content">
-        <h3><i class="fas fa-lock"></i> Cambiar Contrasena</h3>
-        <div class="form-group"><label>Contrasena Actual</label><input type="password" id="passActual"></div>
-        <div class="form-group"><label>Nueva Contrasena (min. 4 caracteres)</label><input type="password" id="passNueva"></div>
+        <h3><i class="fas fa-lock"></i> Cambiar Contraseña</h3>
+        <div class="form-group"><label>Contraseña Actual</label><input type="password" id="passActual"></div>
+        <div class="form-group"><label>Nueva Contraseña (min. 4 caracteres)</label><input type="password" id="passNueva"></div>
         <p id="passError" style="color:#dc2626;font-size:0.85rem;display:none;"></p>
         <p id="passSuccess" style="color:#16a34a;font-size:0.85rem;display:none;"></p>
         <div class="modal-actions">
             <button class="btn btn-outline" onclick="cerrarModal('modalPassword')">Cerrar</button>
-            <button class="btn btn-primary" onclick="cambiarPassword()" style="width:auto;">Cambiar Contrasena</button>
+            <button class="btn btn-primary" onclick="cambiarPassword()" style="width:auto;">Cambiar Contraseña</button>
         </div>
     </div>
 </div>

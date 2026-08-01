@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Enviar Correo a Representantes - INSCRIBE SYSTEM</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { font-family: 'Segoe UI', sans-serif; background: #f8fafb; color: #2d3436; padding: 20px; }
+
+        :root { --primary: #00b689; --danger: #dc2626; --success: #16a34a; }
+
+        .container { max-width: 900px; margin: auto; }
+
+        h1 { font-size: 1.6rem; margin-bottom: 5px; }
+
+        h1 i { color: var(--primary); }
+
+        .subtitle { color: #636e72; margin-bottom: 25px; }
+
+        .card {
+
+            background: white; border-radius: 15px; padding: 25px;
+
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04); border: 1px solid #edf2f7; margin-bottom: 20px;
+
+        }
+
+        .card h3 { font-size: 1.1rem; margin-bottom: 15px; }
+
+        .card h3 i { color: var(--primary); margin-right: 8px; }
+
+        .form-group { margin-bottom: 15px; }
+
+        .form-group label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; color: #555; }
+
+        .form-group input, .form-group textarea, .form-group select {
+
+            width: 100%; padding: 10px 12px; border: 2px solid #edf2f7; border-radius: 8px;
+
+            font-family: inherit; font-size: 0.95rem; transition: 0.3s; box-sizing: border-box;
+
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary); outline: none; }
+
+        .form-group textarea { resize: vertical; min-height: 140px; }
+
+        .btn {
+
+            padding: 11px 22px; border-radius: 8px; border: none; font-weight: 600;
+
+            cursor: pointer; transition: 0.3s; font-size: 0.9rem;
+
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+
+        .btn-primary:hover { background: #009671; }
+
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .buscar-row { display: flex; gap: 10px; }
+
+        .buscar-row input { flex: 1; }
+
+        .aviso {
+
+            display: none; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px;
+
+            font-size: 0.92rem; font-weight: 600;
+
+        }
+
+        .aviso.ok { display: block; background: #ecfdf5; color: var(--success); border: 1px solid #a7f3d0; }
+
+        .aviso.err { display: block; background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; }
+
+        .info-cargo { font-size: 0.8rem; color: #98a2b3; margin-top: 4px; }
+
+        .spinner { display: none; }
+
+        .spinner.activo { display: inline-block; }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1><i class="fas fa-envelope-open-text"></i> Enviar Correo a Representantes</h1>
+
+        <p class="subtitle">Redacte y envíe una comunicación a un representante de la institución.</p>
+
+        <div class="aviso" id="aviso"></div>
+
+        <div class="card">
+
+            <h3><i class="fas fa-user-tie"></i> Seleccionar Representante</h3>
+
+            <div class="buscar-row">
+
+                <input type="text" id="buscar" placeholder="Buscar por nombre, apellido o cédula...">
+
+                <button class="btn btn-primary" onclick="buscarRepresentantes()"><i class="fas fa-search"></i> Buscar</button>
+
+            </div>
+
+            <div class="form-group" style="margin-top:15px;">
+
+                <label>Representantes con correo registrado</label>
+
+                <select id="selectRep" onchange="cargarRep()">
+
+                    <option value="">-- Seleccione un representante --</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <h3><i class="fas fa-pen-alt"></i> Redactar Mensaje</h3>
+
+            <div class="form-group">
+
+                <label>Para (correo del representante)</label>
+
+                <input type="email" id="para" placeholder="ejemplo@correo.com">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Asunto</label>
+
+                <input type="text" id="asunto" placeholder="Asunto del correo">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Mensaje</label>
+
+                <textarea id="mensaje" placeholder="Escriba aquí el mensaje para el representante..."></textarea>
+
+            </div>
+
+            <button class="btn btn-primary" id="btnEnviar" onclick="enviarCorreo()">
+
+                <i class="fas fa-paper-plane"></i> Enviar Correo <i class="fas fa-spinner fa-spin spinner" id="spinner"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        const selectRep = document.getElementById('selectRep');
+
+        const aviso = document.getElementById('aviso');
+
+        let repsCargados = [];
+
+        async function buscarRepresentantes() {
+
+            const busqueda = document.getElementById('buscar').value.trim();
+
+            let url = '/api/correos/representantes';
+
+            if (busqueda) url += '?search=' + encodeURIComponent(busqueda);
+
+            try {
+
+                const res = await fetch(url);
+
+                const data = await res.json();
+
+                repsCargados = Array.isArray(data) ? data : [];
+
+                selectRep.innerHTML = '<option value="">-- Seleccione un representante --</option>';
+
+                repsCargados.forEach(r => {
+
+                    const opt = document.createElement('option');
+
+                    opt.value = r.cedula;
+
+                    opt.textContent = r.nombre_completo + ' (' + r.email + ')';
+
+                    selectRep.appendChild(opt);
+
+                });
+
+                if (repsCargados.length === 0) {
+
+                    selectRep.innerHTML = '<option value="">-- Sin representantes con correo --</option>';
+
+                }
+
+            } catch (e) {
+
+                mostrarAviso('No se pudieron cargar los representantes: ' + e.message, 'err');
+
+            }
+
+        }
+
+        function cargarRep() {
+
+            const cedula = selectRep.value;
+
+            const rep = repsCargados.find(r => r.cedula === cedula);
+
+            if (rep) document.getElementById('para').value = rep.email;
+
+        }
+
+        async function enviarCorreo() {
+
+            const cedula = selectRep.value;
+
+            const para = document.getElementById('para').value.trim();
+
+            const asunto = document.getElementById('asunto').value.trim();
+
+            const mensaje = document.getElementById('mensaje').value.trim();
+
+            if (!para || !asunto || !mensaje) {
+
+                mostrarAviso('Complete el destinatario, el asunto y el mensaje.', 'err');
+
+                return;
+
+            }
+
+            const btn = document.getElementById('btnEnviar');
+
+            const spinner = document.getElementById('spinner');
+
+            btn.disabled = true;
+
+            spinner.classList.add('activo');
+
+            try {
+
+                const res = await fetch('/api/correos/enviar', {
+
+                    method: 'POST',
+
+                    headers: { 'Content-Type': 'application/json' },
+
+                    body: JSON.stringify({ cedula: cedula, destinatario: para, asunto: asunto, mensaje: mensaje })
+
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+
+                    mostrarAviso(data.message, 'ok');
+
+                    document.getElementById('asunto').value = '';
+
+                    document.getElementById('mensaje').value = '';
+
+                } else {
+
+                    mostrarAviso(data.message || 'Error al enviar el correo.', 'err');
+
+                }
+
+            } catch (e) {
+
+                mostrarAviso('Error de conexión: ' + e.message, 'err');
+
+            } finally {
+
+                btn.disabled = false;
+
+                spinner.classList.remove('activo');
+
+            }
+
+        }
+
+        function mostrarAviso(msg, tipo) {
+
+            aviso.textContent = msg;
+
+            aviso.className = 'aviso ' + tipo;
+
+            setTimeout(() => { aviso.className = 'aviso'; }, 8000);
+
+        }
+
+        window.addEventListener('DOMContentLoaded', buscarRepresentantes);
+
+    </script>
+
+</body>
+
+</html>

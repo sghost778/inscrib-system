@@ -106,10 +106,10 @@
 
     <form id="formExpediente" onsubmit="event.preventDefault(); abrirConfirmacion();">
         
-        <h4><i class="fas fa-id-card"></i> Identificacion del Representante</h4>
+        <h4><i class="fas fa-id-card"></i> Identificación del Representante</h4>
         <div class="grid-expediente">
             <div class="info-box">
-                <label>Cedula de Identidad</label>
+                <label>Cédula de Identidad</label>
                 <div class="campo-cedula-contenedor" id="contenedorCedula">
                     <span class="prefijo-v">V-</span>
                     <input type="text" id="cedula" class="input-cedula" readonly onkeypress="return soloNumeros(event)" maxlength="8">
@@ -124,21 +124,21 @@
 
         <h4><i class="fas fa-phone-alt"></i> Medios de Contacto</h4>
         <div class="grid-expediente">
-            <div class="info-box"><label>Telefono Movil</label><input type="text" class="editable" readonly onkeypress="return soloNumeros(event)" maxlength="11"></div>
-            <div class="info-box"><label>Telefono CANTV</label><input type="text" class="editable" readonly onkeypress="return soloNumeros(event)" maxlength="11"></div>
-            <div class="info-box"><label>Correo Electronico</label><input type="email" class="editable" readonly></div>
+            <div class="info-box"><label>Teléfono Móvil</label><input type="text" class="editable" readonly onkeypress="return soloNumeros(event)" maxlength="11"></div>
+            <div class="info-box"><label>Teléfono CANTV</label><input type="text" class="editable" readonly onkeypress="return soloNumeros(event)" maxlength="11"></div>
+            <div class="info-box"><label>Correo Electrónico</label><input type="email" class="editable" readonly></div>
         </div>
 
-        <h4><i class="fas fa-map-marker-alt"></i> Ubicacion Geografica</h4>
+        <h4><i class="fas fa-map-marker-alt"></i> Ubicación Geografica</h4>
         <div class="grid-expediente">
-            <div class="info-box"><label>Pais</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
+            <div class="info-box"><label>País</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
             <div class="info-box"><label>Estado</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
             <div class="info-box"><label>Ciudad</label><input type="text" class="editable" readonly onkeypress="return soloLetras(event)"></div>
         </div>
 
         <div class="btn-container">
             <button type="button" id="btnModificar" class="btn-main" onclick="habilitarCampos()">
-                <i class="fas fa-edit"></i> Modificar Informacion
+                <i class="fas fa-edit"></i> Modificar Información
             </button>
             <button type="submit" id="btnGuardar" class="btn-main">
                 <i class="fas fa-save"></i> Guardar Cambios
@@ -150,7 +150,7 @@
 <div id="modalConfirm" class="modal">
     <div class="modal-content">
         <i class="fas fa-question-circle" style="font-size: 3rem; color: #f1c40f; margin-bottom: 15px;"></i>
-        <h3>?Desea aplicar los cambios?</h3>
+        <h3>¿Desea aplicar los cambios?</h3>
         <p>Los datos del representante se actualizaran en el sistema.</p>
         <div style="display:flex; gap:10px; margin-top:20px;">
             <button onclick="cerrarModal()" style="flex:1; padding:10px; border-radius:8px; border:none; cursor:pointer;">Cancelar</button>
@@ -162,8 +162,8 @@
 <div id="modalExito" class="modal">
     <div class="modal-content">
         <i class="fas fa-check-circle" style="font-size: 3.5rem; color: var(--primary-color); margin-bottom: 15px;"></i>
-        <h3>!Modificacion Exitosa!</h3>
-        <p>La informacion ha sido procesada correctamente.</p>
+        <h3>¡Modificación Exitosa!</h3>
+        <p>La información ha sido procesada correctamente.</p>
         <button onclick="location.reload()" style="width:100%; padding:12px; margin-top:20px; border-radius:8px; border:none; background:var(--primary-color); color:white; font-weight:bold; cursor:pointer;">Finalizar</button>
     </div>
 </div>

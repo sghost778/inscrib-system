@@ -97,52 +97,52 @@
 
 <div class="container">
     <h1><i class="fas fa-globe"></i> Configurar Sitio Web</h1>
-    <p class="subtitle">Administra el contenido de la pagina publica de la escuela</p>
+    <p class="subtitle">Administra el contenido de la página publica de la escuela</p>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="cambiarTab('config',this)"><i class="fas fa-cog"></i> Configuracion</button>
+        <button class="tab-btn active" onclick="cambiarTab('config',this)"><i class="fas fa-cog"></i> Configuración</button>
         <button class="tab-btn" onclick="cambiarTab('noticias',this)"><i class="fas fa-newspaper"></i> Noticias</button>
         <button class="tab-btn" onclick="cambiarTab('programas',this)"><i class="fas fa-graduation-cap"></i> Programas</button>
-        <button class="tab-btn" onclick="cambiarTab('galeria',this)"><i class="fas fa-images"></i> Galeria</button>
+        <button class="tab-btn" onclick="cambiarTab('galeria',this)"><i class="fas fa-images"></i> Galería</button>
         <button class="tab-btn" onclick="cambiarTab('mensajes',this)"><i class="fas fa-envelope"></i> Mensajes</button>
     </div>
 
     <!-- CONFIGURACIÓN -->
     <div class="tab-content active" id="tab-config">
         <div class="card">
-            <h3><i class="fas fa-sliders-h"></i> Configuracion del Sitio</h3>
+            <h3><i class="fas fa-sliders-h"></i> Configuración del Sitio</h3>
             <div class="form-group">
                 <label>Nombre de la Escuela</label>
                 <input type="text" id="cfg_site_name" value="Escuela José Manuel Cova Maza">
             </div>
             <div class="form-group">
-                <label>Descripcion Corta (hero)</label>
+                <label>Descripción Corta (hero)</label>
                 <input type="text" id="cfg_site_description" value="Formando lideres para el futuro con excelencia educativa">
             </div>
             <div class="form-group">
-                <label>Titulo de Seccion Nosotros</label>
+                <label>Título de Sección Nosotros</label>
                 <input type="text" id="cfg_about_title" value="?Quienes Somos?">
             </div>
             <div class="form-group">
                 <label>Contenido Nosotros</label>
-                <textarea id="cfg_about_content" rows="4">La Escuela José Manuel Cova Maza es una institucion comprometida con la formacion integral.</textarea>
+                <textarea id="cfg_about_content" rows="4">La Escuela José Manuel Cova Maza es una institución comprometida con la formación integral.</textarea>
             </div>
             <div class="form-group">
                 <label>Mision</label>
-                <textarea id="cfg_about_mision" rows="3">Formar ciudadanos integrales con valores eticos.</textarea>
+                <textarea id="cfg_about_mision" rows="3">Formar ciudadanos integrales con valores éticos.</textarea>
             </div>
             <div class="form-group">
                 <label>Vision</label>
-                <textarea id="cfg_about_vision" rows="3">Ser una institucion educativa de referencia nacional.</textarea>
+                <textarea id="cfg_about_vision" rows="3">Ser una institución educativa de referencia nacional.</textarea>
             </div>
             <hr style="margin:15px 0;border:none;border-top:1px solid #edf2f7;">
-            <h3 style="margin-bottom:15px;"><i class="fas fa-phone-alt"></i> Informacion de Contacto</h3>
+            <h3 style="margin-bottom:15px;"><i class="fas fa-phone-alt"></i> Información de Contacto</h3>
             <div class="form-group">
-                <label>Direccion</label>
+                <label>Dirección</label>
                 <input type="text" id="cfg_contact_address" value="Av. Principal, Urbanizacion Las Flores, Puerto Ordaz">
             </div>
             <div class="form-group">
-                <label>Telefono</label>
+                <label>Teléfono</label>
                 <input type="text" id="cfg_contact_phone" value="+58 412-1234567">
             </div>
             <div class="form-group">
@@ -150,16 +150,16 @@
                 <input type="text" id="cfg_contact_email" value="info@uejmcm.edu.ve">
             </div>
             <div class="form-group">
-                <label>Horario de Atencion</label>
+                <label>Horario de Atención</label>
                 <input type="text" id="cfg_contact_hours" value="Lunes a Viernes: 7:00 AM - 3:00 PM">
             </div>
             <hr style="margin:15px 0;border:none;border-top:1px solid #edf2f7;">
-            <h3 style="margin-bottom:15px;"><i class="fas fa-clipboard-list"></i> Requisitos de Inscripcion</h3>
+            <h3 style="margin-bottom:15px;"><i class="fas fa-clipboard-list"></i> Requisitos de Inscripción</h3>
             <div class="form-group">
                 <label>Requisitos (uno por linea)</label>
                 <textarea id="cfg_requisitos_inscripcion" rows="8" placeholder="Partida de Nacimiento&#10;Cedula del Representante&#10;Fotos tipo carnet"></textarea>
             </div>
-            <button class="btn btn-primary" onclick="guardarConfig()"><i class="fas fa-save"></i> Guardar Configuracion</button>
+            <button class="btn btn-primary" onclick="guardarConfig()"><i class="fas fa-save"></i> Guardar Configuración</button>
         </div>
     </div>
 
@@ -171,7 +171,7 @@
         </div>
         <div class="card">
             <table>
-                <thead><tr><th>Titulo</th><th>Fecha</th><th>Activo</th><th>Acciones</th></tr></thead>
+                <thead><tr><th>Título</th><th>Fecha</th><th>Activo</th><th>Acciones</th></tr></thead>
                 <tbody id="tablaNoticias"></tbody>
             </table>
             <div class="empty" id="emptyNoticias"><i class="fas fa-newspaper"></i><p>No hay noticias</p></div>
@@ -181,7 +181,7 @@
     <!-- PROGRAMAS -->
     <div class="tab-content" id="tab-programas">
         <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
-            <h3 style="margin:0;"><i class="fas fa-graduation-cap"></i> Programas Academicos</h3>
+            <h3 style="margin:0;"><i class="fas fa-graduation-cap"></i> Programas Académicos</h3>
             <button class="btn btn-primary" onclick="abrirModalPrograma()"><i class="fas fa-plus"></i> Nuevo Programa</button>
         </div>
         <div class="card">
@@ -196,12 +196,12 @@
     <!-- GALERÍA -->
     <div class="tab-content" id="tab-galeria">
         <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
-            <h3 style="margin:0;"><i class="fas fa-images"></i> Galeria</h3>
+            <h3 style="margin:0;"><i class="fas fa-images"></i> Galería</h3>
             <button class="btn btn-primary" onclick="abrirModalGaleria()"><i class="fas fa-plus"></i> Agregar Imagen</button>
         </div>
         <div class="card">
             <table>
-                <thead><tr><th>Titulo</th><th>URL Imagen</th><th>Fecha</th><th>Acciones</th></tr></thead>
+                <thead><tr><th>Título</th><th>URL Imagen</th><th>Fecha</th><th>Acciones</th></tr></thead>
                 <tbody id="tablaGaleria"></tbody>
             </table>
             <div class="empty" id="emptyGaleria"><i class="fas fa-images"></i><p>No hay imagenes</p></div>
@@ -213,7 +213,7 @@
         <div class="card">
             <h3><i class="fas fa-envelope"></i> Mensajes de Contacto</h3>
             <table>
-                <thead><tr><th>Nombre</th><th>Email</th><th>Telefono</th><th>Mensaje</th><th>Fecha</th><th>Estado</th></tr></thead>
+                <thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Mensaje</th><th>Fecha</th><th>Estado</th></tr></thead>
                 <tbody id="tablaMensajes"></tbody>
             </table>
             <div class="empty" id="emptyMensajes"><i class="fas fa-envelope"></i><p>No hay mensajes</p></div>
@@ -226,7 +226,7 @@
     <div class="modal-content">
         <h2 id="tituloModalNoticia"><i class="fas fa-plus-circle"></i> Nueva Noticia</h2>
         <div class="form-group">
-            <label>Titulo</label>
+            <label>Título</label>
             <input type="text" id="n_titulo">
         </div>
         <div class="form-group">
@@ -261,7 +261,7 @@
             <input type="text" id="p_nombre">
         </div>
         <div class="form-group">
-            <label>Descripcion</label>
+            <label>Descripción</label>
             <textarea id="p_descripcion"></textarea>
         </div>
         <div class="form-group">
@@ -289,7 +289,7 @@
     <div class="modal-content">
         <h2><i class="fas fa-plus-circle"></i> Agregar Imagen</h2>
         <div class="form-group">
-            <label>Titulo</label>
+            <label>Título</label>
             <input type="text" id="g_titulo">
         </div>
         <div class="form-group">
@@ -301,7 +301,7 @@
             <input type="file" id="g_imagen_file" accept="image/*" style="display:none;" onchange="subirArchivo(this, 'g_imagen')">
         </div>
         <div class="form-group">
-            <label>Descripcion (opcional)</label>
+            <label>Descripción (opcional)</label>
             <textarea id="g_descripcion"></textarea>
         </div>
         <div class="modal-actions">

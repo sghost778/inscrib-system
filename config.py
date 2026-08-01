@@ -32,3 +32,15 @@ class Config:
 
     # Contraseña inicial para el usuario 'admin' (solo se usa si no existe)
     ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
+
+    # --- CORREO SMTP (para que el administrador envie correos a representantes) ---
+    SMTP_HOST = os.environ.get('SMTP_HOST', '')
+    SMTP_USER = os.environ.get('SMTP_USER', '')
+    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
+    EMAIL_FROM = os.environ.get('EMAIL_FROM', '')
+    EMAIL_FROM_NAME = os.environ.get('EMAIL_FROM_NAME', 'Escuela José Manuel Cova Maza')
+    try:
+        SMTP_PORT = int(os.environ.get('SMTP_PORT', '587'))
+    except ValueError:
+        SMTP_PORT = 587
+    SMTP_STARTTLS = os.environ.get('SMTP_STARTTLS', 'true').lower() == 'true'

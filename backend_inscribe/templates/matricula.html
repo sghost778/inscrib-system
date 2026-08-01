@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Control de Matricula - Gestion Escolar</title>
+    <title>Control de Matrícula - Gestión Escolar</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00b689">
@@ -232,19 +232,19 @@
 
     <div class="container">
         <div class="header-section">
-            <h1 style="margin:0;">Control de Matricula Activa</h1>
-            <p style="margin:5px 0 0 0; color:#64748b;">Administracion de Grados y Evaluacion por Lapsos</p>
+            <h1 style="margin:0;">Control de Matrícula Activa</h1>
+            <p style="margin:5px 0 0 0; color:#64748b;">Administración de Grados y Evaluación por Lapsos</p>
 
             <div class="status-alert" id="alertaLimite">
                 <i class="fas fa-exclamation-triangle"></i>
-                <span>Atencion: Modificaciones permitidas hasta el 06 de mayo de 2026.</span>
+                <span>Atención: Modificaciones permitidas hasta el 06 de mayo de 2026.</span>
             </div>
         </div>
 
         <div class="search-bar">
             <input type="text" id="inputBusqueda" placeholder="Buscar por nombre, cedula o institucion..."
                 onkeyup="buscar()">
-            <button class="tab-btn active" id="btnTodos" onclick="renderizar('todos')">Matricula Total</button>
+            <button class="tab-btn active" id="btnTodos" onclick="renderizar('todos')">Matrícula Total</button>
             <button class="tab-btn" id="btnNuevos" onclick="renderizar('nuevos')">Nuevos Ingresos</button>
             <button class="tab-btn" id="btnRetiros" onclick="renderizar('retiros')">Retiros</button>
         </div>
@@ -330,7 +330,7 @@
     <div id="modalPregunta" class="modal">
         <div class="modal-content">
             <div class="confirm-icon"><i class="fas fa-question-circle"></i></div>
-            <h3>?Desea guardar esta informacion?</h3>
+            <h3>¿Desea guardar esta información?</h3>
             <div style="display:flex; gap:10px; margin-top:20px;">
                 <button onclick="confirmarExito()"
                     style="flex:1; background:var(--success); color:white; border:none; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold;">Si,
@@ -345,7 +345,7 @@
     <div id="modalExito" class="modal">
         <div class="modal-content">
             <div class="confirm-icon" style="color:var(--success)"><i class="fas fa-check-circle"></i></div>
-            <h3 id="tituloExito">!Guardado con exito!</h3>
+            <h3 id="tituloExito">¡Guardado con éxito!</h3>
             <p>La base de datos ha sido actualizada correctamente.</p>
             <button onclick="cerrarTodo()"
                 style="width:100%; background:var(--primary); color:white; border:none; padding:10px; border-radius:8px; margin-top:15px; cursor:pointer; font-weight:bold;">Aceptar</button>

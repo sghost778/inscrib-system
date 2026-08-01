@@ -290,8 +290,8 @@
     <div class="modal-overlay" id="exitModal">
         <div class="modal-exit">
             <i class="fas fa-question-circle"></i>
-            <h2>?Cerrar Sesion?</h2>
-            <p>?Estas seguro de que deseas salir del sistema?</p>
+            <h2>¿Cerrar Sesión?</h2>
+            <p>¿Estas seguro de que deseas salir del sistema?</p>
             <div class="modal-buttons">
                 <button class="btn-modal btn-cancel" onclick="cerrarModal()">Cancelar</button>
                 <button class="btn-modal btn-confirm" onclick="confirmarSalida()">Si, Salir</button>
@@ -342,7 +342,7 @@
 
             <div class="menu-group">
                 <div class="menu-item" onclick="toggleSubmenu(this)">
-                    <span><i class="fas fa-file-signature"></i> Plantilla Inscripcion</span>
+                    <span><i class="fas fa-file-signature"></i> Plantilla Inscripción</span>
                     <i class="fas fa-chevron-right arrow"></i>
                 </div>
                 <ul class="submenu">
@@ -354,20 +354,25 @@
             </div>
 
             <a href="{{ url_for('view_matricula') }}" target="ventana_central" class="menu-item">
-                <span><i class="fas fa-address-book"></i> Matricula</span>
+                <span><i class="fas fa-address-book"></i> Matrícula</span>
             </a>
 
             <a href="{{ url_for('view_gestion_ano') }}" target="ventana_central" class="menu-item">
-                <span><i class="fas fa-calendar-alt"></i> Gestion de Ano</span>
+                <span><i class="fas fa-calendar-alt"></i> Gestión de Año</span>
             </a>
 
             <a href="{{ url_for('view_usuarios') }}" target="ventana_central" class="menu-item">
                 <span><i class="fas fa-user-shield"></i> Usuario</span>
             </a>
 
-            <a href="{{ url_for('view_admin_sitio') }}" target="ventana_central" class="menu-item">
-                <span><i class="fas fa-globe"></i> Configurar Sitio Web</span>
-            </a>
+            <a href="{{ url_for('view_admin_sitio') }}" target="ventana_central" class="menu-item">
+                <span><i class="fas fa-globe"></i> Configurar Sitio Web</span>
+            </a>
+
+            <a href="{{ url_for('view_correos') }}" target="ventana_central" class="menu-item">
+                <span><i class="fas fa-envelope-open-text"></i> Enviar Correo</span>
+            </a>
+
 
             <div class="menu-item btn-salir" onclick="abrirModal()">
                 <span><i class="fas fa-power-off"></i> Salir del Sistema</span>

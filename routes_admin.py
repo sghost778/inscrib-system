@@ -465,6 +465,67 @@ def eliminar_representante(cedula):
 
 
 # ============================
+# CORREOS A REPRESENTANTES
+# ============================
+@api_admin.route("/correos/representantes", methods=["GET"])
+@token_required
+def correos_representantes():
+    search = request.args.get("search", "")
+    query = models.Representante.query
+    if search:
+        query = query.filter(
+            models.Representante.nombres.contains(search) |
+            models.Representante.apellidos.contains(search) |
+            models.Representante.cedula.contains(search))
+    reps = query.limit(100).all()
+    return jsonify([{
+        "cedula": r.cedula,
+        "nombre_completo": f"{r.nombres or ''} {r.apellidos or ''}".strip(),
+        "email": r.email or "",
+    } for r in reps if r.email])
+
+
+@api_admin.route("/correos/enviar", methods=["POST"])
+@token_required
+def correos_enviar():
+    data = request.get_json() or {}
+    cedula = (data.get("cedula") or "").strip()
+    destinatario = (data.get("destinatario") or "").strip()
+    asunto = (data.get("asunto") or "").strip()
+    mensaje = (data.get("mensaje") or "").strip()
+
+    if not asunto:
+        return jsonify({"success": False, "message": "Debe escribir un asunto"}), 400
+    if not mensaje:
+        return jsonify({"success": False, "message": "Debe escribir un mensaje"}), 400
+    if not destinatario:
+        return jsonify({"success": False, "message": "Debe indicar el correo del destinatario"}), 400
+
+    rep = None
+    if cedula:
+        rep = models.Representante.query.filter_by(cedula=cedula).first()
+        if rep and rep.email:
+            destinatario = rep.email
+
+    if "@" not in destinatario or "." not in destinatario.split("@")[-1]:
+        return jsonify({"success": False, "message": "El correo del destinatario no parece valido"}), 400
+
+    try:
+        from email_service import enviar_correo, plantilla_correo, smtp_configurado
+        if not smtp_configurado():
+            return jsonify({"success": False,
+                            "message": "El servidor de correo no esta configurado. Agregue SMTP_HOST, SMTP_USER y SMTP_PASSWORD (variables de entorno) y vuelva a intentar."}), 500
+        nombre_rep = f"{rep.nombres} {rep.apellidos}".strip() if rep else ""
+        cuerpo = plantilla_correo(nombre_rep or destinatario, mensaje)
+        enviar_correo(destinatario, asunto, cuerpo)
+        log_audit(request.user.id_usuario, "ENVIO_CORREO", f"A: {destinatario} - {asunto}")
+        return jsonify({"success": True, "message": f"Correo enviado a {destinatario}"})
+    except Exception as e:
+        models.db.session.rollback()
+        return jsonify({"success": False, "message": f"Error al enviar el correo: {str(e)}"}), 500
+
+
+# ============================
 # MATRICULA
 # ============================
 @api_admin.route("/matricula", methods=["GET"])

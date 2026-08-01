@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Gestion de Anos Escolares - Sistema Escolar</title>
+    <title>Gestión de Años Escolares - Sistema Escolar</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00b689">
@@ -455,11 +455,11 @@
     <div class="container">
         <div class="header-section">
             <div>
-                <h1 style="margin:0; font-size: 24px;">Gestion de Anos Escolares</h1>
+                <h1 style="margin:0; font-size: 24px;">Gestión de Años Escolares</h1>
                 <p style="margin:5px 0 0 0; color:#64748b;">Panel de control y estadisticas de rendimiento</p>
             </div>
             <button class="btn-nuevo" onclick="abrirNuevoAno()">
-                <i class="fas fa-plus-circle"></i> Nuevo Ano Escolar
+                <i class="fas fa-plus-circle"></i> Nuevo Año Escolar
             </button>
         </div>
 
@@ -492,9 +492,9 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Ano Escolar</th>
+                        <th>Año Escolar</th>
                         <th>Inicio del Periodo</th>
-                        <th>Matricula Total</th>
+                        <th>Matrícula Total</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -511,9 +511,9 @@
             <div class="inst-header">
                 <img src="imagen.png" alt="Logo Colegio" class="inst-logo">
                 <div class="inst-info">
-                    <h4>Republica Bolivariana de Venezuela</h4>
-                    <h4>Ministerio del Poder Popular para la Educacion</h4>
-                    <h2>U.E.P "Don Tobias Álvarez Armas"</h2>
+                    <h4>República Bolivariana de Venezuela</h4>
+                    <h4>Ministerio del Poder Popular para la Educación</h4>
+                    <h2>Escuela "José Manuel Cova Maza"</h2>
                     <p>El Tigre - Edo. Anzoategui</p>
                 </div>
             </div>
@@ -523,8 +523,8 @@
             </div>
 
             <div class="report-data-grid">
-                <div class="data-box"><label>Ano Escolar</label><span id="repPeriodo"></span></div>
-                <div class="data-box"><label>Total Matricula</label><span id="repMatricula">342 Alumnos</span></div>
+                <div class="data-box"><label>Año Escolar</label><span id="repPeriodo"></span></div>
+                <div class="data-box"><label>Total Matrícula</label><span id="repMatricula">342 Alumnos</span></div>
                 <div class="data-box"><label>Promedio General</label><span>17.5 / 20</span></div>
                 <div class="data-box"><label>Estado del Ciclo</label><span>Culminado Exitosamente</span></div>
                 <div class="data-box"><label>Personal Directivo</label><span>Lcdo. Nombre Apellido</span></div>
@@ -551,8 +551,8 @@
 
             <p
                 style="font-size: 10px; color: #64748b; text-align: justify; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
-                Certifico que los datos aqui presentados corresponden al registro oficial de la institucion para el
-                periodo escolar mencionado, cumpliendo con los lineamientos del Ministerio de Educacion.
+                Certifico que los datos aqui presentados corresponden al registro oficial de la institución para el
+                periodo escolar mencionado, cumpliendo con los lineamientos del Ministerio de Educación.
             </p>
 
             <div class="signature-section">
@@ -572,8 +572,8 @@
 
     <div id="modalModificar" class="modal">
         <div class="modal-content">
-            <h2 style="margin-top:0; color:var(--primary);"><i class="fas fa-edit"></i> Modificar Ano Escolar</h2>
-            <p style="color:#64748b; font-size: 14px;">Actualice la informacion del periodo seleccionado.</p>
+            <h2 style="margin-top:0; color:var(--primary);"><i class="fas fa-edit"></i> Modificar Año Escolar</h2>
+            <p style="color:#64748b; font-size: 14px;">Actualice la información del periodo seleccionado.</p>
             <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
 
             <div class="form-group">
@@ -604,7 +604,7 @@
 
     <div id="modalNuevoAno" class="modal">
         <div class="modal-content">
-            <h2 style="margin-top:0; color:var(--primary);"><i class="fas fa-calendar-plus"></i> Abrir Nuevo Ano Escolar
+            <h2 style="margin-top:0; color:var(--primary);"><i class="fas fa-calendar-plus"></i> Abrir Nuevo Año Escolar
             </h2>
             <p style="color:#64748b; font-size: 14px;">Configure los parametros del proximo ciclo educativo.</p>
             <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
@@ -642,7 +642,7 @@
             <div style="display:flex; gap:10px; margin-top:25px;">
                 <button onclick="guardarNuevoAno()"
                     style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold;">Abrir
-                    Ano Escolar</button>
+                    Año Escolar</button>
                 <button onclick="cerrarModal('modalNuevoAno')"
                     style="flex:1; background:#e2e8f0; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold;">Cancelar</button>
             </div>
@@ -652,7 +652,7 @@
     <div id="modalCierre" class="modal">
         <div class="modal-content" style="text-align: center;">
             <div class="confirm-icon" style="color:var(--danger)"><i class="fas fa-exclamation-triangle"></i></div>
-            <h3>?Cerrar Ano Escolar?</h3>
+            <h3>¿Cerrar Año Escolar?</h3>
             <p>El periodo <b id="anoCierre"></b> sera archivado.</p>
             <div style="display:flex; gap:10px; margin-top:25px;">
                 <button onclick="exitoCierre()"
@@ -666,7 +666,7 @@
     <div id="modalExito" class="modal">
         <div class="modal-content" style="text-align: center;">
             <div class="confirm-icon" style="color:var(--success)"><i class="fas fa-check-circle"></i></div>
-            <h3 id="msgExito">!Éxito!</h3>
+            <h3 id="msgExito">¡Éxito!</h3>
             <button onclick="cerrarModal('modalExito')"
                 style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold;">Aceptar</button>
         </div>

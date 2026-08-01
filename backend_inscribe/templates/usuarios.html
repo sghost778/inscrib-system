@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Gestion de Usuarios - Sistema Escolar</title>
+    <title>Gestión de Usuarios - Sistema Escolar</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00b689">
@@ -203,7 +203,7 @@
     <div class="container">
         <div class="header-section">
             <div>
-                <h1 style="margin:0; font-size: 24px;">Gestion de Usuarios</h1>
+                <h1 style="margin:0; font-size: 24px;">Gestión de Usuarios</h1>
                 <p style="margin:5px 0 0 0; color:var(--gray);">Administre los accesos y credenciales del personal</p>
             </div>
             <button class="btn-nuevo" onclick="abrirModal('modalUsuario')">
@@ -250,16 +250,16 @@
                 <div class="section-title"><i class="fas fa-key"></i> Seguridad de Acceso</div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Contrasena</label>
+                        <label>Contraseña</label>
                         <input type="password" id="pass" required>
                     </div>
                     <div class="form-group">
-                        <label>Confirmar Contrasena</label>
+                        <label>Confirmar Contraseña</label>
                         <input type="password" id="passConfirm" required>
                     </div>
                 </div>
 
-                <div class="section-title"><i class="fas fa-shield-alt"></i> Preguntas de Recuperacion</div>
+                <div class="section-title"><i class="fas fa-shield-alt"></i> Preguntas de Recuperación</div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Color Favorito</label>
@@ -300,8 +300,8 @@
     <div id="modalEliminar" class="modal">
         <div class="modal-content" style="width: 400px; text-align: center;">
             <div class="confirm-icon" style="color:var(--danger)"><i class="fas fa-user-times"></i></div>
-            <h3>?Eliminar Usuario?</h3>
-            <p>?Estas seguro que deseas eliminar a <b id="nombreEliminar"></b>? Esta accion no se puede deshacer.</p>
+            <h3>¿Eliminar Usuario?</h3>
+            <p>¿Estas seguro que deseas eliminar a <b id="nombreEliminar"></b>? Esta acción no se puede deshacer.</p>
             <div style="display:flex; gap:10px; margin-top:25px;">
                 <button onclick="ejecutarEliminacion()"
                     style="flex:1; background:var(--danger); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Si,
@@ -316,7 +316,7 @@
     <div id="modalExito" class="modal">
         <div class="modal-content" style="width: 350px; text-align: center;">
             <div class="confirm-icon" style="color:var(--success)"><i class="fas fa-check-circle"></i></div>
-            <h3 id="mensajeExito">!Operacion Exitosa!</h3>
+            <h3 id="mensajeExito">¡Operacion Exitosa!</h3>
             <button onclick="cerrarModal('modalExito')"
                 style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Aceptar</button>
         </div>
