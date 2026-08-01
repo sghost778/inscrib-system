@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar - INSCRIBE SYSTEM</title>
 
-    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
@@ -240,43 +240,18 @@
     </div>
 
     <div class="container">
-        <img src="logo.png" alt="Logo" class="logo-img">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo-img">
         <div class="brand-name">INSCRIBE SYSTEM</div>
 
-        <div id="step1" class="step active">
-            <h2>Recuperar Cuenta</h2>
-            <label>Usuario</label>
-            <input type="text" id="user_rec" placeholder="Ingrese su usuario">
-            <button class="btn" onclick="validarPaso1()">CONTINUAR</button>
-        </div>
+                <div id="step1" class="step active">
+            <h2>Recuperar Cuenta</h2>
+            <label>Usuario</label>
+            <input type="text" id="user_rec" placeholder="Ingrese su usuario">
+            <label>Correo Electrónico</label>
+            <input type="email" id="email_rec" placeholder="correo@ejemplo.com">
+            <button class="btn" onclick="enviarSolicitud()">ENVIAR ENLACE</button>
+        </div>
 
-        <div id="step2" class="step">
-            <h2>Verificacion</h2>
-            <label>1. Color favorito</label>
-            <input type="text" id="q1">
-            <label>2. Nombre de mascota</label>
-            <input type="text" id="q2">
-            <label>3. Comida favorita</label>
-            <input type="text" id="q3">
-            <label>4. Nombre materno</label>
-            <input type="text" id="q4">
-            <button class="btn" onclick="validarPaso2()">VERIFICAR</button>
-        </div>
-
-        <div id="step3" class="step">
-            <h2>Nueva Contraseña</h2>
-            <label>Nueva Contraseña</label>
-            <div class="password-wrapper">
-                <input type="password" id="pass1" placeholder="Ingrese su nueva contraseña">
-                <i class="fa-solid fa-eye toggle-password" onclick="togglePass('pass1', this)"></i>
-            </div>
-            <label>Confirmar Contraseña</label>
-            <div class="password-wrapper">
-                <input type="password" id="pass2" placeholder="Ingrese su nueva contraseña">
-                <i class="fa-solid fa-eye toggle-password" onclick="togglePass('pass2', this)"></i>
-            </div>
-            <button class="btn" onclick="validarFinal()">RESTABLECER</button>
-        </div>
 
         <a href="/login"
             style="display:block; margin-top:20px; color:#888; text-decoration:none; font-size:0.85rem; font-weight: 600;">
@@ -292,8 +267,8 @@
         <div class="modal-content">
             <i class="fas fa-check-circle"></i>
             <h2 style="margin-bottom: 10px;">¡Listo!</h2>
-            <p style="color: #666; margin-bottom: 20px;">Tu contraseña ha sido actualizada correctamente.</p>
-            <button class="btn" onclick="window.location.href='/login'">REGRESAR AL LOGIN</button>
+            <p style="color: #666; margin-bottom: 20px;">Te enviamos un enlace a tu correo electrónico para restablecer tu contraseña.</p>
+            <button class="btn" onclick="window.location.href='/login'">IR AL LOGIN</button>
         </div>
     </div>
 
@@ -319,39 +294,36 @@
             }
         }
 
-        function nextStep(step) {
-            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-            document.getElementById('step' + step).classList.add('active');
-        }
-
-        function validarPaso1() {
-            if (document.getElementById('user_rec').value.trim() === "") {
-                mostrarError("Debe ingresar su usuario");
-            } else { nextStep(2); }
-        }
-
-        function validarPaso2() {
-            const q1 = document.getElementById('q1').value;
-            const q2 = document.getElementById('q2').value;
-            const q3 = document.getElementById('q3').value;
-            const q4 = document.getElementById('q4').value;
-            if (q1 === "" || q2 === "" || q3 === "" || q4 === "") {
-                mostrarError("Responda todas las preguntas");
-            } else { nextStep(3); }
-        }
-
-        function validarFinal() {
-            const p1 = document.getElementById('pass1').value;
-            const p2 = document.getElementById('pass2').value;
-            if (p1 === "" || p2 === "") {
-                mostrarError("Complete los campos");
-            } else if (p1 !== p2) {
-                mostrarError("Las contrasenas no coinciden");
-            } else {
-                document.getElementById('successModal').style.display = 'flex';
-            }
-        }
-
+                function enviarSolicitud() {
+            const usuario = document.getElementById('user_rec').value.trim();
+            const email = document.getElementById('email_rec').value.trim();
+            if (!usuario || !email) {
+                mostrarError("Ingrese su usuario y su correo electronico");
+                return;
+            }
+            if (email.indexOf('@') < 1 || email.indexOf('.') < 0) {
+                mostrarError("El correo no parece valido");
+                return;
+            }
+            fetch('/api/recuperar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ usuario: usuario, email: email })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('successModal').style.display = 'flex';
+                } else {
+                    mostrarError(data.message || 'Error al procesar la solicitud');
+                }
+            })
+            .catch(() => mostrarError('Error de conexion. Intenta de nuevo.'));
+        }
+
+
+
+
         // Registrar el Service Worker para la PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

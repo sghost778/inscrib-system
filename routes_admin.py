@@ -1,8 +1,10 @@
-from datetime import datetime
+import secrets
+from datetime import datetime, timedelta
 from flask import Blueprint, jsonify, request, session
 
 import models
 from security import check_password, log_audit, token_required
+from email_service import smtp_configurado, enviar_correo_recuperacion, enviar_aviso_cambio_contrasena
 
 api_admin = Blueprint("api_admin", __name__)
 
@@ -543,3 +545,113 @@ def ver_matricula():
             "grado": ins.grado.nombre, "tipo": "regular",
         })
     return jsonify(resultado)
+
+
+# ============================
+# RECUPERACION DE CONTRASENA
+# ============================
+@api_admin.route("/registro", methods=["POST"])
+def registrarse():
+    data = request.get_json() or {}
+    usuario = (data.get('usuario') or '').strip()
+    password = data.get('password', '')
+    nombre = (data.get('nombre') or '').strip()
+    apellido = (data.get('apellido') or '').strip()
+    email = (data.get('email') or '').strip()
+    if not usuario or not password:
+        return jsonify({"success": False, "message": "Usuario y contrasena requeridos"}), 400
+    if len(password) < 4:
+        return jsonify({"success": False, "message": "La contrasena debe tener al menos 4 caracteres"}), 400
+    if models.Usuario.query.filter_by(usuario=usuario).first():
+        return jsonify({"success": False, "message": "El usuario ya existe"}), 400
+    from security import hash_password
+    u = models.Usuario(nombre=nombre, apellido=apellido, usuario=usuario,
+                       password_hash=hash_password(password), rol='secretario', email=email or None)
+    models.db.session.add(u)
+    models.db.session.commit()
+    return jsonify({"success": True, "message": "Cuenta creada correctamente. Ya puedes iniciar sesion."}), 201
+
+
+@api_admin.route("/recuperar", methods=["POST"])
+def recuperar():
+    data = request.get_json() or {}
+    usuario = (data.get('usuario') or '').strip()
+    email = (data.get('email') or '').strip().lower()
+    if not usuario or not email:
+        return jsonify({"success": False, "message": "Ingresa tu usuario y tu correo electronico"}), 400
+    if "@" not in email or "." not in email.split("@")[-1]:
+        return jsonify({"success": False, "message": "El correo no parece valido"}), 400
+
+    user = models.Usuario.query.filter_by(usuario=usuario).first()
+    if not user:
+        return jsonify({"success": False, "message": "No se encontro una cuenta con este usuario"}), 404
+
+    email_guardado = (user.email or '').strip().lower()
+    if email_guardado and email_guardado != email:
+        return jsonify({"success": False, "message": "El correo no coincide con el registrado para este usuario"}), 400
+    if not email_guardado:
+        user.email = email
+        models.db.session.commit()
+
+    if not smtp_configurado():
+        return jsonify({"success": False,
+                        "message": "El envio de correos no esta configurado en el servidor. Agregue las variables SMTP_* para poder enviar el enlace."}), 500
+
+    token = secrets.token_urlsafe(32)
+    for viejo in models.ResetToken.query.filter_by(id_usuario=user.id_usuario, usado=False).all():
+        viejo.usado = True
+    nuevo = models.ResetToken(
+        token=token,
+        id_usuario=user.id_usuario,
+        expiracion=datetime.utcnow() + timedelta(hours=1),
+        usado=False
+    )
+    models.db.session.add(nuevo)
+    models.db.session.commit()
+
+    base = request.host_url.rstrip('/')
+    enlace = f"{base}/restablecer?token={token}"
+    nombre = f"{user.nombre or ''} {user.apellido or ''}".strip() or user.usuario
+    try:
+        enviar_correo_recuperacion(nombre, user.email, enlace)
+    except Exception as e:
+        print(f"[CORREO] Correo de recuperacion no enviado: {e}")
+        return jsonify({"success": False, "message": f"Error al enviar el correo: {str(e)}"}), 500
+
+    return jsonify({"success": True,
+                    "message": "Te enviamos un enlace a tu correo electronico para restablecer tu contrasena. Revisa tu bandeja de entrada."})
+
+
+@api_admin.route("/restablecer", methods=["POST"])
+def restablecer():
+    data = request.get_json() or {}
+    token = (data.get('token') or '').strip()
+    new_pass = data.get('new_password', '')
+    if not token or not new_pass:
+        return jsonify({"success": False, "message": "Token y nueva contrasena requeridos"}), 400
+    if len(new_pass) < 4:
+        return jsonify({"success": False, "message": "La nueva contrasena debe tener al menos 4 caracteres"}), 400
+
+    rt = models.ResetToken.query.filter_by(token=token, usado=False).first()
+    if not rt:
+        return jsonify({"success": False, "message": "El enlace no es valido o ya fue usado. Solicita uno nuevo."}), 400
+    if rt.expiracion < datetime.utcnow():
+        return jsonify({"success": False, "message": "El enlace ha expirado. Solicita uno nuevo."}), 400
+
+    user = models.Usuario.query.get(rt.id_usuario)
+    if not user:
+        return jsonify({"success": False, "message": "Usuario no encontrado"}), 404
+
+    from security import hash_password
+    user.password_hash = hash_password(new_pass)
+    rt.usado = True
+    models.db.session.commit()
+
+    redirect_destino = "/portal" if getattr(user, 'rol', '') == 'representante' else "/login"
+    try:
+        if user.email and smtp_configurado():
+            enviar_aviso_cambio_contrasena(f"{user.nombre or ''} {user.apellido or ''}".strip() or user.usuario, user.email)
+    except Exception as e:
+        print(f"[CORREO] Aviso de restablecimiento no enviado: {e}")
+
+    return jsonify({"success": True, "message": "Contrasena restablecida correctamente", "redirect": redirect_destino})

@@ -1,7 +1,15 @@
-from datetime import datetime
+import secrets
+from datetime import datetime, timedelta
 from flask import Blueprint, jsonify, request, session
 
 import models
+from email_service import (
+    smtp_configurado,
+    enviar_bienvenida,
+    enviar_confirmacion_inscripcion,
+    enviar_aviso_cambio_contrasena,
+    enviar_correo_recuperacion,
+)
 
 api_public = Blueprint("api_public", __name__)
 
@@ -108,6 +116,12 @@ def portal_registro():
         )
         models.db.session.add(user)
         models.db.session.commit()
+
+        try:
+            if rep.email and smtp_configurado():
+                enviar_bienvenida(f"{rep.nombres} {rep.apellidos}", rep.email)
+        except Exception as e:
+            print(f"[CORREO] Bienvenida no enviada: {e}")
 
         return jsonify({"success": True, "message": "Registro exitoso. Ya puedes iniciar sesion."}), 201
     except Exception as e:
@@ -251,6 +265,18 @@ def portal_inscribir():
         )
         models.db.session.add(inscripcion)
         models.db.session.commit()
+
+        try:
+            if rep.email and smtp_configurado():
+                grado_nombre = inscripcion.grado.nombre if inscripcion.grado else "N/A"
+                enviar_confirmacion_inscripcion(
+                    f"{rep.nombres} {rep.apellidos}", rep.email,
+                    f"{estudiante.nombres} {estudiante.apellidos}",
+                    grado_nombre, ano_activo.periodo
+                )
+        except Exception as e:
+            print(f"[CORREO] Confirmacion de inscripcion no enviada: {e}")
+
         return jsonify({"success": True, "message": "Inscripcion realizada exitosamente"}), 201
     except Exception as e:
         models.db.session.rollback()
@@ -307,18 +333,103 @@ def portal_password():
         return jsonify({"success": False, "message": "Contrasena actual incorrecta"}), 401
     user.password_hash = hash_password(new_pass)
     models.db.session.commit()
+
+    rep = models.Representante.query.filter_by(cedula=cedula_rep).first()
+    try:
+        if rep and rep.email and smtp_configurado():
+            enviar_aviso_cambio_contrasena(f"{rep.nombres} {rep.apellidos}", rep.email)
+    except Exception as e:
+        print(f"[CORREO] Aviso de cambio de contrasena no enviado: {e}")
+
     return jsonify({"success": True, "message": "Contrasena cambiada exitosamente"})
 
 
 @api_public.route("/portal/recuperar", methods=["POST"])
 def portal_recuperar():
-    cedula = (request.get_json() or {}).get('cedula', '').strip()
-    if not cedula:
-        return jsonify({"success": False, "message": "Ingresa tu cedula"}), 400
+    data = request.get_json() or {}
+    cedula = (data.get('cedula') or '').strip()
+    email = (data.get('email') or '').strip().lower()
+    if not cedula or not email:
+        return jsonify({"success": False, "message": "Ingresa tu cedula y tu correo electronico"}), 400
+    if "@" not in email or "." not in email.split("@")[-1]:
+        return jsonify({"success": False, "message": "El correo no parece valido"}), 400
+
     user = models.Usuario.query.filter_by(usuario=cedula, rol='representante').first()
     if not user:
         return jsonify({"success": False, "message": "No se encontro una cuenta con esta cedula"}), 404
-    return jsonify({"success": True, "message": "Tu cedula esta registrada. Contacta a la institucion para restablecer tu contrasena o usa la opcion de cambio desde tu perfil."})
+    rep = models.Representante.query.filter_by(cedula=cedula).first()
+    if not rep:
+        return jsonify({"success": False, "message": "Representante no encontrado"}), 404
+
+    email_registrado = (rep.email or '').strip().lower()
+    if email_registrado and email_registrado != email:
+        return jsonify({"success": False, "message": "El correo no coincide con el registrado para esta cedula"}), 400
+    if not email_registrado:
+        rep.email = email
+        models.db.session.commit()
+
+    if not smtp_configurado():
+        return jsonify({"success": False,
+                        "message": "El envio de correos no esta configurado en el servidor. Contacta a la institucion para restablecer tu contrasena."}), 500
+
+    token = secrets.token_urlsafe(32)
+    for viejo in models.ResetToken.query.filter_by(id_usuario=user.id_usuario, usado=False).all():
+        viejo.usado = True
+    nuevo = models.ResetToken(
+        token=token,
+        id_usuario=user.id_usuario,
+        expiracion=datetime.utcnow() + timedelta(hours=1),
+        usado=False
+    )
+    models.db.session.add(nuevo)
+    models.db.session.commit()
+
+    base = request.host_url.rstrip('/')
+    enlace = f"{base}/restablecer?token={token}"
+    try:
+        enviar_correo_recuperacion(f"{rep.nombres} {rep.apellidos}", rep.email, enlace)
+    except Exception as e:
+        print(f"[CORREO] Correo de recuperacion no enviado: {e}")
+        return jsonify({"success": False, "message": f"Error al enviar el correo: {str(e)}"}), 500
+
+    return jsonify({"success": True,
+                    "message": "Te enviamos un enlace a tu correo electronico para restablecer tu contrasena. Revisa tu bandeja de entrada."})
+
+
+@api_public.route("/restablecer", methods=["POST"])
+def restablecer():
+    data = request.get_json() or {}
+    token = (data.get('token') or '').strip()
+    new_pass = data.get('new_password', '')
+    if not token or not new_pass:
+        return jsonify({"success": False, "message": "Token y nueva contrasena requeridos"}), 400
+    if len(new_pass) < 4:
+        return jsonify({"success": False, "message": "La nueva contrasena debe tener al menos 4 caracteres"}), 400
+
+    rt = models.ResetToken.query.filter_by(token=token, usado=False).first()
+    if not rt:
+        return jsonify({"success": False, "message": "El enlace no es valido o ya fue usado. Solicita uno nuevo."}), 400
+    if rt.expiracion < datetime.utcnow():
+        return jsonify({"success": False, "message": "El enlace ha expirado. Solicita uno nuevo."}), 400
+
+    user = models.Usuario.query.get(rt.id_usuario)
+    if not user:
+        return jsonify({"success": False, "message": "Usuario no encontrado"}), 404
+
+    from security import hash_password
+    user.password_hash = hash_password(new_pass)
+    rt.usado = True
+    models.db.session.commit()
+
+    redirect_destino = "/portal" if getattr(user, 'rol', '') == 'representante' else "/login"
+    rep = models.Representante.query.filter_by(cedula=user.usuario).first()
+    try:
+        if rep and rep.email and smtp_configurado():
+            enviar_aviso_cambio_contrasena(f"{rep.nombres} {rep.apellidos}", rep.email)
+    except Exception as e:
+        print(f"[CORREO] Aviso de restablecimiento no enviado: {e}")
+
+    return jsonify({"success": True, "message": "Contrasena restablecida correctamente", "redirect": redirect_destino})
 
 
 @api_public.route("/portal/constancia/<cedula_escolar>", methods=["GET"])

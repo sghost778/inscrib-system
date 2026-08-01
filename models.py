@@ -74,6 +74,16 @@ class Usuario(db.Model):
     usuario = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     rol = db.Column(db.String(20), default='admin')  # admin / secretario / docente
+    email = db.Column(db.String(100))
+
+class ResetToken(db.Model):
+    __tablename__ = 'RESET_TOKEN'
+    id_token = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(64), unique=True, nullable=False)
+    id_usuario = db.Column(db.Integer, db.ForeignKey('USUARIO.id_usuario'), nullable=False)
+    expiracion = db.Column(db.DateTime, nullable=False)
+    usado = db.Column(db.Boolean, default=False)
+    fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
 
 class RegistroAuditoria(db.Model):
     __tablename__ = 'REGISTRO_AUDITORIA'

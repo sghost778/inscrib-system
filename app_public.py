@@ -6,6 +6,7 @@ from flask_cors import CORS
 from config import Config
 from models import db
 from routes_public import api_public
+from db_migrate import migrar_bd
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'backend_inscribe', 'static', 'uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'}
@@ -19,6 +20,8 @@ def create_app():
     app.config.from_object(Config)
 
     db.init_app(app)
+    with app.app_context():
+        migrar_bd()
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
@@ -73,6 +76,10 @@ def create_app():
     @app.route('/portal')
     def view_portal():
         return render_template('portal.html')
+
+    @app.route('/restablecer')
+    def view_restablecer():
+        return render_template('restablecer.html')
 
     def allowed_file(filename):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

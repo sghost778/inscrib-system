@@ -39,9 +39,12 @@ def enviar_correo(destinatario, asunto, mensaje_html, remitente_nombre=None):
             server.sendmail(remitente, [destinatario], msg.as_string())
 
 
-def plantilla_correo(nombre_destinatario, cuerpo):
+def plantilla_correo(nombre_destinatario, cuerpo, escapar=True):
     nombre_html = nombre_destinatario.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-    cuerpo_html = cuerpo.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br>")
+    if escapar:
+        cuerpo_html = cuerpo.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br>")
+    else:
+        cuerpo_html = cuerpo.replace("\n", "<br>")
     return f"""\
 <html>
 <body style="margin:0;padding:0;background-color:#f4f6f8;font-family:'Segoe UI',Arial,sans-serif;">
@@ -60,3 +63,44 @@ def plantilla_correo(nombre_destinatario, cuerpo):
   </div>
 </body>
 </html>"""
+
+
+# ============================
+# CORREOS AUTOMATICOS DEL SISTEMA
+# ============================
+
+def _boton_enlace(url, texto):
+    return (f'<a href="{url}" style="background:#00b689;color:#ffffff;padding:12px 24px;'
+            f'border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block;'
+            f'margin:8px 0;">{texto}</a>')
+
+
+def enviar_bienvenida(nombre, email_destino):
+    cuerpo = ("Tu cuenta en el <strong>Portal de Representantes</strong> fue creada correctamente. "
+              "Ya puedes iniciar sesion con tu cedula y la contrasena que registraste. "
+              "Si tienes dudas, contacta a la institucion.")
+    enviar_correo(email_destino, "Bienvenido/a al Portal de Representantes",
+                  plantilla_correo(nombre, cuerpo))
+
+
+def enviar_confirmacion_inscripcion(nombre, email_destino, estudiante, grado, periodo):
+    cuerpo = (f"Te confirmamos que el estudiante <strong>{estudiante}</strong> fue inscrito "
+              f"en el grado <strong>{grado}</strong> para el periodo <strong>{periodo}</strong>.")
+    enviar_correo(email_destino, "Confirmacion de Inscripcion",
+                  plantilla_correo(nombre, cuerpo))
+
+
+def enviar_aviso_cambio_contrasena(nombre, email_destino):
+    cuerpo = ("Tu contrasena fue cambiada correctamente. "
+              "Si no realizaste este cambio, contacta de inmediato a la institucion.")
+    enviar_correo(email_destino, "Contrasena actualizada",
+                  plantilla_correo(nombre, cuerpo))
+
+
+def enviar_correo_recuperacion(nombre, email_destino, enlace):
+    cuerpo = ("Recibimos una solicitud para restablecer tu contrasena. "
+              "Abre el siguiente enlace para continuar (valido por 1 hora):<br><br>"
+              + _boton_enlace(enlace, "Restablecer Contrasena") +
+              "<br>Si no solicitaste este cambio, ignora este mensaje.")
+    enviar_correo(email_destino, "Restablecer contrasena",
+                  plantilla_correo(nombre, cuerpo, escapar=False))

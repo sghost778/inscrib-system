@@ -223,13 +223,14 @@
 <div class="modal" id="modalRecuperar">
     <div class="modal-content">
         <h3><i class="fas fa-key"></i> Recuperar Contraseña</h3>
-        <p style="margin:10px 0;color:#636e72;font-size:0.9rem;">Ingresa tu cédula para verificar si tienes una cuenta registrada.</p>
+        <p style="margin:10px 0;color:#636e72;font-size:0.9rem;">Ingresa tu cédula y el correo registrado. Te enviaremos un enlace para restablecer tu contraseña.</p>
         <div class="form-group"><label>Cédula</label><input type="text" id="recCedula" placeholder="V-12345678"></div>
+        <div class="form-group"><label>Correo Electrónico</label><input type="email" id="recEmail" placeholder="correo@ejemplo.com"></div>
         <p id="recError" style="color:#dc2626;font-size:0.85rem;display:none;"></p>
         <p id="recSuccess" style="color:#16a34a;font-size:0.85rem;display:none;"></p>
         <div class="modal-actions">
             <button class="btn btn-outline" onclick="cerrarModal('modalRecuperar')">Cerrar</button>
-            <button class="btn btn-primary" onclick="recuperarCuenta()" style="width:auto;">Verificar</button>
+            <button class="btn btn-primary" onclick="recuperarCuenta()" style="width:auto;">Enviar enlace</button>
         </div>
     </div>
 </div>
@@ -517,6 +518,7 @@
 
     function mostrarRecuperar() {
         document.getElementById('recCedula').value = document.getElementById('loginCedula').value;
+        document.getElementById('recEmail').value = '';
         document.getElementById('recError').style.display = 'none';
         document.getElementById('recSuccess').style.display = 'none';
         abrirModal('modalRecuperar');
@@ -524,9 +526,11 @@
 
     async function recuperarCuenta() {
         const cedula = document.getElementById('recCedula').value.trim();
-        if (!cedula) { document.getElementById('recError').textContent = 'Ingresa tu cedula'; document.getElementById('recError').style.display = 'block'; return; }
+        const email = document.getElementById('recEmail').value.trim();
+        if (!cedula || !email) { document.getElementById('recError').textContent = 'Ingresa tu cedula y tu correo electronico'; document.getElementById('recError').style.display = 'block'; return; }
+        if (email.indexOf('@') < 1 || email.indexOf('.') < 0) { document.getElementById('recError').textContent = 'El correo no parece valido'; document.getElementById('recError').style.display = 'block'; return; }
         try {
-            const res = await fetch('/api/portal/recuperar', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cedula}) });
+            const res = await fetch('/api/portal/recuperar', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cedula, email}) });
             const data = await res.json();
             if (data.success) { document.getElementById('recSuccess').textContent = data.message; document.getElementById('recSuccess').style.display = 'block'; document.getElementById('recError').style.display = 'none'; }
             else { document.getElementById('recError').textContent = data.message; document.getElementById('recError').style.display = 'block'; document.getElementById('recSuccess').style.display = 'none'; }

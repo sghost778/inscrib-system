@@ -11,6 +11,7 @@ from models import db, Usuario
 from sqlalchemy import text
 from routes_admin import api_admin
 from security import hash_password
+from db_migrate import migrar_bd
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'backend_inscribe', 'static', 'uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'}
@@ -53,9 +54,17 @@ def create_app():
     def view_login():
         return render_template('login.html')
 
+    @app.route('/registro')
+    def view_registro():
+        return render_template('registro.html')
+
     @app.route('/recuperar')
     def view_recuperar():
         return render_template('recuperar.html')
+
+    @app.route('/restablecer')
+    def view_restablecer():
+        return render_template('restablecer.html')
 
     @app.route('/logout')
     def view_logout():
@@ -147,7 +156,7 @@ def create_app():
 
     # ---- DATABASE SETUP ----
     with app.app_context():
-        db.create_all()
+        migrar_bd()
 
         try:
             db.session.execute(text("ALTER TABLE INSCRIPCION ADD COLUMN estado TEXT DEFAULT 'REGULAR';"))
