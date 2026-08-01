@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Control de Matricula - Gestion Escolar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00b689">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
+
+    <style>
+        :root {
+            --primary: #1e40af;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --bg: #f8fafc;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .header-section {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary);
+        }
+
+        .status-alert {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            padding: 12px;
+            border-radius: 8px;
+            color: #9f1239;
+            font-weight: 600;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: #e2e8f0;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 8px;
+            color: #475569;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .table-container {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f1f5f9;
+            padding: 15px;
+            text-align: left;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .lapso-box {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 800;
+            text-align: center;
+            min-width: 30px;
+        }
+
+        .l1 {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .l2 {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .l3 {
+            background: #fef9c3;
+            color: #854d0e;
+            border: 1px solid #fef08a;
+        }
+
+        .btn-modificar {
+            background: #f1f5f9;
+            color: var(--primary);
+            border: 1px solid #cbd5e1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .btn-modificar:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-retirar {
+            background: #fff1f2;
+            color: var(--danger);
+            border: 1px solid #fecdd3;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-retirar:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .badge-info {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 480px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #64748b;
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .confirm-icon {
+            font-size: 50px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header-section">
+            <h1 style="margin:0;">Control de Matricula Activa</h1>
+            <p style="margin:5px 0 0 0; color:#64748b;">Administracion de Grados y Evaluacion por Lapsos</p>
+
+            <div class="status-alert" id="alertaLimite">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Atencion: Modificaciones permitidas hasta el 06 de mayo de 2026.</span>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="inputBusqueda" placeholder="Buscar por nombre, cedula o institucion..."
+                onkeyup="buscar()">
+            <button class="tab-btn active" id="btnTodos" onclick="renderizar('todos')">Matricula Total</button>
+            <button class="tab-btn" id="btnNuevos" onclick="renderizar('nuevos')">Nuevos Ingresos</button>
+            <button class="tab-btn" id="btnRetiros" onclick="renderizar('retiros')">Retiros</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead id="cabeceraTabla"></thead>
+                <tbody id="cuerpoTabla"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="modalModificar" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-top:0; color:var(--primary); text-align: left;">Modificar Datos</h2>
+            <p id="estudianteSeleccionado" style="font-weight:bold; text-align: left;"></p>
+            <hr>
+            <div class="form-group">
+                <label>GRADO / AA‘O</label>
+                <select id="selectGrado">
+                    <option value="1ero">Primer Grado</option>
+                    <option value="2do">Segundo Grado</option>
+                    <option value="3ero">Tercer Grado</option>
+                    <option value="4to">Cuarto Grado</option>
+                    <option value="5to">Quinto Grado</option>
+                    <option value="6to">Sexto Grado</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>LAPSO DE REGISTRO</label>
+                <select id="selectLapsoRegistro">
+                    <option value="Lapso 1">Lapso 1</option>
+                    <option value="Lapso 2">Lapso 2</option>
+                    <option value="Lapso 3">Lapso 3</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>AA‘O ESCOLAR</label>
+                <input type="text" id="inputAnoEscolar" placeholder="Ej: 2025-2026">
+            </div>
+            <div style="display:flex; gap:10px; margin-top:25px;">
+                <button onclick="preguntarGuardar()"
+                    style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold;">Guardar
+                    Cambios</button>
+                <button onclick="cerrar()"
+                    style="flex:1; background:#e2e8f0; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalRetirar" class="modal">
+        <div class="modal-content">
+            <div class="confirm-icon" style="color:var(--danger)"><i class="fas fa-user-minus"></i></div>
+            <h2 style="margin-top:0; color:var(--danger);">Procesar Retiro</h2>
+            <p id="estudianteARetirar" style="font-weight:bold;"></p>
+            <div class="form-group">
+                <label>FECHA DE RETIRO</label>
+                <input type="date" id="fechaRetiroInput">
+            </div>
+            <div class="form-group">
+                <label>LAPSO DEL RETIRO</label>
+                <select id="lapsoRetiroInput">
+                    <option value="Lapso 1">Lapso 1</option>
+                    <option value="Lapso 2">Lapso 2</option>
+                    <option value="Lapso 3">Lapso 3</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>MOTIVO DEL RETIRO (CASILLA DE TEXTO)</label>
+                <textarea id="motivoRetiroTexto" rows="3"
+                    placeholder="Escriba aqui la razon detallada del retiro..."></textarea>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button onclick="confirmarExitoRetiro()"
+                    style="flex:1; background:var(--danger); color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold;">Confirmar
+                    Retiro</button>
+                <button onclick="cerrarRetiro()"
+                    style="flex:1; background:#cbd5e1; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalPregunta" class="modal">
+        <div class="modal-content">
+            <div class="confirm-icon"><i class="fas fa-question-circle"></i></div>
+            <h3>?Desea guardar esta informacion?</h3>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button onclick="confirmarExito()"
+                    style="flex:1; background:var(--success); color:white; border:none; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold;">Si,
+                    Guardar</button>
+                <button onclick="cerrarPregunta()"
+                    style="flex:1; background:#cbd5e1; border:none; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold;">No,
+                    Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalExito" class="modal">
+        <div class="modal-content">
+            <div class="confirm-icon" style="color:var(--success)"><i class="fas fa-check-circle"></i></div>
+            <h3 id="tituloExito">!Guardado con exito!</h3>
+            <p>La base de datos ha sido actualizada correctamente.</p>
+            <button onclick="cerrarTodo()"
+                style="width:100%; background:var(--primary); color:white; border:none; padding:10px; border-radius:8px; margin-top:15px; cursor:pointer; font-weight:bold;">Aceptar</button>
+        </div>
+    </div>
+
+    <script>
+        let data = [];
+        const FECHA_LIMITE = new Date("2026-05-06");
+        const esFechaBloqueada = new Date() > FECHA_LIMITE;
+        let inscripcionSeleccionadaId = null;
+
+        async function cargarMatricula() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/matricula', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                data = await response.json();
+
+                const tbody = document.getElementById('cuerpoTabla');
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay inscripciones activas registradas.</td></tr>';
+                    return;
+                }
+
+                renderizar('todos');
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function renderizar(filtro) {
+            const cuerpo = document.getElementById('cuerpoTabla');
+            const cabecera = document.getElementById('cabeceraTabla');
+            const btns = document.querySelectorAll('.tab-btn');
+
+            btns.forEach(b => b.classList.remove('active'));
+            document.getElementById('btn' + filtro.charAt(0).toUpperCase() + filtro.slice(1)).classList.add('active');
+
+            cuerpo.innerHTML = "";
+
+            if (filtro === 'retiros') {
+                cabecera.innerHTML = `<tr><th>Estudiante</th><th>Cedula</th><th>Grado</th><th>Fecha Retiro</th><th>Lapso Retiro</th><th>Motivo</th><th>Acciones</th></tr>`;
+            } else if (filtro === 'nuevos') {
+                cabecera.innerHTML = `<tr><th>Estudiante</th><th>Cedula</th><th>Grado</th><th>Plantel Procedencia</th><th>Fecha Ingreso</th><th>Lapso</th><th>Acciones</th></tr>`;
+            } else {
+                cabecera.innerHTML = `<tr><th>Estudiante</th><th>Cedula</th><th>Grado</th><th>Lapso 1</th><th>Lapso 2</th><th>Lapso 3</th><th>Acciones</th></tr>`;
+            }
+
+            data.forEach(est => {
+                if (filtro === 'nuevos' && est.tipo !== 'nuevo') return;
+                if (filtro === 'retiros' && est.tipo !== 'retiro') return;
+                if (filtro === 'todos' && est.tipo === 'retiro') return;
+
+                const tr = document.createElement('tr');
+
+                // Format name bold for first name
+                let nombreParts = est.nombre.split(' ');
+                let nombreHTML = est.nombre;
+                if (nombreParts.length > 1) {
+                    nombreHTML = `<b>${nombreParts[0]} ${nombreParts[1] || ''}</b> ${nombreParts.slice(2).join(' ')}`;
+                } else {
+                    nombreHTML = `<b>${est.nombre}</b>`;
+                }
+
+                if (filtro === 'todos') {
+                    tr.innerHTML = `
+                    <td>${nombreHTML}</td>
+                    <td>${est.cedula}</td>
+                    <td><span style="font-weight:bold; color:#475569;">${est.grado}</span></td>
+                    <td><span class="lapso-box l1">${est.l1}</span></td>
+                    <td><span class="lapso-box l2">${est.l2}</span></td>
+                    <td><span class="lapso-box l3">${est.l3}</span></td>
+                    <td>
+                        <button class="btn-modificar" onclick="abrirModal(${est.id_inscripcion}, '${est.nombre}', '${est.grado}', '${est.lapsoReg}', '${est.ano}')">
+                            <i class="fas fa-user-edit"></i> Modificar
+                        </button>
+                        <button class="btn-retirar" onclick="abrirModalRetirar(${est.id_inscripcion}, '${est.nombre}')">
+                            <i class="fas fa-user-minus"></i> Retirar
+                        </button>
+                    </td>`;
+                } else if (filtro === 'retiros') {
+                    tr.innerHTML = `
+                    <td>${nombreHTML}</td>
+                    <td>${est.cedula}</td>
+                    <td><span style="font-weight:bold; color:#475569;">${est.grado}</span></td>
+                    <td><span class="badge-info">${est.fecha}</span></td>
+                    <td><span class="badge-info">${est.lapsoReg}</span></td>
+                    <td><small>${est.motivoRetiro}</small></td>
+                    <td>
+                        <button class="btn-modificar" onclick="abrirModal(${est.id_inscripcion}, '${est.nombre}', '${est.grado}', '${est.lapsoReg}', '${est.ano}')">
+                            <i class="fas fa-user-edit"></i> Modificar
+                        </button>
+                    </td>`;
+                } else if (filtro === 'nuevos') {
+                    tr.innerHTML = `
+                    <td>${nombreHTML}</td>
+                    <td>${est.cedula}</td>
+                    <td><span style="font-weight:bold; color:#475569;">${est.grado}</span></td>
+                    <td><span class="badge-info">${est.procedencia}</span></td>
+                    <td><span class="badge-info">${est.fecha}</span></td>
+                    <td><span class="badge-info">${est.lapsoReg}</span></td>
+                    <td>
+                        <button class="btn-modificar" onclick="abrirModal(${est.id_inscripcion}, '${est.nombre}', '${est.grado}', '${est.lapsoReg}', '${est.ano}')">
+                            <i class="fas fa-user-edit"></i> Modificar
+                        </button>
+                    </td>`;
+                }
+                cuerpo.appendChild(tr);
+            });
+        }
+
+        function abrirModal(id, nombre, grado, lapso, ano) {
+            inscripcionSeleccionadaId = id;
+            document.getElementById('estudianteSeleccionado').innerText = "Estudiante: " + nombre;
+            // Simplificado, the mockup hardcodes string values like '1ero', so we try to match it if it matches
+            document.getElementById('selectLapsoRegistro').value = lapso;
+            document.getElementById('inputAnoEscolar').value = ano;
+            document.getElementById('modalModificar').style.display = 'flex';
+        }
+
+        function abrirModalRetirar(id, nombre) {
+            inscripcionSeleccionadaId = id;
+            document.getElementById('estudianteARetirar').innerText = nombre;
+            document.getElementById('fechaRetiroInput').valueAsDate = new Date();
+            document.getElementById('motivoRetiroTexto').value = "";
+            document.getElementById('modalRetirar').style.display = 'flex';
+        }
+
+        async function confirmarExitoRetiro() {
+            if (!inscripcionSeleccionadaId) return;
+
+            const fecha = document.getElementById('fechaRetiroInput').value;
+            const lapso = document.getElementById('lapsoRetiroInput').value;
+            const motivo = document.getElementById('motivoRetiroTexto').value;
+
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`/api/matricula/${inscripcionSeleccionadaId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        estado: 'retiro',
+                        fecha_retiro: fecha,
+                        lapso_registro: lapso,
+                        motivo_retiro: motivo
+                    })
+                });
+                const result = await res.json();
+
+                if (res.ok) {
+                    cerrarRetiro();
+                    document.getElementById('tituloExito').innerText = "!Retiro Exitoso!";
+                    document.getElementById('modalExito').style.display = 'flex';
+                    cargarMatricula(); // Recargar datos
+                } else {
+                    alert("Error al retirar: " + result.message);
+                    cerrarRetiro();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function cerrar() { document.getElementById('modalModificar').style.display = 'none'; }
+        function cerrarRetiro() { document.getElementById('modalRetirar').style.display = 'none'; }
+        function preguntarGuardar() { document.getElementById('modalPregunta').style.display = 'flex'; }
+        function cerrarPregunta() { document.getElementById('modalPregunta').style.display = 'none'; }
+
+        async function confirmarExito() {
+            if (!inscripcionSeleccionadaId) return;
+
+            const lapso = document.getElementById('selectLapsoRegistro').value;
+
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`/api/matricula/${inscripcionSeleccionadaId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ lapso_registro: lapso })
+                });
+                const result = await res.json();
+
+                if (res.ok) {
+                    cerrarPregunta();
+                    cerrar();
+                    document.getElementById('tituloExito').innerText = "!Guardado con exito!";
+                    document.getElementById('modalExito').style.display = 'flex';
+                    cargarMatricula();
+                } else {
+                    alert("Error al guardar: " + result.message);
+                    cerrarPregunta();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function cerrarTodo() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+
+        function buscar() {
+            let texto = document.getElementById('inputBusqueda').value.toLowerCase();
+            let filas = document.querySelectorAll('#cuerpoTabla tr');
+            filas.forEach(f => {
+                f.style.display = f.innerText.toLowerCase().includes(texto) ? "" : "none";
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', cargarMatricula);
+
+        // Registrar el Service Worker para la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registrado con exito:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Error al registrar el ServiceWorker:', error);
+                    });
+            });
+        }
+    </script>
+
+</body>
+
+</html>

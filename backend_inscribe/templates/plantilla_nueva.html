@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ficha de Inscripcion Oficial - Periodo 2026-2027</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00b689">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
+
+    <style>
+        :root {
+            --primary-color: #00b689;
+        }
+
+        body {
+            font-family: "Arial Narrow", Arial, sans-serif;
+            background-color: #525659;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .seccion-busqueda {
+            background: #ffffff;
+            padding: 10px 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            width: 21cm;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            box-sizing: border-box;
+        }
+
+        .contenedor-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .prefijo-v {
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .input-busqueda {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 150px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .input-busqueda:focus {
+            border-color: var(--primary-color);
+        }
+
+        .hoja {
+            background-color: white;
+            width: 21cm;
+            min-height: 29.7cm;
+            padding: 1.5cm;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+        }
+
+        /* Encabezado */
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .logo-gobierno {
+            width: 80px;
+            height: auto;
+        }
+
+        .texto-institucion {
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            flex: 1;
+            line-height: 1.2;
+        }
+
+        .foto-boxes {
+            display: flex;
+            gap: 10px;
+        }
+
+        .foto-box {
+            width: 75px;
+            height: 95px;
+            border: 1.5px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        .titulo-ficha {
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin: 15px 0;
+        }
+
+        /* Estilo de Tablas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 8px;
+            table-layout: fixed;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 3px 5px;
+            font-size: 9.5px;
+            vertical-align: top;
+        }
+
+        .header-seccion {
+            background-color: #f0f0f0;
+            text-align: center;
+            font-weight: bold;
+            font-size: 10.5px;
+            text-transform: uppercase;
+        }
+
+        .label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"] {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 10px;
+            font-family: inherit;
+            background: transparent;
+        }
+
+        /* Continuidad Academica */
+        .tabla-continuidad td {
+            text-align: center;
+            height: 18px;
+        }
+
+        .small-text {
+            font-size: 7px;
+            font-weight: bold;
+        }
+
+        /* Recaudos */
+        .check-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cuadrito {
+            width: 12px;
+            height: 12px;
+            border: 1px solid black;
+            display: inline-block;
+        }
+
+        .btn-flotante {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-guardar {
+            background: #2c3e50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-guardar:hover {
+            background: #1a252f;
+        }
+
+        /* MODAL DE CONFIRMACIA"N PERSONALIZADO */
+        .overlay-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ventana-modal {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .ventana-modal h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .ventana-modal p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .botones-modal {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn-confirmar {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-cancelar {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* AVISO TOAST */
+        .modal-aviso {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 3000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeInDown 0.5s;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                top: -50px;
+                opacity: 0;
+            }
+
+            to {
+                top: 20px;
+                opacity: 1;
+            }
+        }
+
+        @media print {
+
+            .btn-flotante,
+            .seccion-busqueda,
+            .modal-aviso,
+            .overlay-modal {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .hoja {
+                box-shadow: none;
+                width: 100%;
+                padding: 1cm;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="modalConfirmacion" class="overlay-modal">
+        <div class="ventana-modal">
+            <i class="fas fa-question-circle" style="font-size: 40px; color: #2980b9; margin-bottom: 15px;"></i>
+            <h3>Confirmar Accion</h3>
+            <p>?Desea guardar esta informacion en el sistema?</p>
+            <div class="botones-modal">
+                <button class="btn-confirmar" onclick="ejecutarGuardado()">SA, GUARDAR</button>
+                <button class="btn-cancelar" onclick="cerrarModal()">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="avisoSistema" class="modal-aviso"></div>
+
+    <div class="seccion-busqueda">
+        <div class="contenedor-input">
+            <span class="prefijo-v">V-</span>
+            <input type="text" id="busquedaCedula" class="input-busqueda" placeholder="Cedula" maxlength="9"
+                onkeypress="return soloNumeros(event)" onkeyup="if(event.keyCode==13) buscarEstudiante()">
+            <button class="btn-guardar" style="background: var(--primary-color);" onclick="buscarEstudiante()">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
+        <button class="btn-guardar" onclick="abrirModal()">
+            <i class="fas fa-save"></i> GUARDAR INFORMACIA"N
+        </button>
+    </div>
+
+    <div class="hoja" id="areaFicha">
+        <div class="header-top">
+            <img src="imagen.png" class="logo-gobierno" alt="Logo Institucional">
+
+            <div class="texto-institucion">
+                REPAšBLICA BOLIVARIANA DE VENEZUELA<br>
+                MINISTERIO DEL PODER POPULAR PARA LA EDUCACIA"N<br>
+                U. E. P. "DON TOBAAS ALVAREZ ARMAS"<br>
+                EL TIGRE a€" EDO. ANZOATEGUI
+            </div>
+            <div class="foto-boxes">
+                <div class="foto-box">ESTUDIANTE</div>
+                <div class="foto-box">REPRESENTANTE</div>
+            </div>
+        </div>
+
+        <div class="titulo-ficha">FICHA DE INSCRIPCIA"N<br>PERIODO ESCOLAR. 2026-2027</div>
+
+        <table>
+            <tr>
+                <td colspan="4" class="header-seccion">Datos del Estudiante</td>
+            </tr>
+            <tr>
+                <td colspan="1"><span class="label">1er Nombre:</span><input type="text" id="est_nombre1"
+                        onkeypress="return soloLetras(event)"></td>
+                <td colspan="1"><span class="label">2do Nombre:</span><input type="text" id="est_nombre2"
+                        onkeypress="return soloLetras(event)"></td>
+                <td colspan="1"><span class="label">1er Apellido:</span><input type="text" id="est_apellido1"
+                        onkeypress="return soloLetras(event)"></td>
+                <td colspan="1"><span class="label">2do Apellido:</span><input type="text" id="est_apellido2"
+                        onkeypress="return soloLetras(event)"></td>
+            </tr>
+            <tr>
+                <td><span class="label">Nº C. E.: Indique E- o V-</span><input type="text" id="est_cedula"
+                        onkeypress="return soloNumeros(event)"></td>
+                <td><span class="label">Orden de Nacimiento:</span><input type="number"></td>
+                <td><span class="label">Edad:</span><input type="number"></td>
+                <td><span class="label">Plantel de Procedencia y Nº Telef.:</span><input type="text"></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td colspan="3" align="center"><strong>Lugar de Nacimiento</strong></td>
+                <td colspan="3" align="center"><strong>Fecha de Nacimiento</strong></td>
+            </tr>
+            <tr>
+                <td>Ciudad: <input type="text"></td>
+                <td>Estado: <input type="text"></td>
+                <td>Pais: <input type="text"></td>
+                <td width="40">Dia:<input type="text"></td>
+                <td width="40">Mes:<input type="text"></td>
+                <td width="60">Ano:<input type="text"></td>
+            </tr>
+            <tr>
+                <td colspan="6"><span class="label">Direccion del Estudiante:</span><input type="text"></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td width="40%"><span class="label">NOMBRE Y APELLIDO DE LA MADRE:</span><input type="text"></td>
+                <td width="15%"><span class="label">C.I.</span><input type="text"></td>
+                <td width="25%"><span class="label">Nº telefono. de la madre:</span><input type="text"></td>
+                <td width="20%"><span class="label">Ocupacion:</span><input type="text"></td>
+            </tr>
+            <tr>
+                <td><span class="label">NOMBRE Y APELLIDO DEL PADRE:</span><input type="text"></td>
+                <td><span class="label">C.I.</span><input type="text"></td>
+                <td><span class="label">Nº telefono. del padre:</span><input type="text"></td>
+                <td><span class="label">Ocupacion:</span><input type="text"></td>
+            </tr>
+            <tr>
+                <td colspan="4"><span class="label">CORREO ELECTRA"NICO:</span><input type="email"></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td width="25%"><span class="label">?Toma algun Medicamento?</span> SI____ NO____</td>
+                <td width="30%"><span class="label">?Presenta alguna Enfermedad?</span><input type="text"></td>
+                <td width="45%" colspan="3" align="center"><span class="label">?Presenta alguna Diversidad conductual
+                        Funcional?</span>
+                    <div style="display:flex; justify-content: space-around; font-size: 8px;">
+                        <span>Motora ____</span> <span>Visual ____</span> <span>Auditiva ____</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td colspan="4" class="header-seccion">Datos del Representante / Responsable Economico</td>
+            </tr>
+            <tr>
+                <td><span class="label">1er Nombre:</span><input type="text"></td>
+                <td><span class="label">2do Nombre:</span><input type="text"></td>
+                <td><span class="label">1er Apellido:</span><input type="text"></td>
+                <td><span class="label">2do Apellido:</span><input type="text"></td>
+            </tr>
+            <tr>
+                <td><span class="label">Nº C. I.: Indique E- o V-</span><input type="text" id="rep_cedula"></td>
+                <td><span class="label">Nº Telef. CANTV:</span><input type="text"></td>
+                <td><span class="label">Nº Telef. MOVIL:</span><input type="text"></td>
+                <td><span class="label">Profesion (titulo obtenido):</span><input type="text"></td>
+            </tr>
+            <tr>
+                <td colspan="4"><span class="label">Direccion del representante economico</span><input type="text"></td>
+            </tr>
+            <tr>
+                <td colspan="2"><span class="label">Afinidad o Parentesco con el o la Estudiante:</span><input
+                        type="text"></td>
+                <td colspan="2"><span class="label">Ciudad de Residencia:</span><input type="text"></td>
+            </tr>
+            <tr>
+                <td><span class="label">Ocupacion:</span><input type="text"></td>
+                <td colspan="2"><span class="label">Nombre de la Empresa donde trabaja:</span><input type="text"></td>
+                <td><span class="label">Correo electronico:</span><input type="text"></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="font-size: 8px;"><strong>?ESTA EN POSIBILIDAD ECONA"MICA DE PAGAR EL MONTO DE
+                        MENSUALIDAD POR SERVICIO EDUCATIVO?</strong><br> SI____ NO____</td>
+                <td colspan="2" style="font-size: 7.5px; line-height: 1;">EL RETARDO POR REINCIDENCIA EN LA MORA POR
+                    PAGO DE MENSUALIDADES SERA SUJETO A APERTURA DE EXPEDIENTE ADMINISTRATIVO...</td>
+            </tr>
+        </table>
+
+        <table class="tabla-continuidad">
+            <tr>
+                <td colspan="12" class="header-seccion">Continuidad Academica</td>
+            </tr>
+            <tr>
+                <td rowspan="2" width="10%">AA‘O ESCOLAR</td>
+                <td colspan="3">EDUCACIA"N INICIAL</td>
+                <td colspan="6">EDUCACIA"N PRIMARIA</td>
+                <td rowspan="2" width="12%">Representante</td>
+                <td rowspan="2" width="8%">Firma</td>
+            </tr>
+            <tr class="small-text">
+                <td>G 1º</td>
+                <td>G 2º</td>
+                <td>G 3º</td>
+                <td>1º</td>
+                <td>2º</td>
+                <td>3º</td>
+                <td>4º</td>
+                <td>5º</td>
+                <td>6º</td>
+            </tr>
+            <tr>
+                <td>2026-2027</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>2027-2028</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>2028-2029</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td colspan="4" class="header-seccion">Recaudos Consignados</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="check-container">
+                        <div class="cuadrito"></div> COPIA DE PARTIDA DE NACIMIENTO
+                    </div>
+                </td>
+                <td>
+                    <div class="check-container">
+                        <div class="cuadrito"></div> CEDULA DE IDENT DEL NIA‘O(A)
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="check-container">
+                        <div class="cuadrito"></div> COPIA TARJETA DE VACUNAS
+                    </div>
+                </td>
+                <td>
+                    <div class="check-container">
+                        <div class="cuadrito"></div> BOLETIN INFORMATIVO
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="check-container">
+                        <div class="cuadrito"></div> COPIA CEDULA DEL REPRESENTANTE
+                    </div>
+                </td>
+                <td>
+                    <div class="check-container">
+                        <div class="cuadrito"></div> CONSTANCIA DE SOLVENCIA
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="check-container">
+                        <div class="cuadrito"></div> 03 FOTOS DEL EDUCANDO
+                    </div>
+                </td>
+                <td>
+                    <div class="check-container">
+                        <div class="cuadrito"></div> CONSTANCIA DE RETIRO
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <button class="btn-flotante" onclick="window.print()">
+        <i class="fas fa-print"></i> IMPRIMIR FICHA OFICIAL
+    </button>
+
+    <script>
+        function soloLetras(e) {
+            let key = e.keyCode || e.which;
+            let teclado = String.fromCharCode(key).toLowerCase();
+            let letras = " abcdefghijklmnnopqrstuvwxyzaeiou";
+            return (letras.indexOf(teclado) != -1);
+        }
+        function soloNumeros(e) {
+            let key = e.keyCode || e.which;
+            let teclado = String.fromCharCode(key);
+            let numeros = "0123456789";
+            return (numeros.indexOf(teclado) != -1);
+        }
+
+        function mostrarAviso(mensaje, color) {
+            const aviso = document.getElementById('avisoSistema');
+            aviso.innerText = mensaje;
+            aviso.style.backgroundColor = color;
+            aviso.style.display = 'block';
+            setTimeout(() => { aviso.style.display = 'none'; }, 3500);
+        }
+
+        async function buscarEstudiante() {
+            const cedula = document.getElementById('busquedaCedula').value.trim();
+            if (cedula === "") {
+                mostrarAviso("Por favor, ingrese una cedula", "#e74c3c");
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/estudiantes/' + encodeURIComponent('V-' + cedula), {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    mostrarAviso("Estudiante Encontrado. Autocompletando...", "#2980b9");
+                    document.getElementById('est_nombre1').value = data.nombre1;
+                    document.getElementById('est_nombre2').value = data.nombre2;
+                    document.getElementById('est_apellido1').value = data.apellido1;
+                    document.getElementById('est_apellido2').value = data.apellido2;
+                    document.getElementById('est_cedula').value = data.cedula_escolar;
+                } else {
+                    mostrarAviso("Cedula no registrada: Estudiante de Nuevo Ingreso", "#f39c12");
+                    // Intento buscar con cedula normal (sin V-) o escolar
+                    const altResponse = await fetch('/api/estudiantes/' + encodeURIComponent(cedula), {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const altData = await altResponse.json();
+                    if (altData.success) {
+                        mostrarAviso("Estudiante Encontrado. Autocompletando...", "#2980b9");
+                        document.getElementById('est_nombre1').value = altData.nombre1;
+                        document.getElementById('est_nombre2').value = altData.nombre2;
+                        document.getElementById('est_apellido1').value = altData.apellido1;
+                        document.getElementById('est_apellido2').value = altData.apellido2;
+                        document.getElementById('est_cedula').value = altData.cedula_escolar;
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+                mostrarAviso("Error de conexion al buscar estudiante", "#e74c3c");
+            }
+        }
+
+        /* FUNCIONES DEL NUEVO MODAL */
+        function abrirModal() {
+            document.getElementById('modalConfirmacion').style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalConfirmacion').style.display = 'none';
+        }
+
+        async function ejecutarGuardado() {
+            cerrarModal();
+
+            const est_cedula = document.getElementById('est_cedula').value.trim();
+            const rep_cedula = document.getElementById('rep_cedula') ? document.getElementById('rep_cedula').value.trim() : "";
+
+            if (!est_cedula || !rep_cedula) {
+                mostrarAviso("Debe buscar un estudiante y proporcionar la cedula del representante.", "#e74c3c");
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('/api/inscripcion', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        cedula_estudiante: est_cedula,
+                        representante: {
+                            cedula: rep_cedula.startsWith('V-') || rep_cedula.startsWith('E-') ? rep_cedula : 'V-' + rep_cedula
+                        },
+                        id_grado: 1 // Por defecto, como este form oficial es complejo
+                    })
+                });
+                const result = await res.json();
+
+                if (res.ok) {
+                    mostrarAviso("!La planilla de inscripcion ha sido guardada exitosamente!", "#27ae60");
+                } else {
+                    mostrarAviso("Error: " + result.message, "#e74c3c");
+                }
+            } catch (e) {
+                console.error(e);
+                mostrarAviso("Error de servidor al guardar la planilla", "#e74c3c");
+            }
+        }
+
+        // Registrar el Service Worker para la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registrado con exito:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Error al registrar el ServiceWorker:', error);
+                    });
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>

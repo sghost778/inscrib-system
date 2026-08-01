@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Estudiante - INSCRIBE SYSTEM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00b689">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
+
+    <style>
+        :root {
+            --primary-color: #00b689;
+            --text-main: #2d3436;
+            --bg-card: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8fafb;
+            padding: 30px;
+            color: var(--text-main);
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        h4 {
+            color: #636e72;
+            margin-top: 25px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 10px;
+        }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .campo-cedula {
+            display: flex;
+            align-items: center;
+            border: 1px solid #dfe4ea;
+            border-radius: 8px;
+            background: white;
+            overflow: hidden;
+        }
+
+        .prefijo-v {
+            background: #f1f2f6;
+            padding: 10px 12px;
+            font-weight: bold;
+            color: #555;
+            border-right: 1px solid #dfe4ea;
+        }
+
+        .campo-cedula input {
+            border: none !important;
+            flex: 1;
+            padding: 10px;
+            outline: none;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            border: 1px solid #dfe4ea;
+            border-radius: 8px;
+            outline: none;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        input:focus,
+        select:focus,
+        .campo-cedula:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(0, 182, 137, 0.2);
+        }
+
+        .btn-guardar {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 35px;
+            width: 100%;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+        .btn-guardar:hover {
+            background: #00946f;
+            transform: translateY(-2px);
+        }
+
+        .modal-confirm {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 380px;
+        }
+
+        .btn-flex {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn-yes {
+            background: var(--primary-color);
+            color: white;
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-no {
+            background: #f1f2f6;
+            color: #2d3436;
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2><i class="fas fa-user-graduate"></i> Registrar Estudiante</h2>
+
+        <form id="formRegistro" onsubmit="event.preventDefault(); mostrarConfirmacion();" autocomplete="off">
+
+            <h4><i class="fas fa-id-card"></i> Datos Personales</h4>
+            <div class="grid-form">
+                <div class="form-group">
+                    <label>Cedula Escolar</label>
+                    <div class="campo-cedula">
+                        <span class="prefijo-v">V-</span>
+                        <input type="text" id="cedula_escolar" onkeypress="return soloNumeros(event)" maxlength="8"
+                            required>
+                    </div>
+                </div>
+                <div class="form-group"><label>Primer Nombre</label><input type="text" id="nombre1"
+                        onkeypress="return soloLetras(event)" required></div>
+                <div class="form-group"><label>Segundo Nombre</label><input type="text" id="nombre2"
+                        onkeypress="return soloLetras(event)"></div>
+                <div class="form-group"><label>Primer Apellido</label><input type="text" id="apellido1"
+                        onkeypress="return soloLetras(event)" required></div>
+                <div class="form-group"><label>Segundo Apellido</label><input type="text" id="apellido2"
+                        onkeypress="return soloLetras(event)"></div>
+                <div class="form-group"><label>Fecha de Nacimiento</label><input type="date" id="fecha_nac" required>
+                </div>
+                <div class="form-group"><label>Edad</label><input type="number" id="edad" min="1" max="99"
+                        onkeypress="return soloNumeros(event)" required></div>
+                <div class="form-group"><label>Lugar de Nacimiento</label><input type="text" id="lugar_nac"
+                        onkeypress="return soloLetras(event)" required></div>
+                <div class="form-group"><label>Orden de Nacimiento</label><input type="number" id="orden_nac" min="1"
+                        onkeypress="return soloNumeros(event)"></div>
+            </div>
+
+            <h4><i class="fas fa-map-marker-alt"></i> Ubicacion de Origen</h4>
+            <div class="grid-form">
+                <div class="form-group">
+                    <label>Pais</label>
+                    <select id="pais" required>
+                        <option value="">Seleccione...</option>
+                        <option value="venezuela">Venezuela</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Estado</label><input type="text" id="estado"
+                        onkeypress="return soloLetras(event)" required></div>
+                <div class="form-group"><label>Ciudad</label><input type="text" id="ciudad"
+                        onkeypress="return soloLetras(event)" required></div>
+            </div>
+
+            <h4><i class="fas fa-users"></i> Datos de los Padres y Representante</h4>
+            <div class="grid-form">
+                <div class="form-group"><label>Nombre de la Madre</label><input type="text"
+                        onkeypress="return soloLetras(event)"></div>
+                <div class="form-group">
+                    <label>Cedula Madre</label>
+                    <div class="campo-cedula"><span class="prefijo-v">V-</span><input type="text"
+                            onkeypress="return soloNumeros(event)" maxlength="8"></div>
+                </div>
+                <div class="form-group"><label>Telefono Madre</label><input type="text"
+                        onkeypress="return soloNumeros(event)" maxlength="11"></div>
+                <div class="form-group"><label>Nombre del Padre</label><input type="text"
+                        onkeypress="return soloLetras(event)"></div>
+                <div class="form-group">
+                    <label>Cedula Padre</label>
+                    <div class="campo-cedula"><span class="prefijo-v">V-</span><input type="text"
+                            onkeypress="return soloNumeros(event)" maxlength="8"></div>
+                </div>
+                <div class="form-group"><label>Telefono Padre</label><input type="text"
+                        onkeypress="return soloNumeros(event)" maxlength="11"></div>
+                <div class="form-group"><label>Ocupacion del Representante</label><input type="text"
+                        onkeypress="return soloLetras(event)" required></div>
+            </div>
+
+            <h4><i class="fas fa-notes-medical"></i> Salud y Diversidad</h4>
+            <div class="grid-form">
+                <div class="form-group">
+                    <label>?Toma algun medicamento?</label>
+                    <select>
+                        <option value="no">No</option>
+                        <option value="si">Si</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Correo Electronico</label><input type="email" required></div>
+                <div class="form-group"><label>Diversidad (Condicion)</label><input type="text"></div>
+            </div>
+
+            <button type="submit" class="btn-guardar">
+                <i class="fas fa-save"></i> Guardar Registro
+            </button>
+        </form>
+    </div>
+
+    <div id="modalConfirm" class="modal-confirm">
+        <div class="modal-content">
+            <i class="fas fa-question-circle" style="font-size: 3rem; color: #f1c40f; margin-bottom: 15px;"></i>
+            <h3>?Confirmar Registro?</h3>
+            <p>?Estas seguro de que quieres guardar esta informacion en el sistema?</p>
+            <div class="btn-flex">
+                <button type="button" class="btn-no" onclick="cerrarModal()">No, revisar</button>
+                <button type="button" class="btn-yes" onclick="guardarExito()">Si, guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function soloNumeros(e) {
+            let key = e.keyCode || e.which;
+            let teclado = String.fromCharCode(key);
+            let numeros = "0123456789";
+            return (numeros.indexOf(teclado) != -1);
+        }
+
+        function soloLetras(e) {
+            let key = e.keyCode || e.which;
+            let teclado = String.fromCharCode(key).toLowerCase();
+            let letras = " abcdefghijklmnnopqrstuvwxyzaeiou";
+            return (letras.indexOf(teclado) != -1);
+        }
+
+        function mostrarConfirmacion() {
+            document.getElementById('modalConfirm').style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalConfirm').style.display = 'none';
+        }
+
+        async function guardarExito() {
+            const cedula = document.getElementById('cedula_escolar').value;
+            const nombre1 = document.getElementById('nombre1').value;
+            const nombre2 = document.getElementById('nombre2').value;
+            const apellido1 = document.getElementById('apellido1').value;
+            const apellido2 = document.getElementById('apellido2').value;
+            const fecha = document.getElementById('fecha_nac').value;
+            const orden = document.getElementById('orden_nac').value;
+            const ciudad = document.getElementById('ciudad').value;
+            const estado = document.getElementById('estado').value;
+            const pais = document.getElementById('pais').value;
+
+            const dataPayload = {
+                cedula_escolar: "V-" + cedula,
+                nombres: (nombre1 + " " + nombre2).trim(),
+                apellidos: (apellido1 + " " + apellido2).trim(),
+                fecha_nacimiento: fecha,
+                orden_nacimiento: orden ? parseInt(orden) : null,
+                direccion: ciudad + ", " + estado + ", " + pais
+            };
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                       alert("No hay una sesion activa. Por favor, inicie sesion nuevamente.");
+                        window.location.href = "/"; // Redirige al login
+                     return;
+                    }
+                    
+                const response = await fetch('/api/estudiantes', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataPayload)
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    const modal = document.querySelector('.modal-content');
+                    modal.innerHTML = `
+                    <i class="fas fa-check-circle" style="font-size: 3.5rem; color: #00b689; margin-bottom: 15px;"></i>
+                    <h3>!A‰xito!</h3>
+                    <p>${result.message || 'El estudiante ha sido registrado correctamente.'}</p>
+                    <button type="button" class="btn-yes" onclick="location.reload()">Aceptar</button>
+                `;
+                } else {
+                    alert("Error: " + result.message);
+                    cerrarModal();
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Error de conexion al guardar el estudiante.");
+                cerrarModal();
+            }
+        }
+
+        document.getElementById('fecha_nac').addEventListener('change', function () {
+            let fechaInput = new Date(this.value);
+            let hoy = new Date();
+            if (fechaInput > hoy) {
+                alert("La fecha de nacimiento no puede ser futura");
+                this.value = "";
+            }
+        });
+
+        // Registrar el Service Worker para la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registrado con exito:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Error al registrar el ServiceWorker:', error);
+                    });
+            });
+        }
+    </script>
+
+</body>
+
+</html>

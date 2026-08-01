@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00b689">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
+
+    <style>
+        :root {
+            --primary: #00b689;
+            --secondary: #3498db;
+            --bg-color: #f8fafb;
+            --text-dark: #2d3436;
+            --accent: #e67e22;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            padding: 20px;
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        .header-ficha {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header-title h1 { margin:0; font-size: 2rem; color: var(--text-dark); }
+
+        .section-title {
+            background: #f1fdfa;
+            color: var(--primary);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            margin: 30px 0 20px 0;
+            display: flex; align-items: center; gap: 12px;
+        }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .campo { display: flex; flex-direction: column; }
+        label { font-size: 0.75rem; font-weight: bold; color: #7f8c8d; margin-bottom: 8px; text-transform: uppercase; }
+
+        input, select {
+            padding: 12px;
+            border: 1.5px solid #edf2f7;
+            border-radius: 10px;
+            background: #fdfdfd;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:read-only, select:disabled { background-color: #f8fafb; color: #95a5a6; cursor: not-allowed; }
+
+        .botones-footer { margin-top: 50px; display: flex; gap: 15px; justify-content: flex-end; }
+
+        .btn { padding: 14px 25px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .btn-modify { background: var(--secondary); color: white; }
+        .btn-save { background: var(--primary); color: white; display: none; }
+        .btn-template { background: #2d3436; color: white; }
+        .btn-back { background: #f1f2f6; color: #636e72; text-decoration: none; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 20000; }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 400px; text-align: center; }
+        .modal-btns { display: flex; justify-content: center; gap: 15px; margin-top: 25px; }
+        .btn-confirm { background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; }
+        .btn-cancel { background: #eee; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; }
+
+        /* AVISO */
+        .custom-alert { position: fixed; top: 25px; right: 25px; background: white; padding: 18px 25px; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); border-left: 6px solid var(--primary); display: none; z-index: 10000; }
+        .cedula-wrapper { display: flex; align-items: center; gap: 8px; }
+        .prefix { font-weight: bold; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div id="modalConfirm" class="modal-overlay">
+        <div class="modal-content">
+            <i id="modalIcon" class="fas fa-question-circle" style="font-size: 3rem; color: var(--secondary); margin-bottom: 15px; display: block;"></i>
+            <h3 id="modalTitle">Confirmacion</h3>
+            <p id="modalMsg"></p>
+            <div class="modal-btns">
+                <button class="btn-cancel" onclick="cerrarModal()">No, cancelar</button>
+                <button class="btn-confirm" id="confirmActionBtn">Si, continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="miAviso" class="custom-alert">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <i class="fas fa-check-circle" style="color: var(--primary); font-size: 1.4rem;"></i>
+            <div><strong id="avisoTitulo" style="display: block;"></strong><span id="avisoTexto"></span></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header-ficha">
+            <div class="header-title"><h1>Expediente Academico</h1><p>Registro centralizado de datos estudiantiles</p></div>
+            <div id="statusModo" style="background: #ecf0f1; padding: 10px 18px; border-radius: 30px; font-size: 0.7rem; font-weight: 800;">
+                <i class="fas fa-lock"></i> MODO CONSULTA
+            </div>
+        </div>
+
+        <form id="formConsulta">
+            <div class="section-title"><i class="fas fa-user-graduate"></i> Identificacion del Alumno</div>
+            <div class="grid-form">
+                <div class="campo"><label>Cedula Escolar</label><input type="text" class="dato-input solo-numeros" readonly></div>
+                <div class="campo"><label>Primer Nombre</label><input type="text" class="dato-input solo-letras" readonly></div>
+                <div class="campo"><label>Segundo Nombre</label><input type="text" class="dato-input solo-letras" readonly></div>
+                <div class="campo"><label>Primer Apellido</label><input type="text" class="dato-input solo-letras" readonly></div>
+                <div class="campo"><label>Segundo Apellido</label><input type="text" class="dato-input solo-letras" readonly></div>
+                <div class="campo"><label>Edad</label><input type="number" class="dato-input solo-numeros" min="1" readonly></div>
+                <div class="campo"><label>Fecha de Nacimiento</label><input type="date" class="dato-input" readonly></div>
+                <div class="campo"><label>Lugar de Nacimiento</label><input type="text" class="dato-input solo-letras" readonly></div>
+                <div class="campo"><label>Orden de Nacimiento</label><input type="number" class="dato-input solo-numeros" min="1" readonly></div>
+            </div>
+
+            <div class="section-title"><i class="fas fa-map-marker-alt"></i> Procedencia y Ubicacion</div>
+            <div class="grid-form">
+                <div class="campo"><label>Plantel de Procedencia</label><input type="text" class="dato-input" readonly></div>
+                <div class="campo"><label>Ciudad</label><input type="text" class="dato-input solo-letras" readonly></div>
+                <div class="campo"><label>Estado</label><input type="text" class="dato-input solo-letras" readonly></div>
+                <div class="campo"><label>Pais</label><input type="text" class="dato-input solo-letras" readonly></div>
+            </div>
+
+            <div class="section-title"><i class="fas fa-users"></i> Datos de los Padres</div>
+            <div class="grid-form">
+                <div class="campo"><label>Nombre de la Madre</label><input type="text" class="dato-input solo-letras" readonly></div>
+                <div class="campo"><label>Cedula Madre</label><div class="cedula-wrapper"><span class="prefix">V-</span><input type="text" class="dato-input solo-numeros" readonly style="width:100%"></div></div>
+                <div class="campo"><label>Telefono Madre</label><input type="text" class="dato-input solo-numeros" readonly></div>
+                <div class="campo"><label>Nombre del Padre</label><input type="text" class="dato-input solo-letras" readonly></div>
+                <div class="campo"><label>Cedula Padre</label><div class="cedula-wrapper"><span class="prefix">V-</span><input type="text" class="dato-input solo-numeros" readonly style="width:100%"></div></div>
+                <div class="campo"><label>Telefono Padre</label><input type="text" class="dato-input solo-numeros" readonly></div>
+            </div>
+
+            <div class="section-title"><i class="fas fa-heartbeat"></i> Salud y Diversidad</div>
+            <div class="grid-form">
+                <div class="campo"><label>?Toma algun medicamento?</label>
+                    <select class="dato-input" disabled>
+                        <option value="no">No</option>
+                        <option value="si">Si</option>
+                    </select>
+                </div>
+                <div class="campo"><label>Diversidad Funcional</label><input type="text" class="dato-input solo-letras" readonly></div>
+                <div class="campo"><label>Correo Electronico</label><input type="email" class="dato-input" readonly></div>
+            </div>
+
+            <div class="botones-footer">
+                <a href="{{ url_for('view_estudiantes_listado') }}" class="btn btn-back">Volver</a>
+                <button type="button" class="btn btn-template" onclick="location.href='plantilla_inscripcion.html'"><i class="fas fa-print"></i> Plantilla</button>
+                <button type="button" id="btnModificar" class="btn btn-modify" onclick="preguntarEdicion()"><i class="fas fa-edit"></i> Modificar</button>
+                <button type="button" id="btnGuardar" class="btn btn-save" onclick="preguntarGuardado()"><i class="fas fa-save"></i> Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+
+   
+    <script>
+        // VALIDACIA"N: Bloquea numeros en letras y letras en numeros
+        document.addEventListener('input', function (e) {
+            if (e.target.classList.contains('solo-letras')) {
+                e.target.value = e.target.value.replace(/[0-9]/g, '');
+            }
+            if (e.target.classList.contains('solo-numeros')) {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            }
+        });
+
+        function abrirModal(titulo, msg, icon, color, accion) {
+            document.getElementById('modalTitle').innerText = titulo;
+            document.getElementById('modalMsg').innerText = msg;
+            document.getElementById('modalIcon').className = "fas " + icon;
+            document.getElementById('modalIcon').style.color = color;
+            document.getElementById('modalConfirm').style.display = 'flex';
+            document.getElementById('confirmActionBtn').onclick = accion;
+        }
+
+        function cerrarModal() { document.getElementById('modalConfirm').style.display = 'none'; }
+
+        function preguntarEdicion() {
+            abrirModal("?Modificar Informacion?", "?Deseas habilitar la edicion de este expediente?", "fa-user-edit", "var(--secondary)", ejecutarEdicion);
+        }
+
+        function ejecutarEdicion() {
+            cerrarModal();
+            const inputs = document.querySelectorAll('.dato-input');
+            inputs.forEach(input => {
+                input.readOnly = false;
+                if(input.tagName === "SELECT") input.disabled = false;
+                input.style.borderColor = "var(--secondary)";
+            });
+            document.getElementById('btnModificar').style.display = 'none';
+            document.getElementById('btnGuardar').style.display = 'flex';
+            document.getElementById('statusModo').innerHTML = '<i class="fas fa-unlock-alt" style="color:var(--accent)"></i> MODO EDICIA"N';
+            document.getElementById('statusModo').style.color = "var(--accent)";
+            mostrarAviso("Sistema Habilitado", "Ahora puedes realizar cambios.");
+        }
+
+        function preguntarGuardado() {
+            abrirModal("?Guardar Cambios?", "?Estas seguro de que deseas guardar la nueva informacion?", "fa-save", "var(--primary)", ejecutarGuardado);
+        }
+
+        function ejecutarGuardado() {
+            cerrarModal();
+            mostrarAviso("A‰xito", "Expediente actualizado correctamente.");
+            setTimeout(() => { location.reload(); }, 2000);
+        }
+
+        function mostrarAviso(titulo, texto) {
+            const aviso = document.getElementById('miAviso');
+            document.getElementById('avisoTitulo').innerText = titulo;
+            document.getElementById('avisoTexto').innerText = texto;
+            aviso.style.display = 'block';
+            setTimeout(() => { aviso.style.display = 'none'; }, 3000);
+        }
+
+        // Registrar el Service Worker para la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registrado con exito:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Error al registrar el ServiceWorker:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

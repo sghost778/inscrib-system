@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurar Sitio Web - INSCRIBE SYSTEM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f8fafb; color: #2d3436; padding: 20px; }
+        :root { --primary: #00b689; --danger: #dc2626; --success: #16a34a; }
+
+        .container { max-width: 1200px; margin: auto; }
+
+        h1 { font-size: 1.6rem; margin-bottom: 5px; }
+        h1 i { color: var(--primary); }
+        .subtitle { color: #636e72; margin-bottom: 25px; }
+
+        .tabs {
+            display: flex; gap: 5px; margin-bottom: 25px; flex-wrap: wrap;
+            background: white; padding: 8px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .tab-btn {
+            padding: 10px 20px; border: none; background: transparent; cursor: pointer;
+            font-weight: 600; border-radius: 8px; transition: 0.3s; color: #636e72; font-size: 0.9rem;
+        }
+        .tab-btn:hover { background: #f0f4f2; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-btn i { margin-right: 6px; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card {
+            background: white; border-radius: 15px; padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04); border: 1px solid #edf2f7; margin-bottom: 20px;
+        }
+        .card h3 { font-size: 1.1rem; margin-bottom: 15px; }
+        .card h3 i { color: var(--primary); margin-right: 8px; }
+
+        .btn {
+            padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600;
+            cursor: pointer; transition: 0.3s; font-size: 0.85rem;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #009671; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+        .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: #555; }
+        .btn-outline:hover { background: #f1f5f9; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; color: #555; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 10px 12px; border: 2px solid #edf2f7; border-radius: 8px;
+            font-family: inherit; font-size: 0.95rem; transition: 0.3s; box-sizing: border-box;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); outline: none; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8fafb; padding: 12px 15px; text-align: left; font-size: 0.8rem; color: #636e72; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        .actions { display: flex; gap: 5px; }
+
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center;
+            backdrop-filter: blur(3px);
+        }
+        .modal.open { display: flex; }
+        .modal-content {
+            background: white; border-radius: 15px; padding: 30px; width: 90%; max-width: 550px;
+            max-height: 85vh; overflow-y: auto; animation: pop 0.2s ease-out;
+        }
+        @keyframes pop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-content h2 { margin-bottom: 15px; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+        .empty { text-align: center; padding: 40px; color: #636e72; }
+        .empty i { font-size: 2.5rem; margin-bottom: 10px; opacity: 0.3; }
+
+        .toast {
+            position: fixed; top: 20px; right: 20px; background: var(--primary); color: white;
+            padding: 15px 25px; border-radius: 10px; font-weight: 600; display: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15); z-index: 300;
+        }
+        .toast.error { background: var(--danger); }
+
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; }
+        .badge-s { background: #dcfce7; color: #166534; }
+        .badge-n { background: #dbeafe; color: #1e40af; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1><i class="fas fa-globe"></i> Configurar Sitio Web</h1>
+    <p class="subtitle">Administra el contenido de la pagina publica de la escuela</p>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="cambiarTab('config',this)"><i class="fas fa-cog"></i> Configuracion</button>
+        <button class="tab-btn" onclick="cambiarTab('noticias',this)"><i class="fas fa-newspaper"></i> Noticias</button>
+        <button class="tab-btn" onclick="cambiarTab('programas',this)"><i class="fas fa-graduation-cap"></i> Programas</button>
+        <button class="tab-btn" onclick="cambiarTab('galeria',this)"><i class="fas fa-images"></i> Galeria</button>
+        <button class="tab-btn" onclick="cambiarTab('mensajes',this)"><i class="fas fa-envelope"></i> Mensajes</button>
+    </div>
+
+    <!-- CONFIGURACIA"N -->
+    <div class="tab-content active" id="tab-config">
+        <div class="card">
+            <h3><i class="fas fa-sliders-h"></i> Configuracion del Sitio</h3>
+            <div class="form-group">
+                <label>Nombre de la Escuela</label>
+                <input type="text" id="cfg_site_name" value="Escuela José Manuel Cova Maza">
+            </div>
+            <div class="form-group">
+                <label>Descripcion Corta (hero)</label>
+                <input type="text" id="cfg_site_description" value="Formando lideres para el futuro con excelencia educativa">
+            </div>
+            <div class="form-group">
+                <label>Titulo de Seccion Nosotros</label>
+                <input type="text" id="cfg_about_title" value="?Quienes Somos?">
+            </div>
+            <div class="form-group">
+                <label>Contenido Nosotros</label>
+                <textarea id="cfg_about_content" rows="4">La Escuela José Manuel Cova Maza es una institucion comprometida con la formacion integral.</textarea>
+            </div>
+            <div class="form-group">
+                <label>Mision</label>
+                <textarea id="cfg_about_mision" rows="3">Formar ciudadanos integrales con valores eticos.</textarea>
+            </div>
+            <div class="form-group">
+                <label>Vision</label>
+                <textarea id="cfg_about_vision" rows="3">Ser una institucion educativa de referencia nacional.</textarea>
+            </div>
+            <hr style="margin:15px 0;border:none;border-top:1px solid #edf2f7;">
+            <h3 style="margin-bottom:15px;"><i class="fas fa-phone-alt"></i> Informacion de Contacto</h3>
+            <div class="form-group">
+                <label>Direccion</label>
+                <input type="text" id="cfg_contact_address" value="Av. Principal, Urbanizacion Las Flores, Puerto Ordaz">
+            </div>
+            <div class="form-group">
+                <label>Telefono</label>
+                <input type="text" id="cfg_contact_phone" value="+58 412-1234567">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" id="cfg_contact_email" value="info@uejmcm.edu.ve">
+            </div>
+            <div class="form-group">
+                <label>Horario de Atencion</label>
+                <input type="text" id="cfg_contact_hours" value="Lunes a Viernes: 7:00 AM - 3:00 PM">
+            </div>
+            <hr style="margin:15px 0;border:none;border-top:1px solid #edf2f7;">
+            <h3 style="margin-bottom:15px;"><i class="fas fa-clipboard-list"></i> Requisitos de Inscripcion</h3>
+            <div class="form-group">
+                <label>Requisitos (uno por linea)</label>
+                <textarea id="cfg_requisitos_inscripcion" rows="8" placeholder="Partida de Nacimiento&#10;Cedula del Representante&#10;Fotos tipo carnet"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="guardarConfig()"><i class="fas fa-save"></i> Guardar Configuracion</button>
+        </div>
+    </div>
+
+    <!-- NOTICIAS -->
+    <div class="tab-content" id="tab-noticias">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="margin:0;"><i class="fas fa-newspaper"></i> Noticias</h3>
+            <button class="btn btn-primary" onclick="abrirModalNoticia()"><i class="fas fa-plus"></i> Nueva Noticia</button>
+        </div>
+        <div class="card">
+            <table>
+                <thead><tr><th>Titulo</th><th>Fecha</th><th>Activo</th><th>Acciones</th></tr></thead>
+                <tbody id="tablaNoticias"></tbody>
+            </table>
+            <div class="empty" id="emptyNoticias"><i class="fas fa-newspaper"></i><p>No hay noticias</p></div>
+        </div>
+    </div>
+
+    <!-- PROGRAMAS -->
+    <div class="tab-content" id="tab-programas">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="margin:0;"><i class="fas fa-graduation-cap"></i> Programas Academicos</h3>
+            <button class="btn btn-primary" onclick="abrirModalPrograma()"><i class="fas fa-plus"></i> Nuevo Programa</button>
+        </div>
+        <div class="card">
+            <table>
+                <thead><tr><th>Nombre</th><th>Nivel</th><th>Acciones</th></tr></thead>
+                <tbody id="tablaProgramas"></tbody>
+            </table>
+            <div class="empty" id="emptyProgramas"><i class="fas fa-graduation-cap"></i><p>No hay programas</p></div>
+        </div>
+    </div>
+
+    <!-- GALERAA -->
+    <div class="tab-content" id="tab-galeria">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="margin:0;"><i class="fas fa-images"></i> Galeria</h3>
+            <button class="btn btn-primary" onclick="abrirModalGaleria()"><i class="fas fa-plus"></i> Agregar Imagen</button>
+        </div>
+        <div class="card">
+            <table>
+                <thead><tr><th>Titulo</th><th>URL Imagen</th><th>Fecha</th><th>Acciones</th></tr></thead>
+                <tbody id="tablaGaleria"></tbody>
+            </table>
+            <div class="empty" id="emptyGaleria"><i class="fas fa-images"></i><p>No hay imagenes</p></div>
+        </div>
+    </div>
+
+    <!-- MENSAJES -->
+    <div class="tab-content" id="tab-mensajes">
+        <div class="card">
+            <h3><i class="fas fa-envelope"></i> Mensajes de Contacto</h3>
+            <table>
+                <thead><tr><th>Nombre</th><th>Email</th><th>Telefono</th><th>Mensaje</th><th>Fecha</th><th>Estado</th></tr></thead>
+                <tbody id="tablaMensajes"></tbody>
+            </table>
+            <div class="empty" id="emptyMensajes"><i class="fas fa-envelope"></i><p>No hay mensajes</p></div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL NOTICIA -->
+<div class="modal" id="modalNoticia">
+    <div class="modal-content">
+        <h2 id="tituloModalNoticia"><i class="fas fa-plus-circle"></i> Nueva Noticia</h2>
+        <div class="form-group">
+            <label>Titulo</label>
+            <input type="text" id="n_titulo">
+        </div>
+        <div class="form-group">
+            <label>Resumen</label>
+            <textarea id="n_resumen"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Contenido (opcional)</label>
+            <textarea id="n_contenido"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Imagen</label>
+            <div style="display:flex;gap:8px;">
+                <input type="text" id="n_imagen" placeholder="URL o sube una imagen" style="flex:1;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="subirImagen('n_imagen')"><i class="fas fa-upload"></i></button>
+            </div>
+            <input type="file" id="n_imagen_file" accept="image/*" style="display:none;" onchange="subirArchivo(this, 'n_imagen')">
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="cerrarModal('modalNoticia')">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarNoticia()"><i class="fas fa-save"></i> Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PROGRAMA -->
+<div class="modal" id="modalPrograma">
+    <div class="modal-content">
+        <h2 id="tituloModalPrograma"><i class="fas fa-plus-circle"></i> Nuevo Programa</h2>
+        <div class="form-group">
+            <label>Nombre del Programa</label>
+            <input type="text" id="p_nombre">
+        </div>
+        <div class="form-group">
+            <label>Descripcion</label>
+            <textarea id="p_descripcion"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Nivel</label>
+            <select id="p_nivel">
+                <option value="Inicial">Inicial</option>
+                <option value="Primaria">Primaria</option>
+                <option value="Bachillerato">Bachillerato</option>
+                <option value="General">General</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Icono (FontAwesome, ej: fa-book, fa-flask)</label>
+            <input type="text" id="p_icono" value="fa-book">
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="cerrarModal('modalPrograma')">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarPrograma()"><i class="fas fa-save"></i> Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL GALERAA -->
+<div class="modal" id="modalGaleria">
+    <div class="modal-content">
+        <h2><i class="fas fa-plus-circle"></i> Agregar Imagen</h2>
+        <div class="form-group">
+            <label>Titulo</label>
+            <input type="text" id="g_titulo">
+        </div>
+        <div class="form-group">
+            <label>Imagen</label>
+            <div style="display:flex;gap:8px;">
+                <input type="text" id="g_imagen" placeholder="URL o sube una imagen" style="flex:1;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="subirImagen('g_imagen')"><i class="fas fa-upload"></i></button>
+            </div>
+            <input type="file" id="g_imagen_file" accept="image/*" style="display:none;" onchange="subirArchivo(this, 'g_imagen')">
+        </div>
+        <div class="form-group">
+            <label>Descripcion (opcional)</label>
+            <textarea id="g_descripcion"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="cerrarModal('modalGaleria')">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarGaleria()"><i class="fas fa-save"></i> Guardar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    let editandoNoticiaId = null;
+    let editandoProgramaId = null;
+
+    function mostrarToast(msg, error) {
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.className = 'toast' + (error ? ' error' : '');
+        t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 4000);
+    }
+
+    function cambiarTab(tab, btn) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.add('active');
+        btn.classList.add('active');
+        if (tab === 'noticias') cargarNoticias();
+        if (tab === 'programas') cargarProgramas();
+        if (tab === 'galeria') cargarGaleria();
+        if (tab === 'mensajes') cargarMensajes();
+    }
+
+    function cerrarModal(id) {
+        document.getElementById(id).classList.remove('open');
+    }
+
+    // ---- CONFIG ----
+    async function cargarConfig() {
+        try {
+            const res = await fetch('/api/site-config');
+            const config = await res.json();
+            const fields = [
+                'site_name', 'site_description', 'about_title',
+                'about_content', 'about_mision', 'about_vision',
+                'contact_address', 'contact_phone', 'contact_email', 'contact_hours',
+                'requisitos_inscripcion'
+            ];
+            fields.forEach(f => {
+                const el = document.getElementById('cfg_' + f);
+                if (el && config[f]) el.value = config[f];
+            });
+        } catch(e) { console.error(e); }
+    }
+
+    async function guardarConfig() {
+        const keys = [
+            'site_name', 'site_description', 'about_title',
+            'about_content', 'about_mision', 'about_vision',
+            'contact_address', 'contact_phone', 'contact_email', 'contact_hours',
+            'requisitos_inscripcion'
+        ];
+        const data = {};
+        keys.forEach(k => {
+            const el = document.getElementById('cfg_' + k);
+            if (el) data[k] = el.value;
+        });
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('/api/site-config', {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const r = await res.json();
+            if (r.success) mostrarToast('Configuracion guardada correctamente');
+        } catch(e) { mostrarToast('Error al guardar', true); }
+    }
+
+    // ---- NOTICIAS ----
+    async function cargarNoticias() {
+        try {
+            const res = await fetch('/api/noticias');
+            const noticias = await res.json();
+            const tbody = document.getElementById('tablaNoticias');
+            const empty = document.getElementById('emptyNoticias');
+            if (!noticias.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            tbody.innerHTML = noticias.map(n => `
+                <tr>
+                    <td><b>${n.titulo}</b></td>
+                    <td>${n.fecha}</td>
+                    <td><span class="badge ${n.activo ? 'badge-s' : 'badge-n'}">${n.activo ? 'Activo' : 'Inactivo'}</span></td>
+                    <td class="actions">
+                        <button class="btn btn-primary btn-sm" onclick="editarNoticia(${n.id},'${n.titulo.replace(/'/g,"\\'")}','${(n.resumen||'').replace(/'/g,"\\'")}','${(n.contenido||'').replace(/'/g,"\\'")}','${(n.imagen||'').replace(/'/g,"\\'")}',${n.activo})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="eliminarNoticia(${n.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch(e) { console.error(e); }
+    }
+
+    function abrirModalNoticia() {
+        editandoNoticiaId = null;
+        document.getElementById('tituloModalNoticia').innerHTML = '<i class="fas fa-plus-circle"></i> Nueva Noticia';
+        document.getElementById('n_titulo').value = '';
+        document.getElementById('n_resumen').value = '';
+        document.getElementById('n_contenido').value = '';
+        document.getElementById('n_imagen').value = '';
+        document.getElementById('modalNoticia').classList.add('open');
+    }
+
+    function editarNoticia(id, titulo, resumen, contenido, imagen, activo) {
+        editandoNoticiaId = id;
+        document.getElementById('tituloModalNoticia').innerHTML = '<i class="fas fa-edit"></i> Editar Noticia';
+        document.getElementById('n_titulo').value = titulo;
+        document.getElementById('n_resumen').value = resumen;
+        document.getElementById('n_contenido').value = contenido;
+        document.getElementById('n_imagen').value = imagen;
+        document.getElementById('modalNoticia').classList.add('open');
+    }
+
+    async function guardarNoticia() {
+        const data = {
+            titulo: document.getElementById('n_titulo').value.trim(),
+            resumen: document.getElementById('n_resumen').value.trim(),
+            contenido: document.getElementById('n_contenido').value.trim(),
+            imagen: document.getElementById('n_imagen').value.trim()
+        };
+        if (!data.titulo) { mostrarToast('El titulo es obligatorio', true); return; }
+        const token = localStorage.getItem('token');
+        try {
+            let res;
+            if (editandoNoticiaId) {
+                res = await fetch(`/api/noticias/${editandoNoticiaId}`, {
+                    method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } else {
+                res = await fetch('/api/noticias', {
+                    method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            }
+            const r = await res.json();
+            if (r.success) { mostrarToast('Noticia guardada'); cerrarModal('modalNoticia'); cargarNoticias(); }
+        } catch(e) { mostrarToast('Error', true); }
+    }
+
+    async function eliminarNoticia(id) {
+        if (!confirm('?Eliminar esta noticia?')) return;
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(`/api/noticias/${id}`, {
+                method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const r = await res.json();
+            if (r.success) { mostrarToast('Noticia eliminada'); cargarNoticias(); }
+        } catch(e) { mostrarToast('Error', true); }
+    }
+
+    // ---- PROGRAMAS ----
+    async function cargarProgramas() {
+        try {
+            const res = await fetch('/api/programas');
+            const programas = await res.json();
+            const tbody = document.getElementById('tablaProgramas');
+            const empty = document.getElementById('emptyProgramas');
+            if (!programas.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            tbody.innerHTML = programas.map(p => `
+                <tr>
+                    <td><b>${p.nombre}</b></td>
+                    <td>${p.nivel || ''}</td>
+                    <td class="actions">
+                        <button class="btn btn-primary btn-sm" onclick="editarPrograma(${p.id},'${p.nombre.replace(/'/g,"\\'")}','${(p.descripcion||'').replace(/'/g,"\\'")}','${p.nivel||''}','${p.icono||'fa-book'}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="eliminarPrograma(${p.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch(e) { console.error(e); }
+    }
+
+    function abrirModalPrograma() {
+        editandoProgramaId = null;
+        document.getElementById('tituloModalPrograma').innerHTML = '<i class="fas fa-plus-circle"></i> Nuevo Programa';
+        document.getElementById('p_nombre').value = '';
+        document.getElementById('p_descripcion').value = '';
+        document.getElementById('p_nivel').value = 'General';
+        document.getElementById('p_icono').value = 'fa-book';
+        document.getElementById('modalPrograma').classList.add('open');
+    }
+
+    function editarPrograma(id, nombre, descripcion, nivel, icono) {
+        editandoProgramaId = id;
+        document.getElementById('tituloModalPrograma').innerHTML = '<i class="fas fa-edit"></i> Editar Programa';
+        document.getElementById('p_nombre').value = nombre;
+        document.getElementById('p_descripcion').value = descripcion;
+        document.getElementById('p_nivel').value = nivel;
+        document.getElementById('p_icono').value = icono;
+        document.getElementById('modalPrograma').classList.add('open');
+    }
+
+    async function guardarPrograma() {
+        const data = {
+            nombre: document.getElementById('p_nombre').value.trim(),
+            descripcion: document.getElementById('p_descripcion').value.trim(),
+            nivel: document.getElementById('p_nivel').value,
+            icono: document.getElementById('p_icono').value.trim()
+        };
+        if (!data.nombre) { mostrarToast('El nombre es obligatorio', true); return; }
+        const token = localStorage.getItem('token');
+        try {
+            let res;
+            if (editandoProgramaId) {
+                res = await fetch(`/api/programas/${editandoProgramaId}`, {
+                    method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } else {
+                res = await fetch('/api/programas', {
+                    method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            }
+            const r = await res.json();
+            if (r.success) { mostrarToast('Programa guardado'); cerrarModal('modalPrograma'); cargarProgramas(); }
+        } catch(e) { mostrarToast('Error', true); }
+    }
+
+    async function eliminarPrograma(id) {
+        if (!confirm('?Eliminar este programa?')) return;
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(`/api/programas/${id}`, {
+                method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const r = await res.json();
+            if (r.success) { mostrarToast('Programa eliminado'); cargarProgramas(); }
+        } catch(e) { mostrarToast('Error', true); }
+    }
+
+    // ---- GALERAA ----
+    async function cargarGaleria() {
+        try {
+            const res = await fetch('/api/galeria');
+            const imagenes = await res.json();
+            const tbody = document.getElementById('tablaGaleria');
+            const empty = document.getElementById('emptyGaleria');
+            if (!imagenes.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            tbody.innerHTML = imagenes.map(g => `
+                <tr>
+                    <td><b>${g.titulo || 'Sin titulo'}</b></td>
+                    <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g.imagen}</td>
+                    <td>${g.fecha}</td>
+                    <td class="actions">
+                        <button class="btn btn-danger btn-sm" onclick="eliminarGaleria(${g.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch(e) { console.error(e); }
+    }
+
+    function abrirModalGaleria() {
+        document.getElementById('g_titulo').value = '';
+        document.getElementById('g_imagen').value = '';
+        document.getElementById('g_descripcion').value = '';
+        document.getElementById('modalGaleria').classList.add('open');
+    }
+
+    async function guardarGaleria() {
+        const data = {
+            titulo: document.getElementById('g_titulo').value.trim(),
+            imagen: document.getElementById('g_imagen').value.trim(),
+            descripcion: document.getElementById('g_descripcion').value.trim()
+        };
+        if (!data.imagen) { mostrarToast('La URL de la imagen es obligatoria', true); return; }
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch('/api/galeria', {
+                method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const r = await res.json();
+            if (r.success) { mostrarToast('Imagen agregada'); cerrarModal('modalGaleria'); cargarGaleria(); }
+        } catch(e) { mostrarToast('Error', true); }
+    }
+
+    async function eliminarGaleria(id) {
+        if (!confirm('?Eliminar esta imagen?')) return;
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(`/api/galeria/${id}`, {
+                method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const r = await res.json();
+            if (r.success) { mostrarToast('Imagen eliminada'); cargarGaleria(); }
+        } catch(e) { mostrarToast('Error', true); }
+    }
+
+    // ---- MENSAJES ----
+    async function cargarMensajes() {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('/api/mensajes', { headers: { 'Authorization': `Bearer ${token}` } });
+            const mensajes = await res.json();
+            const tbody = document.getElementById('tablaMensajes');
+            const empty = document.getElementById('emptyMensajes');
+            if (!mensajes.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            tbody.innerHTML = mensajes.map(m => `
+                <tr>
+                    <td><b>${m.nombre}</b></td>
+                    <td>${m.email}</td>
+                    <td>${m.telefono || '-'}</td>
+                    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${m.mensaje}">${m.mensaje}</td>
+                    <td>${m.fecha}</td>
+                    <td><span class="badge ${m.leido ? 'badge-s' : 'badge-n'}">${m.leido ? 'Leido' : 'Nuevo'}</span></td>
+                </tr>
+            `).join('');
+        } catch(e) { console.error(e); }
+    }
+
+    function subirImagen(inputId) {
+        document.getElementById(inputId + '_file').click();
+    }
+
+    async function subirArchivo(input, inputId) {
+        const file = input.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById(inputId).value = data.url;
+                mostrarToast('Imagen subida correctamente');
+            } else {
+                mostrarToast('Error al subir imagen: ' + (data.message || ''), true);
+            }
+        } catch(e) { mostrarToast('Error de conexion al subir imagen', true); }
+        input.value = '';
+    }
+
+    cargarConfig();
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+# Configuración de despliegue en Render (Blueprint)
+# Crea automáticamente: sitio público, panel admin y base de datos PostgreSQL
+
+databases:
+  - name: inscrib-db
+    plan: free
+
+services:
+  # ------- SITIO PÚBLICO -------
+  - type: web
+    name: inscrib-publico
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi_public:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+    healthCheckPath: /
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: inscrib-db
+          property: connectionString
+      - key: FORCE_HTTPS
+        value: "true"
+      - key: ADMIN_PASSWORD
+        value: admin123
+
+  # ------- PANEL ADMIN -------
+  - type: web
+    name: inscrib-admin
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi_admin:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+    healthCheckPath: /login
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: inscrib-db
+          property: connectionString
+      - key: FORCE_HTTPS
+        value: "true"
+      - key: ADMIN_PASSWORD
+        value: admin123

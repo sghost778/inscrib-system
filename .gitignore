@@ -1,0 +1,22 @@
+# Entorno virtual
+env/
+.venv/
+venv/
+
+# Caché de Python
+__pycache__/
+*.pyc
+
+# Base de datos local
+test.db
+*.db
+backups/
+
+# Logs y archivos temporales
+flask_output.txt
+flask_error.txt
+*.log
+
+# Sistema / editor
+.DS_Store
+Thumbs.db

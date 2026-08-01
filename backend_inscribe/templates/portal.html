@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal del Representante</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; color: #2d3436; }
+        :root { --primary: #00b689; --primary-dark: #009671; --bg: #f8fafb; }
+
+        .top-bar { background: linear-gradient(135deg, var(--primary), #00d2ad); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .top-bar h1 { font-size: 1.3rem; }
+        .top-bar h1 i { margin-right: 8px; }
+        .top-bar .btn-outline { background: transparent; border: 2px solid white; color: white; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+        .top-bar .btn-outline:hover { background: rgba(255,255,255,0.15); }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+
+        .hero { text-align: center; padding: 40px 20px; background: white; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); border: 1px solid #edf2f7; }
+        .hero .icon { font-size: 3rem; color: var(--primary); margin-bottom: 15px; }
+        .hero h2 { font-size: 1.6rem; margin-bottom: 8px; }
+        .hero p { color: #636e72; max-width: 600px; margin: 0 auto 20px; font-size: 0.95rem; }
+        .hero .btn-hero { display: inline-block; background: var(--primary); color: white; padding: 14px 35px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 1rem; transition: 0.3s; border: none; cursor: pointer; }
+        .hero .btn-hero:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,182,137,0.3); }
+
+        .section-title { font-size: 1.3rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .section-title i { color: var(--primary); }
+
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 20px; margin-bottom: 35px; }
+        .news-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 3px 15px rgba(0,0,0,0.04); border: 1px solid #edf2f7; transition: 0.3s; }
+        .news-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+        .news-card img { width: 100%; height: 160px; object-fit: cover; }
+        .news-card .body { padding: 15px; }
+        .news-card .body h4 { font-size: 1rem; margin-bottom: 6px; }
+        .news-card .body p { font-size: 0.85rem; color: #636e72; line-height: 1.4; }
+        .news-card .body .date { font-size: 0.75rem; color: #aaa; margin-top: 8px; }
+
+        .prog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 15px; margin-bottom: 35px; }
+        .prog-card { background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 3px 15px rgba(0,0,0,0.04); border: 1px solid #edf2f7; }
+        .prog-card i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+        .prog-card h4 { font-size: 0.95rem; margin-bottom: 5px; }
+        .prog-card p { font-size: 0.8rem; color: #636e72; }
+
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; margin-bottom: 35px; }
+        .gallery-item { border-radius: 10px; overflow: hidden; height: 150px; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        .auth-section { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); border: 1px solid #edf2f7; max-width: 500px; margin: 0 auto 40px; text-align: center; }
+        .auth-section h3 { margin-bottom: 5px; }
+        .auth-section p { color: #636e72; font-size: 0.9rem; margin-bottom: 20px; }
+        .tabs { display: flex; background: #f1f5f9; border-radius: 10px; padding: 4px; margin-bottom: 20px; }
+        .tabs button { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #636e72; }
+        .tabs button.active { background: white; color: #2d3436; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; color: #555; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 11px 14px; border: 2px solid #edf2f7; border-radius: 8px; font-family: inherit; font-size: 0.95rem; transition: 0.3s; }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); outline: none; }
+
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 0.95rem; width: 100%; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: #555; width: auto; }
+        .btn-outline:hover { background: #f1f5f9; }
+        .btn-sm { padding: 8px 16px; width: auto; font-size: 0.85rem; }
+
+        .hidden { display: none !important; }
+
+        .toast { position: fixed; top: 20px; right: 20px; background: var(--primary); color: white; padding: 15px 25px; border-radius: 10px; font-weight: 600; display: none; box-shadow: 0 5px 20px rgba(0,0,0,0.15); z-index: 300; }
+        .toast.error { background: #dc2626; }
+
+        .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.04); border: 1px solid #edf2f7; }
+        .stat-card i { font-size: 1.8rem; color: var(--primary); margin-bottom: 8px; }
+        .stat-card h3 { font-size: 1.5rem; }
+        .stat-card p { font-size: 0.85rem; color: #636e72; }
+
+        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); border: 1px solid #edf2f7; margin-bottom: 20px; }
+        .card h3 { font-size: 1.1rem; margin-bottom: 15px; }
+        .card h3 i { color: var(--primary); margin-right: 8px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8fafb; padding: 12px 15px; text-align: left; font-size: 0.8rem; color: #636e72; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; }
+        .badge-s { background: #dcfce7; color: #166534; }
+        .badge-n { background: #dbeafe; color: #1e40af; }
+        .empty-state { text-align: center; padding: 40px; color: #636e72; }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 10px; opacity: 0.3; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; }
+        .modal.open { display: flex; }
+        .modal-content { background: white; border-radius: 15px; padding: 30px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+        .footer { text-align: center; padding: 30px; color: #636e72; font-size: 0.85rem; border-top: 1px solid #edf2f7; margin-top: 20px; }
+
+        @media (max-width: 768px) { .stats { grid-template-columns: 1fr; } .grid-2 { grid-template-columns: 1fr; } .top-bar { flex-direction: column; text-align: center; } .news-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <h1><i class="fas fa-user-friends"></i> <span id="siteNameTop">Portal del Representante</span></h1>
+    <div>
+        <span id="userBadge" style="margin-right:15px;font-weight:600;display:none;"></span>
+        <button class="btn-outline hidden" id="btnPerfil" onclick="mostrarPerfil()" style="margin-right:8px;"><i class="fas fa-user-edit"></i> Mi Perfil</button>
+        <button class="btn-outline hidden" id="btnCerrarSesion" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesion</button>
+    </div>
+</div>
+
+<div class="container" id="appContainer">
+
+    <!-- ============ PUBLIC SECTIONS ============ -->
+    <div id="publicSections">
+
+        <div class="hero">
+            <div class="icon"><i class="fas fa-school"></i></div>
+            <h2 id="heroTitle">Escuela José Manuel Cova Maza</h2>
+            <p id="heroDesc">Formando lideres para el futuro con excelencia educativa. Accede al portal para registrar a tus representados, realizar inscripciones y consultar el estatus.</p>
+            <button class="btn-hero" onclick="document.getElementById('authSection').scrollIntoView({behavior:'smooth'})"><i class="fas fa-user-plus"></i> Registrarse o Iniciar Sesion</button>
+        </div>
+
+        <div id="noticiasSection" class="hidden">
+            <h3 class="section-title"><i class="fas fa-newspaper"></i> Noticias</h3>
+            <div class="news-grid" id="newsContainer"></div>
+        </div>
+
+        <div id="programasSection" class="hidden">
+            <h3 class="section-title"><i class="fas fa-graduation-cap"></i> Programas Academicos</h3>
+            <div class="prog-grid" id="programsContainer"></div>
+        </div>
+
+        <div id="galeriaSection" class="hidden">
+            <h3 class="section-title"><i class="fas fa-images"></i> Galeria</h3>
+            <div class="gallery-grid" id="galleryContainer"></div>
+        </div>
+
+        <!-- ============ AUTH SECTION ============ -->
+        <div class="auth-section" id="authSection">
+            <h3><i class="fas fa-user-lock"></i> Acceso al Portal</h3>
+            <p>Ingresa tus datos para acceder o crea una cuenta nueva.</p>
+            <div class="tabs">
+                <button class="active" onclick="cambiarAuthTab('login',this)">Iniciar Sesion</button>
+                <button onclick="cambiarAuthTab('registro',this)">Registrarse</button>
+            </div>
+
+            <div id="authLogin">
+                <div class="form-group"><label>Cedula de Identidad</label><input type="text" id="loginCedula" placeholder="V-12345678"></div>
+                <div class="form-group"><label>Contrasena</label><input type="password" id="loginPassword" placeholder="********"></div>
+                <button class="btn btn-primary" onclick="iniciarSesion()"><i class="fas fa-sign-in-alt"></i> Iniciar Sesion</button>
+                <p style="margin-top:10px;font-size:0.85rem;text-align:center;"><a href="#" onclick="mostrarRecuperar();return false;" style="color:var(--primary);text-decoration:none;">Olvidaste tu contrasena?</a></p>
+                <p id="loginError" style="color:#dc2626;margin-top:10px;font-size:0.85rem;display:none;"></p>
+            </div>
+
+            <div id="authRegistro" class="hidden">
+                <div class="grid-2">
+                    <div class="form-group"><label>Cedula</label><input type="text" id="regCedula" placeholder="V-12345678"></div>
+                    <div class="form-group"><label>Telefono</label><input type="text" id="regTelefono" placeholder="0412-1234567"></div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group"><label>Nombres</label><input type="text" id="regNombres" placeholder="Juan Carlos"></div>
+                    <div class="form-group"><label>Apellidos</label><input type="text" id="regApellidos" placeholder="Perez Silva"></div>
+                </div>
+                <div class="form-group"><label>Correo Electronico</label><input type="email" id="regEmail" placeholder="correo@ejemplo.com"></div>
+                <div class="form-group"><label>Direccion de Habitacion</label><input type="text" id="regDireccion" placeholder="Ciudad, Sector, Calle"></div>
+                <div class="form-group"><label>Contrasena</label><input type="password" id="regPassword" placeholder="Minimo 6 caracteres"></div>
+                <button class="btn btn-primary" onclick="registrarme()"><i class="fas fa-user-plus"></i> Crear Cuenta</button>
+                <p id="regError" style="color:#dc2626;margin-top:10px;font-size:0.85rem;display:none;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ DASHBOARD (after login) ============ -->
+    <div id="dashboardScreen" class="hidden">
+        <div class="stats">
+            <div class="stat-card"><i class="fas fa-users"></i><h3 id="statEstudiantes">0</h3><p>Estudiantes</p></div>
+            <div class="stat-card"><i class="fas fa-check-circle"></i><h3 id="statInscritos">0</h3><p>Inscritos</p></div>
+            <div class="stat-card"><i class="fas fa-school"></i><h3 id="statPeriodo">-</h3><p>Ano Escolar</p></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-user-graduate"></i> Mis Estudiantes</h3>
+                <button class="btn btn-primary btn-sm" onclick="mostrarFormularioEstudiante()"><i class="fas fa-plus"></i> Registrar Estudiante</button>
+            </div>
+            <div id="estudiantesContainer"><div class="empty-state"><i class="fas fa-user-graduate"></i><p>No tienes estudiantes registrados. Registra el primero!</p></div></div>
+        </div>
+
+        <div class="card hidden" id="formEstudianteCard">
+            <h3><i class="fas fa-plus-circle"></i> <span id="tituloFormEstudiante">Registrar Estudiante</span></h3>
+            <div class="grid-2">
+                <div class="form-group"><label>Cedula Escolar</label><input type="text" id="estCedulaEscolar" placeholder="V-12345678"></div>
+                <div class="form-group"><label>Cedula de Identidad</label><input type="text" id="estCedulaIdentidad" placeholder="V-12345678 (opcional)"></div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group"><label>Nombres</label><input type="text" id="estNombres" placeholder="Nombres del estudiante"></div>
+                <div class="form-group"><label>Apellidos</label><input type="text" id="estApellidos" placeholder="Apellidos del estudiante"></div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group"><label>Fecha de Nacimiento</label><input type="date" id="estFechaNac"></div>
+                <div class="form-group"><label>Orden de Nacimiento</label><input type="number" id="estOrden" value="1" min="1"></div>
+            </div>
+            <div style="display:flex;gap:10px;">
+                <button class="btn btn-primary btn-sm" onclick="guardarEstudiante()"><i class="fas fa-save"></i> Guardar Estudiante</button>
+                <button class="btn btn-outline btn-sm" onclick="cancelarFormEstudiante()">Cancelar</button>
+            </div>
+        </div>
+
+        <div class="card hidden" id="formInscripcionCard">
+            <h3><i class="fas fa-pen"></i> Inscribir Estudiante</h3>
+            <div class="form-group"><label>Estudiante</label><select id="insEstudiante"></select></div>
+            <div class="form-group"><label>Grado</label><select id="insGrado"></select></div>
+            <button class="btn btn-primary btn-sm" onclick="inscribirEstudiante()"><i class="fas fa-check"></i> Inscribir</button>
+            <button class="btn btn-outline btn-sm" onclick="cancelarInscripcion()" style="margin-left:8px;">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal" id="modalRecuperar">
+    <div class="modal-content">
+        <h3><i class="fas fa-key"></i> Recuperar Contrasena</h3>
+        <p style="margin:10px 0;color:#636e72;font-size:0.9rem;">Ingresa tu cedula para verificar si tienes una cuenta registrada.</p>
+        <div class="form-group"><label>Cedula</label><input type="text" id="recCedula" placeholder="V-12345678"></div>
+        <p id="recError" style="color:#dc2626;font-size:0.85rem;display:none;"></p>
+        <p id="recSuccess" style="color:#16a34a;font-size:0.85rem;display:none;"></p>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="cerrarModal('modalRecuperar')">Cerrar</button>
+            <button class="btn btn-primary" onclick="recuperarCuenta()" style="width:auto;">Verificar</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modalPerfil">
+    <div class="modal-content">
+        <h3><i class="fas fa-user-edit"></i> Mi Perfil</h3>
+        <div class="grid-2">
+            <div class="form-group"><label>Nombres</label><input type="text" id="perNombres"></div>
+            <div class="form-group"><label>Apellidos</label><input type="text" id="perApellidos"></div>
+        </div>
+        <div class="form-group"><label>Correo Electronico</label><input type="email" id="perEmail"></div>
+        <div class="grid-2">
+            <div class="form-group"><label>Telefono</label><input type="text" id="perTelefono"></div>
+            <div class="form-group"><label>Direccion</label><input type="text" id="perDireccion"></div>
+        </div>
+        <p id="perError" style="color:#dc2626;font-size:0.85rem;display:none;"></p>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="mostrarPassword()" style="width:auto;"><i class="fas fa-lock"></i> Cambiar Contrasena</button>
+            <button class="btn btn-outline" onclick="cerrarModal('modalPerfil')">Cerrar</button>
+            <button class="btn btn-primary" onclick="guardarPerfil()" style="width:auto;">Guardar Cambios</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modalPassword">
+    <div class="modal-content">
+        <h3><i class="fas fa-lock"></i> Cambiar Contrasena</h3>
+        <div class="form-group"><label>Contrasena Actual</label><input type="password" id="passActual"></div>
+        <div class="form-group"><label>Nueva Contrasena (min. 4 caracteres)</label><input type="password" id="passNueva"></div>
+        <p id="passError" style="color:#dc2626;font-size:0.85rem;display:none;"></p>
+        <p id="passSuccess" style="color:#16a34a;font-size:0.85rem;display:none;"></p>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="cerrarModal('modalPassword')">Cerrar</button>
+            <button class="btn btn-primary" onclick="cambiarPassword()" style="width:auto;">Cambiar Contrasena</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="footer" id="footerSection">
+    <p id="footerText">Escuela José Manuel Cova Maza &copy; 2026 - Todos los derechos reservados</p>
+</div>
+
+<script>
+    let estudiantes = [];
+    let grados = [];
+
+    function mostrarToast(msg, error) {
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.className = 'toast' + (error ? ' error' : '');
+        t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 4000);
+    }
+
+    function cambiarAuthTab(tab, btn) {
+        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('authLogin').classList.toggle('hidden', tab !== 'login');
+        document.getElementById('authRegistro').classList.toggle('hidden', tab !== 'registro');
+        document.getElementById('loginError').style.display = 'none';
+        document.getElementById('regError').style.display = 'none';
+    }
+
+    // ============ PUBLIC CONTENT ============
+
+    async function cargarContenidoPublico() {
+        try {
+            const [configRes, noticiasRes, programasRes, galeriaRes] = await Promise.all([
+                fetch('/api/site-config'),
+                fetch('/api/noticias?activas=true'),
+                fetch('/api/programas'),
+                fetch('/api/galeria')
+            ]);
+            const config = await configRes.json();
+            const noticias = await noticiasRes.json();
+            const programas = await programasRes.json();
+            const galeria = await galeriaRes.json();
+
+            if (config.site_name) {
+                document.getElementById('siteNameTop').textContent = config.site_name;
+                document.getElementById('heroTitle').textContent = config.site_name;
+            }
+            if (config.site_description) {
+                document.getElementById('heroDesc').textContent = config.site_description;
+            }
+            if (config.contact_address || config.contact_phone) {
+                document.getElementById('footerText').innerHTML = (config.site_name || 'Escuela José Manuel Cova Maza') + ' &copy; 2026 - ' + (config.contact_address || '') + ' | Tel: ' + (config.contact_phone || '');
+            }
+
+            if (noticias.length) {
+                document.getElementById('noticiasSection').classList.remove('hidden');
+                document.getElementById('newsContainer').innerHTML = noticias.map(n =>
+                    '<div class="news-card">' +
+                    (n.imagen ? '<img src="' + n.imagen + '" alt="' + n.titulo + '" onerror="this.style.display=\'none\'">' : '') +
+                    '<div class="body"><h4>' + n.titulo + '</h4><p>' + (n.resumen || '') + '</p>' +
+                    (n.fecha ? '<div class="date"><i class="far fa-calendar-alt"></i> ' + n.fecha + '</div>' : '') + '</div></div>'
+                ).join('');
+            }
+
+            if (programas.length) {
+                document.getElementById('programasSection').classList.remove('hidden');
+                document.getElementById('programsContainer').innerHTML = programas.map(p =>
+                    '<div class="prog-card"><i class="fas ' + (p.icono || 'fa-book') + '"></i><h4>' + p.nombre + '</h4><p>' + (p.descripcion || '') + '</p></div>'
+                ).join('');
+            }
+
+            if (galeria.length) {
+                document.getElementById('galeriaSection').classList.remove('hidden');
+                document.getElementById('galleryContainer').innerHTML = galeria.map(g =>
+                    '<div class="gallery-item"><img src="' + g.imagen + '" alt="' + (g.titulo || '') + '" title="' + (g.titulo || '') + '" onerror="this.style.display=\'none\'"></div>'
+                ).join('');
+            }
+        } catch(e) { console.error('Error cargando contenido publico', e); }
+    }
+
+    // ============ AUTH ============
+
+    async function checkSesion() {
+        try {
+            const res = await fetch('/api/portal/sesion');
+            const data = await res.json();
+            if (data.autenticado) {
+                document.getElementById('publicSections').classList.add('hidden');
+                document.getElementById('dashboardScreen').classList.remove('hidden');
+                document.getElementById('userBadge').innerHTML = '<i class="fas fa-user"></i> ' + data.nombre;
+                document.getElementById('userBadge').style.display = 'inline';
+                document.getElementById('btnPerfil').classList.remove('hidden');
+                document.getElementById('btnCerrarSesion').classList.remove('hidden');
+                cargarDashboard();
+            }
+        } catch(e) {}
+    }
+
+    async function iniciarSesion() {
+        const cedula = document.getElementById('loginCedula').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        if (!cedula || !password) { mostrarToast('Completa todos los campos', true); return; }
+        try {
+            const res = await fetch('/api/portal/login', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({usuario: cedula, password})
+            });
+            const data = await res.json();
+            if (data.success) {
+                mostrarToast('Bienvenido ' + data.nombre);
+                checkSesion();
+            } else {
+                document.getElementById('loginError').textContent = data.message;
+                document.getElementById('loginError').style.display = 'block';
+            }
+        } catch(e) { mostrarToast('Error de conexion', true); }
+    }
+
+    async function registrarme() {
+        const data = {
+            cedula: document.getElementById('regCedula').value.trim(),
+            nombres: document.getElementById('regNombres').value.trim(),
+            apellidos: document.getElementById('regApellidos').value.trim(),
+            email: document.getElementById('regEmail').value.trim(),
+            telefono: document.getElementById('regTelefono').value.trim(),
+            direccion: document.getElementById('regDireccion').value.trim(),
+            password: document.getElementById('regPassword').value
+        };
+        if (!data.cedula || !data.nombres || !data.apellidos || !data.password) {
+            mostrarToast('Completa los campos obligatorios', true); return;
+        }
+        try {
+            const res = await fetch('/api/portal/registro', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify(data)
+            });
+            const r = await res.json();
+            if (r.success) {
+                mostrarToast('Registro exitoso. Inicia sesion.');
+                document.getElementById('loginCedula').value = data.cedula;
+                cambiarAuthTab('login', document.querySelector('.tabs button:first-child'));
+            } else {
+                document.getElementById('regError').textContent = r.message;
+                document.getElementById('regError').style.display = 'block';
+            }
+        } catch(e) { mostrarToast('Error de conexion', true); }
+    }
+
+    async function cerrarSesion() {
+        await fetch('/api/portal/logout', {method:'POST'});
+        document.getElementById('publicSections').classList.remove('hidden');
+        document.getElementById('dashboardScreen').classList.add('hidden');
+        document.getElementById('userBadge').style.display = 'none';
+        document.getElementById('btnPerfil').classList.add('hidden');
+        document.getElementById('btnCerrarSesion').classList.add('hidden');
+    }
+
+    // ============ DASHBOARD ============
+
+    async function cargarDashboard() {
+        try {
+            const [estudiantesRes, gradosRes] = await Promise.all([
+                fetch('/api/portal/estudiantes'),
+                fetch('/api/portal/grados')
+            ]);
+            estudiantes = await estudiantesRes.json();
+            grados = await gradosRes.json();
+            document.getElementById('statEstudiantes').textContent = estudiantes.length;
+            document.getElementById('statInscritos').textContent = estudiantes.filter(e => e.estado === 'REGULAR').length;
+            if (estudiantes.length > 0) document.getElementById('statPeriodo').textContent = estudiantes[0].periodo;
+            renderEstudiantes();
+            cargarSelectGrados();
+        } catch(e) { console.error(e); }
+    }
+
+    function renderEstudiantes() {
+        const container = document.getElementById('estudiantesContainer');
+        if (!estudiantes.length) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-user-graduate"></i><p>No tienes estudiantes registrados. Registra el primero!</p></div>';
+            return;
+        }
+        container.innerHTML = '<table><thead><tr><th>Cedula Escolar</th><th>Nombre</th><th>Grado</th><th>Periodo</th><th>Estado</th><th>Accion</th></tr></thead><tbody>' +
+            estudiantes.map(e => '<tr><td>' + e.cedula_escolar + '</td><td>' + e.nombres + ' ' + e.apellidos + '</td><td>' + e.grado + '</td><td>' + e.periodo + '</td><td><span class="badge ' + (e.estado === 'REGULAR' ? 'badge-s' : 'badge-n') + '">' + e.estado + '</span></td><td><div style="display:flex;gap:5px;">' +
+            (e.estado !== 'REGULAR' ? '<button class="btn btn-primary btn-sm" onclick="mostrarInscripcion(\'' + e.cedula_escolar + '\')"><i class="fas fa-pen"></i> Inscribir</button>' : '<span style="color:#16a34a;font-size:0.85rem;">Inscrito</span>') +
+            (e.estado === 'REGULAR' ? '<button class="btn btn-outline btn-sm" onclick="imprimirConstancia(\'' + e.cedula_escolar + '\')"><i class="fas fa-print"></i> Imprimir</button>' : '') +
+            '</div></td></tr>').join('') + '</tbody></table>';
+    }
+
+    function cargarSelectGrados() {
+        const sel = document.getElementById('insGrado');
+        sel.innerHTML = grados.map(g => '<option value="' + g.id + '">' + g.nombre + ' (' + (g.nivel || '') + ')</option>').join('');
+    }
+
+    function mostrarFormularioEstudiante() {
+        document.getElementById('formEstudianteCard').classList.remove('hidden');
+        document.getElementById('tituloFormEstudiante').textContent = 'Registrar Estudiante';
+        document.getElementById('estCedulaEscolar').value = '';
+        document.getElementById('estCedulaIdentidad').value = '';
+        document.getElementById('estNombres').value = '';
+        document.getElementById('estApellidos').value = '';
+        document.getElementById('estFechaNac').value = '';
+        document.getElementById('estOrden').value = '1';
+    }
+
+    function cancelarFormEstudiante() { document.getElementById('formEstudianteCard').classList.add('hidden'); }
+
+    async function guardarEstudiante() {
+        const data = {
+            cedula_escolar: document.getElementById('estCedulaEscolar').value.trim(),
+            cedula_identidad: document.getElementById('estCedulaIdentidad').value.trim(),
+            nombres: document.getElementById('estNombres').value.trim(),
+            apellidos: document.getElementById('estApellidos').value.trim(),
+            fecha_nacimiento: document.getElementById('estFechaNac').value,
+            orden_nacimiento: parseInt(document.getElementById('estOrden').value) || 1
+        };
+        if (!data.cedula_escolar || !data.nombres || !data.apellidos) { mostrarToast('Cedula escolar, nombres y apellidos son obligatorios', true); return; }
+        try {
+            const res = await fetch('/api/portal/estudiantes', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            const r = await res.json();
+            if (r.success) { mostrarToast('Estudiante registrado correctamente'); cancelarFormEstudiante(); cargarDashboard(); }
+            else { mostrarToast(r.message, true); }
+        } catch(e) { mostrarToast('Error al guardar', true); }
+    }
+
+    function mostrarInscripcion(cedula) {
+        const sel = document.getElementById('insEstudiante');
+        sel.innerHTML = estudiantes.filter(e => e.estado !== 'REGULAR').map(e => '<option value="' + e.cedula_escolar + '" ' + (e.cedula_escolar === cedula ? 'selected' : '') + '>' + e.nombres + ' ' + e.apellidos + ' (' + e.cedula_escolar + ')</option>').join('');
+        document.getElementById('formInscripcionCard').classList.remove('hidden');
+    }
+
+    function cancelarInscripcion() { document.getElementById('formInscripcionCard').classList.add('hidden'); }
+
+    async function inscribirEstudiante() {
+        const cedula_escolar = document.getElementById('insEstudiante').value;
+        const id_grado = parseInt(document.getElementById('insGrado').value);
+        if (!cedula_escolar) { mostrarToast('Selecciona un estudiante', true); return; }
+        try {
+            const res = await fetch('/api/portal/inscripcion', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cedula_escolar, id_grado}) });
+            const r = await res.json();
+            if (r.success) { mostrarToast('Inscripcion realizada exitosamente'); cancelarInscripcion(); cargarDashboard(); }
+            else { mostrarToast(r.message, true); }
+        } catch(e) { mostrarToast('Error al inscribir', true); }
+    }
+
+    function abrirModal(id) { document.getElementById(id).classList.add('open'); }
+    function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    function mostrarRecuperar() {
+        document.getElementById('recCedula').value = document.getElementById('loginCedula').value;
+        document.getElementById('recError').style.display = 'none';
+        document.getElementById('recSuccess').style.display = 'none';
+        abrirModal('modalRecuperar');
+    }
+
+    async function recuperarCuenta() {
+        const cedula = document.getElementById('recCedula').value.trim();
+        if (!cedula) { document.getElementById('recError').textContent = 'Ingresa tu cedula'; document.getElementById('recError').style.display = 'block'; return; }
+        try {
+            const res = await fetch('/api/portal/recuperar', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cedula}) });
+            const data = await res.json();
+            if (data.success) { document.getElementById('recSuccess').textContent = data.message; document.getElementById('recSuccess').style.display = 'block'; document.getElementById('recError').style.display = 'none'; }
+            else { document.getElementById('recError').textContent = data.message; document.getElementById('recError').style.display = 'block'; document.getElementById('recSuccess').style.display = 'none'; }
+        } catch(e) { mostrarToast('Error de conexion', true); }
+    }
+
+    async function mostrarPerfil() {
+        try {
+            const res = await fetch('/api/portal/perfil');
+            const data = await res.json();
+            if (data.success === false) { mostrarToast(data.message, true); return; }
+            document.getElementById('perNombres').value = data.nombres || '';
+            document.getElementById('perApellidos').value = data.apellidos || '';
+            document.getElementById('perEmail').value = data.email || '';
+            document.getElementById('perTelefono').value = data.telefono || '';
+            document.getElementById('perDireccion').value = data.direccion || '';
+            document.getElementById('perError').style.display = 'none';
+            abrirModal('modalPerfil');
+        } catch(e) { mostrarToast('Error al cargar perfil', true); }
+    }
+
+    async function guardarPerfil() {
+        const data = { nombres: document.getElementById('perNombres').value.trim(), apellidos: document.getElementById('perApellidos').value.trim(), email: document.getElementById('perEmail').value.trim(), telefono: document.getElementById('perTelefono').value.trim(), direccion: document.getElementById('perDireccion').value.trim() };
+        if (!data.nombres || !data.apellidos) { document.getElementById('perError').textContent = 'Nombres y apellidos son obligatorios'; document.getElementById('perError').style.display = 'block'; return; }
+        try {
+            const res = await fetch('/api/portal/perfil', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+            const r = await res.json();
+            if (r.success) { mostrarToast('Perfil actualizado'); cerrarModal('modalPerfil'); document.getElementById('userBadge').textContent = data.nombres + ' ' + data.apellidos; }
+            else { document.getElementById('perError').textContent = r.message; document.getElementById('perError').style.display = 'block'; }
+        } catch(e) { mostrarToast('Error al guardar', true); }
+    }
+
+    function mostrarPassword() {
+        document.getElementById('passActual').value = '';
+        document.getElementById('passNueva').value = '';
+        document.getElementById('passError').style.display = 'none';
+        document.getElementById('passSuccess').style.display = 'none';
+        cerrarModal('modalPerfil');
+        abrirModal('modalPassword');
+    }
+
+    async function cambiarPassword() {
+        const current = document.getElementById('passActual').value;
+        const new_pass = document.getElementById('passNueva').value;
+        if (!current || !new_pass) { document.getElementById('passError').textContent = 'Completa ambos campos'; document.getElementById('passError').style.display = 'block'; document.getElementById('passSuccess').style.display = 'none'; return; }
+        if (new_pass.length < 4) { document.getElementById('passError').textContent = 'La nueva contrasena debe tener al menos 4 caracteres'; document.getElementById('passError').style.display = 'block'; document.getElementById('passSuccess').style.display = 'none'; return; }
+        try {
+            const res = await fetch('/api/portal/password', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({current, new_password: new_pass}) });
+            const r = await res.json();
+            if (r.success) { document.getElementById('passSuccess').textContent = r.message; document.getElementById('passSuccess').style.display = 'block'; document.getElementById('passError').style.display = 'none'; setTimeout(() => cerrarModal('modalPassword'), 1500); }
+            else { document.getElementById('passError').textContent = r.message; document.getElementById('passError').style.display = 'block'; document.getElementById('passSuccess').style.display = 'none'; }
+        } catch(e) { mostrarToast('Error de conexion', true); }
+    }
+
+    async function imprimirConstancia(cedula) {
+        try {
+            const res = await fetch('/api/portal/constancia/' + cedula);
+            const data = await res.json();
+            if (data.success === false) { mostrarToast(data.message, true); return; }
+            const win = window.open('', '_blank');
+            win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Constancia de Inscripcion</title><style>body{font-family:"Times New Roman",serif;padding:40px;color:#2d3436}.header{text-align:center;margin-bottom:30px;border-bottom:2px solid #2d3436;padding-bottom:15px}.header h1{font-size:1.5rem;margin:5px 0}.header p{color:#555;font-size:.9rem}table{width:100%;border-collapse:collapse;margin:20px 0}td{padding:10px 8px;border-bottom:1px solid #ccc;font-size:.95rem}td.label{font-weight:700;width:40%}.firma{margin-top:50px;text-align:center;border-top:1px solid #2d3436;padding-top:15px}.firma p{margin:5px 0;color:#555;font-size:.9rem}</style></head><body><div class="header"><h1>UNIDAD EDUCATIVA</h1><h2>Escuela José Manuel Cova Maza</h2><p>CONSTANCIA DE INSCRIPCION</p></div><table><tr><td class="label">Estudiante:</td><td>' + data.estudiante + '</td></tr><tr><td class="label">Cedula Escolar:</td><td>' + data.cedula_escolar + '</td></tr><tr><td class="label">Grado:</td><td>' + data.grado + '</td></tr><tr><td class="label">Periodo Escolar:</td><td>' + data.periodo + '</td></tr><tr><td class="label">Estado:</td><td>' + data.estado + '</td></tr><tr><td class="label">Fecha de Inscripcion:</td><td>' + data.fecha + '</td></tr><tr><td class="label">Representante:</td><td>' + data.representante + '</td></tr><tr><td class="label">Cedula del Representante:</td><td>' + data.rep_cedula + '</td></tr></table><div class="firma"><p>_______________________________</p><p>Directivo / Secretaria</p><p>Sello de la Institucion</p></div><script>window.onload=function(){window.print()}<\/script></body></html>');
+            win.document.close();
+        } catch(e) { mostrarToast('Error al generar constancia', true); }
+    }
+
+    // Init
+    cargarContenidoPublico();
+    checkSesion();
+</script>
+</body>
+</html>

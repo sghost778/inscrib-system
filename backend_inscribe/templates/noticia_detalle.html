@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Noticia - Escuela José Manuel Cova Maza</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; color: #2d3436; }
+        :root { --primary: #00b689; }
+
+        nav {
+            background: white; padding: 0 40px; display: flex; align-items: center;
+            justify-content: space-between; height: 75px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+        }
+        nav .logo { display: flex; align-items: center; gap: 10px; }
+        nav .logo img { height: 45px; }
+        nav .logo span { font-weight: 800; color: var(--primary); font-size: 1rem; }
+        nav .menu a {
+            text-decoration: none; color: #555; font-weight: 600; font-size: 0.9rem;
+            margin-left: 25px; transition: 0.3s;
+        }
+        nav .menu a:hover { color: var(--primary); }
+        .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; color: #555; }
+
+        .page-header {
+            margin-top: 75px; background: linear-gradient(135deg, var(--primary), #00d2ad);
+            padding: 60px 40px; text-align: center; color: white;
+        }
+        .page-header h1 { font-size: 2.2rem; }
+
+        section { padding: 60px 40px; max-width: 900px; margin: 0 auto; }
+        .noticia-img { width: 100%; max-height: 450px; object-fit: cover; border-radius: 15px; margin-bottom: 25px; }
+        .noticia-fecha { color: var(--primary); font-weight: 600; margin-bottom: 10px; }
+        .noticia-contenido { line-height: 1.8; color: #444; font-size: 1.05rem; }
+
+        footer {
+            background: #2d3436; color: white; text-align: center; padding: 30px;
+        }
+        footer p { opacity: 0.7; font-size: 0.9rem; }
+        footer a { color: var(--primary); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            nav { padding: 0 20px; }
+            nav .menu { display: none; flex-direction: column; position: absolute; top: 75px;
+                left: 0; right: 0; background: white; padding: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+            nav .menu.open { display: flex; }
+            nav .menu a { margin: 10px 0; }
+            .menu-toggle { display: block; }
+            section { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        <span id="navTitle">Escuela José Manuel Cova Maza</span>
+    </div>
+    <div class="menu" id="navMenu">
+        <a href="/">Inicio</a>
+        <a href="/nosotros">Nosotros</a>
+        <a href="/programas">Programas</a>
+        <a href="/noticias">Noticias</a>
+        <a href="/requisitos">Requisitos</a>
+        <a href="/galeria">Galería</a>
+        <a href="/contacto">Contacto</a>
+        <a href="/portal" style="color:var(--primary)"><i class="fas fa-user-friends"></i> Representantes</a>
+        
+    </div>
+    <div class="menu-toggle" onclick="document.getElementById('navMenu').classList.toggle('open')">
+        <i class="fas fa-bars"></i>
+    </div>
+</nav>
+
+<div class="page-header">
+    <h1 id="tituloNoticia">Cargando...</h1>
+</div>
+
+<section>
+    <img id="imgNoticia" class="noticia-img" src="" alt="" style="display:none;">
+    <div class="noticia-fecha" id="fechaNoticia"></div>
+    <div class="noticia-contenido" id="contenidoNoticia">Cargando contenido...</div>
+</section>
+
+<footer>
+    <p id="footerText">&copy; 2026 Escuela José Manuel Cova Maza. Todos los derechos reservados.</p>
+    <p style="margin-top:8px;"><a href="/portal" style="margin-right:15px;"><i class="fas fa-user-friends"></i> Portal Representantes</a>
+        <a href="/login"><i class="fas fa-user-shield"></i> Acceso Administrativo</a></p>
+</footer>
+
+<script>
+    async function cargarConfig() {
+        try {
+            const res = await fetch('/api/site-config');
+            const cfg = await res.json();
+            if (cfg.site_name) {
+                document.getElementById('navTitle').textContent = cfg.site_name;
+                document.getElementById('footerText').innerHTML = '&copy; 2026 ' + cfg.site_name + '. Todos los derechos reservados.';
+            }
+        } catch(e) { console.error(e); }
+    }
+    cargarConfig();
+
+    const noticiaId = {{ noticia_id }};
+    async function cargarNoticia() {
+        try {
+            const res = await fetch('/api/noticias');
+            const noticias = await res.json();
+            const n = noticias.find(x => x.id === noticiaId);
+            if (!n) { document.getElementById('contenidoNoticia').textContent = 'Noticia no encontrada.'; return; }
+            document.getElementById('pageTitle').textContent = n.titulo + ' - Escuela José Manuel Cova Maza';
+            document.getElementById('tituloNoticia').textContent = n.titulo;
+            document.getElementById('fechaNoticia').innerHTML = '<i class="far fa-calendar-alt"></i> ' + n.fecha;
+            document.getElementById('contenidoNoticia').innerHTML = (n.contenido || n.resumen || 'Sin contenido');
+            const img = document.getElementById('imgNoticia');
+            if (n.imagen) { img.src = n.imagen; img.style.display = 'block'; img.onerror = function() { this.style.display = 'none'; }; }
+        } catch(e) { document.getElementById('contenidoNoticia').textContent = 'Error al cargar la noticia.'; }
+    }
+    cargarNoticia();
+</script>
+</body>
+</html>

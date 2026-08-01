@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requisitos - Escuela José Manuel Cova Maza</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; color: #2d3436; }
+        :root { --primary: #00b689; }
+        nav { background: white; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 75px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+        nav .logo { display: flex; align-items: center; gap: 10px; }
+        nav .logo img { height: 45px; }
+        nav .logo span { font-weight: 800; color: var(--primary); font-size: 1rem; }
+        nav .menu a { text-decoration: none; color: #555; font-weight: 600; font-size: 0.9rem; margin-left: 25px; transition: 0.3s; }
+        nav .menu a:hover, nav .menu a.active { color: var(--primary); }
+        .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; color: #555; }
+        .page-header { margin-top: 75px; background: linear-gradient(135deg, var(--primary), #00d2ad); padding: 60px 40px; text-align: center; color: white; }
+        .page-header h1 { font-size: 2.2rem; }
+        section { padding: 60px 40px; max-width: 800px; margin: 0 auto; }
+        section h2 { font-size: 1.8rem; margin-bottom: 25px; color: #2d3436; }
+        section h2 i { color: var(--primary); margin-right: 10px; }
+        .requisito-item { display: flex; align-items: center; gap: 15px; padding: 15px 20px; background: #f8fafb; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+        .requisito-item i { color: var(--primary); font-size: 1.2rem; width: 24px; }
+        .requisito-item span { color: #2d3436; font-size: 1rem; }
+        .nota { margin-top: 30px; padding: 20px; background: #fff7ed; border-radius: 12px; border-left: 4px solid #f59e0b; }
+        .nota i { color: #f59e0b; margin-right: 8px; }
+        footer { background: #2d3436; color: white; text-align: center; padding: 30px; }
+        footer p { opacity: 0.7; font-size: 0.9rem; }
+        footer a { color: var(--primary); text-decoration: none; }
+        @media (max-width: 768px) {
+            nav { padding: 0 20px; }
+            nav .menu { display: none; flex-direction: column; position: absolute; top: 75px; left: 0; right: 0; background: white; padding: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+            nav .menu.open { display: flex; }
+            nav .menu a { margin: 10px 0; }
+            .menu-toggle { display: block; }
+            section { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        <span id="navTitle">Escuela José Manuel Cova Maza</span>
+    </div>
+    <div class="menu" id="navMenu">
+        <a href="/">Inicio</a>
+        <a href="/nosotros">Nosotros</a>
+        <a href="/programas">Programas</a>
+        <a href="/requisitos" class="active">Requisitos</a>
+        <a href="/noticias">Noticias</a>
+        <a href="/galeria">Galeria</a>
+        <a href="/contacto">Contacto</a>
+        <a href="/portal" style="color:var(--primary)"><i class="fas fa-user-friends"></i> Representantes</a>
+        
+    </div>
+    <div class="menu-toggle" onclick="document.getElementById('navMenu').classList.toggle('open')">
+        <i class="fas fa-bars"></i>
+    </div>
+</nav>
+
+<div class="page-header">
+    <h1><i class="fas fa-clipboard-list"></i> Requisitos de Inscripcion</h1>
+</div>
+
+<section>
+    <h2><i class="fas fa-file-alt"></i> Documentos Necesarios</h2>
+    <div id="requisitosList"></div>
+    <div class="nota">
+        <i class="fas fa-info-circle"></i> Los requisitos pueden variar segun el nivel educativo. Consulte con la institucion para casos especiales.
+    </div>
+</section>
+
+<footer>
+    <p id="footerText">&copy; 2026 Escuela José Manuel Cova Maza. Todos los derechos reservados.</p>
+    <p style="margin-top:8px;">
+        <a href="/portal" style="margin-right:15px;"><i class="fas fa-user-friends"></i> Portal Representantes</a>
+        <a href="/login"><i class="fas fa-user-shield"></i> Acceso Administrativo</a>
+    </p>
+</footer>
+
+<script>
+    async function cargarConfig() {
+        try {
+            const res = await fetch('/api/site-config');
+            const cfg = await res.json();
+            if (cfg.site_name) {
+                document.getElementById('navTitle').textContent = cfg.site_name;
+                document.getElementById('footerText').innerHTML = '&copy; 2026 ' + cfg.site_name + '. Todos los derechos reservados.';
+            }
+            if (cfg.requisitos_inscripcion) {
+                const items = cfg.requisitos_inscripcion.split('\n').filter(r => r.trim());
+                document.getElementById('requisitosList').innerHTML = items.map(r =>
+                    '<div class="requisito-item"><i class="fas fa-check-circle"></i><span>' + r.trim() + '</span></div>'
+                ).join('');
+            }
+        } catch(e) { console.error(e); }
+    }
+    cargarConfig();
+</script>
+</body>
+</html>
