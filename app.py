@@ -53,6 +53,10 @@ def create_app():
     def view_login():
         return render_template('login.html')
 
+    @app.route('/recuperar')
+    def view_recuperar():
+        return render_template('recuperar.html')
+
     @app.route('/logout')
     def view_logout():
         return redirect('/login')

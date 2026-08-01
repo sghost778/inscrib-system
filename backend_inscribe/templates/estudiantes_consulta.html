@@ -183,7 +183,7 @@
 
    
     <script>
-        // VALIDACIA"N: Bloquea numeros en letras y letras en numeros
+        // VALIDACIÓN: Bloquea numeros en letras y letras en numeros
         document.addEventListener('input', function (e) {
             if (e.target.classList.contains('solo-letras')) {
                 e.target.value = e.target.value.replace(/[0-9]/g, '');
@@ -218,7 +218,7 @@
             });
             document.getElementById('btnModificar').style.display = 'none';
             document.getElementById('btnGuardar').style.display = 'flex';
-            document.getElementById('statusModo').innerHTML = '<i class="fas fa-unlock-alt" style="color:var(--accent)"></i> MODO EDICIA"N';
+            document.getElementById('statusModo').innerHTML = '<i class="fas fa-unlock-alt" style="color:var(--accent)"></i> MODO EDICIÓN';
             document.getElementById('statusModo').style.color = "var(--accent)";
             mostrarAviso("Sistema Habilitado", "Ahora puedes realizar cambios.");
         }
@@ -229,7 +229,7 @@
 
         function ejecutarGuardado() {
             cerrarModal();
-            mostrarAviso("A‰xito", "Expediente actualizado correctamente.");
+            mostrarAviso("Éxito", "Expediente actualizado correctamente.");
             setTimeout(() => { location.reload(); }, 2000);
         }
 
