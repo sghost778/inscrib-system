@@ -15,7 +15,9 @@ def migrar_bd():
         if 'USUARIO' in insp.get_table_names():
             columnas = {c['name'] for c in insp.get_columns('USUARIO')}
             if 'email' not in columnas:
-                db.session.execute(text("ALTER TABLE USUARIO ADD COLUMN email VARCHAR(100)"))
+                preparer = db.engine.dialect.identifier_preparer
+                tabla = preparer.quote('USUARIO')
+                db.session.execute(text(f"ALTER TABLE {tabla} ADD COLUMN email VARCHAR(100)"))
                 db.session.commit()
                 print("[MIGRACION] Columna USUARIO.email agregada")
     except Exception as e:
