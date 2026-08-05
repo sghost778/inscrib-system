@@ -41,10 +41,6 @@ def create_app():
     def serve_manifest():
         return send_from_directory('backend_inscribe/static', 'manifest.json')
 
-    @app.route('/sw.js')
-    def serve_sw():
-        return send_from_directory('backend_inscribe/static', 'sw.js', mimetype='application/javascript')
-
     @app.route('/')
     def view_root():
         return redirect('/login')

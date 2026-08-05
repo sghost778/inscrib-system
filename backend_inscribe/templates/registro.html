@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -386,19 +386,6 @@
                 mostrarError("No se pudo conectar con el servidor.");
             }
         });
-
-        // Registrar el Service Worker para la PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registrado con éxito:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('Error al registrar el ServiceWorker:', error);
-                    });
-            });
-        }
 
     </script>
 </body>
