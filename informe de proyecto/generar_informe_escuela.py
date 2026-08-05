@@ -747,11 +747,13 @@ for b in beneficios:
 doc.add_heading('Arquitectura del Sistema', level=4)
 add_para(doc, 'El sistema fue desarrollado siguiendo una arquitectura de tres capas:')
 add_para(doc, 'Capa de Presentación: HTML5, CSS3, JavaScript, Font Awesome, plantillas Flask/Jinja2 '
-           'y PWA (manifest.json y sw.js) para la interacción con el usuario.')
+         'y PWA (manifest.json y sw.js) para la interacción con el usuario.')
 add_para(doc, 'Capa de Lógica: Aplicación Flask con vistas (Blueprints), formularios, modelos ORM '
-           'SQLAlchemy, autenticación con bcrypt, Flask-CORS, Flask-Talisman y Flask-Limiter.')
+         'SQLAlchemy, autenticación con bcrypt, Flask-CORS, Flask-Talisman y Flask-Limiter.')
 add_para(doc, 'Capa de Datos: Base de datos SQLite (test.db), accedida mediante SQLAlchemy 2.0, con '
-           '20 tablas que modelan la gestión escolar y el registro de auditoría.')
+         '20 tablas que modelan la gestión escolar y el registro de auditoría.')
+add_para(doc, 'Despliegue: Railway (https://web-production-d4f80.up.railway.app) con interfaz de usuario '
+         'modernizada y responsiva, disponible las 24 horas del día.', bold=True)
 
 doc.add_heading('Estructura de la Base de Datos', level=4)
 add_para(doc, 'La base de datos del sistema está compuesta por las siguientes tablas principales:')
@@ -844,7 +846,7 @@ recomendaciones = [
     'Ampliar el portal del representante con funcionalidades de pagos y seguimiento académico.',
     'Incorporar reportes estadísticos (asistencia, rendimiento) para apoyar la toma de decisiones.',
     'Mantener actualizadas las dependencias (Flask, SQLAlchemy) y las políticas de seguridad del CSP.',
-    'Desplegar el sistema en un servidor dedicado con HTTPS para proteger la información en producción.',
+    'El sistema ya se encuentra desplegado en Railway (https://web-production-d4f80.up.railway.app) con interfaz modernizada, disponible las 24 horas.',
 ]
 for i, rec in enumerate(recomendaciones, 1):
     add_para(doc, f'{i}. {rec}')

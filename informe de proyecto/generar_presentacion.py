@@ -196,18 +196,34 @@ add_bullets(s, Inches(0.7), Inches(1.6), SW - Inches(1.4), Inches(5.3), [
     'Usuarios por defecto (admin/secretario) creados en create_app.',
     'REGISTRO_AUDITORIA con clave INTEGER AUTOINCREMENT.',
     'INSCRIPCION con estado, fecha_retiro, lapso_registro y motivo_retiro.',
-    'Sitio público en puerto 5002 y panel admin en puerto 5001.',
+    'Despliegue exitoso en Railway: https://web-production-d4f80.up.railway.app',
+    'Interfaz de usuario modernizada y responsiva.',
 ], size=18)
 
-# ── Diapositiva 8: Conclusiones ────────────────────────────────
+# ── Diapositiva 8: Despliegue ──────────────────────────────────
+s = prs.slides.add_slide(blank)
+add_bg(s, BLANCO)
+title_bar(s, 'Despliegue en Producción')
+add_bullets(s, Inches(0.7), Inches(1.6), SW - Inches(1.4), Inches(5.3), [
+    'Plataforma: Railway (https://web-production-d4f80.up.railway.app)',
+    'Disponibilidad: 24/7 en la nube',
+    'Panel administrativo: admin y secretario',
+    'Sitio web público institucional',
+    'Portal del Representante',
+    'Seguridad: Flask-Talisman, Flask-Limiter, bcrypt',
+    'Interfaz modernizada y responsiva',
+], size=18)
+
+# ── Diapositiva 9: Conclusiones ────────────────────────────────
 s = prs.slides.add_slide(blank)
 add_bg(s, BLANCO)
 title_bar(s, 'Conclusiones y Recomendaciones')
 add_bullets(s, Inches(0.7), Inches(1.6), SW - Inches(1.4), Inches(5.3), [
     'El sistema cumple los objetivos y mejora la eficiencia administrativa.',
     'La seguridad (bcrypt, Talisman, Limiter) y la auditoría fortalecen la integridad.',
-    'Recomendación: respaldos automáticos y migración a un motor más robusto en producción.',
+    'Recomendación: respaldos automáticos y migración a PostgreSQL en producción.',
     'Recomendación: ampliar el portal del representante y agregar reportes.',
+    'Sistema desplegado en Railway con interfaz modernizada.',
 ], size=20)
 
 prs.save(OUTPUT)

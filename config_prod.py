@@ -26,11 +26,11 @@ class ProductionConfig:
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
 
-    # Misma base SQLite local; en producción con más carga se recomienda
-    # cambiar esto a MySQL/PostgreSQL (ej. mysql+pymysql://...).
-    # Se puede sobreescribir con la variable de entorno DATABASE_URL.
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL', f"sqlite:///{os.path.join(BASE_DIR, 'test.db')}")
+    # PostgreSQL en producción (Railway, Render, etc.) o SQLite como fallback
+    _db_url = os.environ.get('DATABASE_URL', '')
+    if _db_url and _db_url.startswith('postgres://'):
+        _db_url = _db_url.replace('postgres://', 'postgresql://', 1)
+    SQLALCHEMY_DATABASE_URI = _db_url or f"sqlite:///{os.path.join(BASE_DIR, 'test.db')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Almacenamiento de rate limiting en memoria (evita el aviso de Flask-Limiter).

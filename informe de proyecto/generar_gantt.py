@@ -50,6 +50,7 @@ add_para('U.E. Dr. José Manuel Cova Maza - Pasantías 2026', bold=True)
 add_para('Marcelo Fernando Campos Anacona | Ing. Yalitza Guevara', bold=True)
 add_para('Leyenda: ■ = Actividad programada para esa semana', bold=True)
 add_para('Período total: 12 semanas (480 horas) | 01 de Junio al 21 de Agosto de 2026', bold=True)
+add_para('Despliegue: Railway (https://web-production-d4f80.up.railway.app)', bold=True)
 
 # Datos encabezado
 add_field_table(doc, 'Estudiante:', 'Marcelo F. Campos Anacona')
@@ -78,10 +79,12 @@ rows = [
     ['14', 'Desarrollo: Sitio web público', '', '', '', '', '', '', '', '', '■', '', '', ''],
     ['15', 'Desarrollo: Seguridad y Auditoría', '', '', '', '', '', '', '', '', '■', '■', '', ''],
     ['16', 'Pruebas y ajustes', '', '', '', '', '', '', '', '', '', '■', '', ''],
-    ['17', 'Puesta en marcha', '', '', '', '', '', '', '', '', '', '', '■', ''],
-    ['18', 'Capacitación al personal', '', '', '', '', '', '', '', '', '', '', '■', ''],
-    ['19', 'Documentación y cierre', '', '', '', '', '', '', '', '', '', '', '', '■'],
-    ['20', 'Soporte y seguimiento post-implementación', '', '', '', '', '', '', '', '', '', '■', '■', ''],
+    ['17', 'Puesta en marcha (local)', '', '', '', '', '', '', '', '', '', '', '■', ''],
+    ['18', 'Despliegue en Railway y pruebas en producción', '', '', '', '', '', '', '', '', '', '', '■', ''],
+    ['19', 'Modernización de la interfaz de usuario (UI)', '', '', '', '', '', '', '', '', '', '', '■', ''],
+    ['20', 'Capacitación al personal', '', '', '', '', '', '', '', '', '', '', '■', ''],
+    ['21', 'Documentación y cierre', '', '', '', '', '', '', '', '', '', '', '', '■'],
+    ['22', 'Soporte y seguimiento post-implementación', '', '', '', '', '', '', '', '', '', '■', '■', ''],
 ]
 
 t = doc.add_table(rows=1 + len(rows), cols=len(headers))

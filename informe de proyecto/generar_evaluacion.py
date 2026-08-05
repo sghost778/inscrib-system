@@ -143,6 +143,18 @@ add_para('El Tutor Académico evaluará el informe de pasantías y el desempeño
          'casilla habilitada a continuación:')
 add_para('Calificación final del Tutor Académico:  _____', bold=True)
 
+# ============ NOTA SOBRE DESPLIEGUE ============
+doc.add_heading('NOTA SOBRE DESPLIEGUE DEL SISTEMA', level=1)
+doc.add_paragraph()
+add_para(doc, 'El sistema INSCRIB SYSTEM fue desplegado exitosamente en la plataforma Railway '
+         '(https://web-production-d4f80.up.railway.app), disponible las 24 horas del día para '
+         'el personal autorizado. El despliegue incluye:')
+add_para(doc, '• Panel administrativo (admin y secretario)')
+add_para(doc, '• Sitio web público institucional')
+add_para(doc, '• Portal del Representante')
+add_para(doc, '• Interfaz de usuario modernizada y responsiva')
+add_para(doc, '• Seguridad reforzada (Flask-Talisman, Flask-Limiter, bcrypt)')
+
 doc.save(OUTPUT)
 print(f'Documento guardado: {OUTPUT}')
 print(f'Tamaño: {os.path.getsize(OUTPUT) / 1024:.1f} KB')
