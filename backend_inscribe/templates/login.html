@@ -1,251 +1,294 @@
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - INSCRIBE SYSTEM</title>
-
-    <link rel="icon" href="logo.png" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <style>
-        :root {
-            --primary-color: #00b689;
-            --primary-hover: #009671;
-            --error-color: #ff4d4d;
-            --bg-color: #f0f4f2;
-            --white: #ffffff;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-
-        /* NOTIFICACIÓN DE ERROR SUPERIOR */
-        .notification {
-            position: fixed;
-            top: -70px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--error-color);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 5px 15px rgba(255, 77, 77, 0.3);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 2000;
-        }
-
-        .notification.show {
-            top: 20px;
-        }
-
-        .login-card {
-            background: var(--white);
-            width: 100%;
-            max-width: 400px;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .logo-img {
-            width: 90px;
-            height: auto;
-            margin-bottom: 0.5rem;
-        }
-
-        .system-name {
-            color: var(--primary-color);
-            font-size: 1.6rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .form-group {
-            text-align: left;
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-weight: 600;
-            color: #555;
-            font-size: 0.85rem;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        input {
-            width: 100%;
-            padding: 11px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-            transition: 0.3s;
-        }
-
-        input:focus {
-            border-color: var(--primary-color);
-            outline: none;
-        }
-
-        .password-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 12px;
-            cursor: pointer;
-            color: #aaa;
-            transition: 0.3s;
-        }
-
-        .toggle-password:hover {
-            color: var(--primary-color);
-        }
-
-        .btn-submit {
-            width: 100%;
-            background: var(--primary-color);
-            color: white;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: 0.3s;
-        }
-
-        .btn-submit:hover {
-            background: var(--primary-hover);
-        }
-
-        .links {
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-        }
-
-        .links a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: bold;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div id="notif" class="notification">
-        <i class="fas fa-exclamation-circle"></i>
-        <span id="notif-text">Error</span>
-    </div>
-
-    <div class="login-card">
-        <img src="{{ url_for('static', filename='logo.png') }}" onerror="this.src='logo.png'" alt="Logo"
-            class="logo-img">
-        <div class="system-name">INICIAR SESIÓN</div>
-
-        <p style="font-size: 0.85rem; color:#666; margin-bottom: 15px;">
-            <i class="fas fa-info-circle text-info"></i> Ingresa tu usuario y contraseña para acceder al sistema.
-        </p>
-
-        <form id="loginForm">
-            <div class="form-group">
-                <label>Usuario</label>
-                <input type="text" id="usuario" value="admin">
-            </div>
-
-            <div class="form-group">
-                <label>Contraseña</label>
-                <div class="password-wrapper">
-                    <input type="password" id="password" value="admin123">
-                    <i class="fa-solid fa-eye toggle-password" onclick="togglePass('password', this)"></i>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-submit">ENTRAR AL SISTEMA</button>
-
-            <div class="links">
-                <a href="/registro">Crear Cuenta</a>
-                <a href="/recuperar">Olvide mi clave</a>
-                <a href="/" style="color:#888;"><i class="fas fa-home"></i> Sitio Público</a>
-            </div>
-        </form>
-    </div>
-
-    <script>
-        function togglePass(id, el) {
-            const input = document.getElementById(id);
-            if (input.type === "password") {
-                input.type = "text";
-                el.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                input.type = "password";
-                el.classList.replace('fa-eye-slash', 'fa-eye');
-            }
-        }
-
-        function mostrarError(mensaje) {
-            const notif = document.getElementById('notif');
-            document.getElementById('notif-text').innerText = mensaje;
-            notif.classList.add('show');
-            setTimeout(() => { notif.classList.remove('show'); }, 3000);
-        }
-
-        document.getElementById('loginForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            const usuario = document.getElementById('usuario').value.trim();
-            const password = document.getElementById('password').value;
-
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ usuario, password })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    // Guardar token y usuario
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - INSCRIBE SYSTEM</title>
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            background: #f0f4f3;
+        }
+        .login-left {
+            flex: 1;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-left::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(0,182,137,0.12) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(108,92,231,0.08) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+        @keyframes float { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-20px)} }
+        .login-left .content { position: relative; z-index: 1; text-align: center; max-width: 400px; }
+        .login-left .content img { width: 100px; margin-bottom: 25px; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3)); }
+        .login-left .content h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 15px; line-height: 1.2; }
+        .login-left .content h1 span { color: #00d4a0; }
+        .login-left .content p { opacity: 0.65; line-height: 1.7; font-size: 0.95rem; }
+        .login-left .features { margin-top: 40px; text-align: left; }
+        .login-left .feature { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+        .login-left .feature i { width: 36px; height: 36px; background: rgba(0,182,137,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #00d4a0; font-size: 0.85rem; }
+        .login-left .feature span { font-size: 0.9rem; opacity: 0.8; }
+
+        .login-right {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+        }
+        .login-card .welcome {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #00b689;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+        .login-card h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        .login-card .subtitle { color: #636e72; font-size: 0.92rem; margin-bottom: 35px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1a1a2e;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        .input-wrapper i.input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b0b8c1;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .input-wrapper input {
+            width: 100%;
+            padding: 13px 14px 13px 42px;
+            border: 2px solid #e8ecf1;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.92rem;
+            transition: 0.3s;
+            background: #f8fafb;
+        }
+        .input-wrapper input:focus {
+            border-color: #00b689;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0,182,137,0.1);
+        }
+        .input-wrapper input:focus + i.input-icon,
+        .input-wrapper input:focus ~ i.input-icon { color: #00b689; }
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #b0b8c1;
+            transition: 0.3s;
+        }
+        .toggle-password:hover { color: #00b689; }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #00b689, #00d4a0);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 25px;
+        }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,182,137,0.35); }
+        .btn-login:active { transform: translateY(0); }
+
+        .links {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 0.85rem;
+        }
+        .links a {
+            color: #636e72;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+        .links a:hover { color: #00b689; }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #ff4d4d;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 30px rgba(255,77,77,0.3);
+            z-index: 2000;
+            transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+        .notification.show { transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .login-left { padding: 40px 30px; min-height: auto; }
+            .login-left .content img { width: 70px; }
+            .login-left .content h1 { font-size: 1.4rem; }
+            .login-left .features { display: none; }
+            .login-right { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="notification" id="notif">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="notif-text">Error</span>
+    </div>
+
+    <div class="login-left">
+        <div class="content">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+            <h1>INSCRIBE <span>SYSTEM</span></h1>
+            <p>Sistema de gestión escolar para la U.E. Dr. José Manuel Cova Maza. Administra inscripciones, estudiantes y más.</p>
+            <div class="features">
+                <div class="feature"><i class="fas fa-shield-halved"></i><span>Gestión segura de datos</span></div>
+                <div class="feature"><i class="fas fa-users"></i><span>Control de estudiantes</span></div>
+                <div class="feature"><i class="fas fa-file-invoice"></i><span>Reportes y documentos</span></div>
+                <div class="feature"><i class="fas fa-clock"></i><span>Disponible 24/7</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-right">
+        <div class="login-card">
+            <div class="welcome">Bienvenido de vuelta</div>
+            <h2>Iniciar Sesión</h2>
+            <p class="subtitle">Ingresa tus credenciales para acceder al panel de administración.</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="usuario" value="admin" placeholder="Tu usuario">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="password" value="admin123" placeholder="Tu contraseña">
+                        <i class="fa-solid fa-eye toggle-password" onclick="togglePass('password', this)"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login">ENTRAR AL SISTEMA <i class="fas fa-arrow-right"></i></button>
+            </form>
+
+            <div class="links">
+                <a href="/registro"><i class="fas fa-user-plus"></i> Crear Cuenta</a>
+                <a href="/recuperar"><i class="fas fa-key"></i> Olvidé mi clave</a>
+                <a href="/"><i class="fas fa-home"></i> Sitio Público</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePass(id, el) {
+            const input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+                el.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = "password";
+                el.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        function mostrarError(mensaje) {
+            const notif = document.getElementById('notif');
+            document.getElementById('notif-text').innerText = mensaje;
+            notif.classList.add('show');
+            setTimeout(() => { notif.classList.remove('show'); }, 3000);
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const usuario = document.getElementById('usuario').value.trim();
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario, password })
+                });
+                const data = await response.json();
+                if (data.success) {
                     if (data.token) localStorage.setItem('token', data.token);
                     localStorage.setItem('usuario', data.usuario);
                     localStorage.setItem('rol', data.rol || 'admin');
                     window.location.href = '/menu';
-                } else {
-                    mostrarError(data.message || "Usuario o clave incorrectos");
-                }
+                } else {
+                    mostrarError(data.message || "Usuario o clave incorrectos");
+                }
             } catch (error) {
                 console.error("Error:", error);
                 mostrarError("Error de conexión con el servidor");
             }
-        });
-    </script>
-</body>
-
+        });
+    </script>
+</body>
 </html>
