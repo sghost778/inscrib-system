@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Listado de Representantes - INSCRIBE SYSTEM</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00b689">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,18 +16,18 @@
 
     <style>
         :root {
-            --primary-color: #00b689;
-            --text-main: #2d3436;
-            --bg-table: #ffffff;
-            --bg-body: #f8fafb;
+            --primary: #00b689;
+            --dark: #1a1a2e;
+            --white: #ffffff;
+            --light: #f8fafb;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-body);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
             padding: 30px;
             margin: 0;
-            color: var(--text-main);
+            color: var(--dark);
         }
 
         /* ENCABEZADO LIMPIO */
@@ -32,12 +35,12 @@
             display: flex;
             align-items: center;
             margin-bottom: 25px;
-            padding: 10px 0;
+            padding: 13px 0;
         }
 
         .header-simple i {
             font-size: 1.8rem;
-            color: var(--primary-color);
+            color: var(--primary);
             margin-right: 15px;
         }
 
@@ -45,7 +48,7 @@
             margin: 0;
             font-size: 1.6rem;
             font-weight: 700;
-            color: var(--text-main);
+            color: var(--dark);
         }
 
         /* BUSCADOR */
@@ -57,17 +60,17 @@
 
         .search-box input {
             width: 100%;
-            padding: 12px 15px 12px 45px;
-            border: 1px solid #dfe4ea;
+            padding: 13px 15px 12px 45px;
+            border: 2px solid #e8ecf1;
             border-radius: 12px;
             outline: none;
             font-size: 0.95rem;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
 
         .search-box input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 8px rgba(0, 182, 137, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0,182,137,0.1);
         }
 
         .search-box i {
@@ -80,7 +83,7 @@
 
         /* TABLA DE REPRESENTANTES */
         .table-card {
-            background: var(--bg-table);
+            background: var(--white);
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
             overflow: hidden;
@@ -123,22 +126,22 @@
             background: #edf2f7;
             color: #2d3436;
             padding: 4px 12px;
-            border-radius: 20px;
+            border-radius: 16px;
             font-weight: 600;
             font-size: 0.85rem;
         }
 
         .status-active {
-            color: var(--primary-color);
+            color: var(--primary);
             background: rgba(0, 182, 137, 0.1);
             padding: 4px 10px;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: 700;
             font-size: 0.8rem;
         }
 
         .btn-ficha {
-            color: var(--primary-color);
+            color: var(--primary);
             font-size: 1.4rem;
             text-decoration: none;
             transition: transform 0.2s, color 0.2s;
@@ -241,3 +244,5 @@
 </body>
 
 </html>
+
+

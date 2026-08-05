@@ -16,7 +16,10 @@
     <title>Gestion de Usuarios - Sistema Escolar</title>
 
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 
     <link rel="manifest" href="/manifest.json">
@@ -55,7 +58,7 @@
             --warning: #f59e0b;
 
 
-            --bg: #f8fafc;
+            --light: #f8fafb;
 
 
             --white: #ffffff;
@@ -73,10 +76,10 @@
         body {
 
 
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Inter', sans-serif;
 
 
-            background-color: var(--bg);
+            background-color: var(--light);
 
 
             margin: 0;
@@ -121,7 +124,7 @@
             border-radius: 12px;
 
 
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.04);
 
 
             margin-bottom: 20px;
@@ -148,7 +151,7 @@
         .btn-nuevo {
 
 
-            background: var(--primary);
+            background: linear-gradient(135deg, #00b689, #00d4a0);
 
 
             color: white;
@@ -157,16 +160,16 @@
             border: none;
 
 
-            padding: 10px 18px;
+            padding: 13px 18px;
 
 
-            border-radius: 8px;
+            border-radius: 12px;
 
 
             cursor: pointer;
 
 
-            font-weight: bold;
+            font-weight: 700;
 
 
             display: flex;
@@ -193,10 +196,7 @@
             background: var(--white);
 
 
-            border-radius: 12px;
-
-
-            overflow: hidden;
+            border-radius: 16px; overflow: hidden;
 
 
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
@@ -271,13 +271,13 @@
             padding: 4px 10px;
 
 
-            border-radius: 20px;
+            border-radius: 16px;
 
 
             font-size: 11px;
 
 
-            font-weight: bold;
+            font-weight: 700;
 
 
         }
@@ -346,7 +346,7 @@
             padding: 6px 10px;
 
 
-            border-radius: 6px;
+            border-radius: 12px;
 
 
             cursor: pointer;
@@ -373,7 +373,7 @@
             padding: 6px 10px;
 
 
-            border-radius: 6px;
+            border-radius: 12px;
 
 
             cursor: pointer;
@@ -436,7 +436,7 @@
             padding: 25px;
 
 
-            border-radius: 15px;
+            border-radius: 16px;
 
 
             width: 600px;
@@ -493,7 +493,7 @@
             font-size: 11px;
 
 
-            font-weight: bold;
+            font-weight: 700;
 
 
             margin-bottom: 4px;
@@ -523,7 +523,7 @@
             padding: 8px 12px;
 
 
-            border-radius: 6px;
+            border-radius: 12px;
 
 
             border: 1px solid #cbd5e1;
@@ -544,7 +544,7 @@
             font-size: 14px;
 
 
-            font-weight: bold;
+            font-weight: 700;
 
 
             color: var(--primary);
@@ -868,7 +868,7 @@
                     <button type="button" onclick="guardarUsuario()"
 
 
-                        style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Guardar
+                        style="flex:1; background: linear-gradient(135deg, #00b689, #00d4a0); color:white; border:none; padding: 13px; border-radius: 12px; font-weight: 700; cursor:pointer;">Guardar
 
 
                         Usuario</button>
@@ -877,7 +877,7 @@
                     <button type="button" onclick="cerrarModal('modalUsuario')"
 
 
-                        style="flex:1; background:#e2e8f0; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Cancelar</button>
+                        style="flex:1; background:#e2e8f0; border:none; padding: 13px; border-radius: 12px; font-weight: 700; cursor:pointer;">Cancelar</button>
 
 
                 </div>
@@ -916,7 +916,7 @@
                 <button onclick="ejecutarEliminacion()"
 
 
-                    style="flex:1; background:var(--danger); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Si,
+                    style="flex:1; background:var(--danger); color:white; border:none; padding: 13px; border-radius: 12px; font-weight: 700; cursor:pointer;">Si,
 
 
                     Eliminar</button>
@@ -925,7 +925,7 @@
                 <button onclick="cerrarModal('modalEliminar')"
 
 
-                    style="flex:1; background:#e2e8f0; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">No,
+                    style="flex:1; background:#e2e8f0; border:none; padding: 13px; border-radius: 12px; font-weight: 700; cursor:pointer;">No,
 
 
                     Volver</button>
@@ -958,7 +958,7 @@
             <button onclick="cerrarModal('modalExito')"
 
 
-                style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Aceptar</button>
+                style="width:100%; background: linear-gradient(135deg, #00b689, #00d4a0); color:white; border:none; padding: 13px; border-radius: 12px; font-weight: 700; cursor:pointer;">Aceptar</button>
 
 
         </div>
@@ -1400,3 +1400,5 @@
 
 
 </html>
+
+

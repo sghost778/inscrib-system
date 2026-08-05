@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Registro de Representante - INSCRIBE SYSTEM</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00b689">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,40 +16,40 @@
 
     <style>
         :root {
-            --primary-color: #00b689;
-            --text-main: #2d3436;
-            --bg-card: #ffffff;
+            --primary: #00b689;
+            --dark: #1a1a2e;
+            --white: #ffffff;
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: #f8fafb;
             padding: 30px;
-            color: var(--text-main);
+            color: var(--dark);
         }
 
         .container {
             max-width: 950px;
             margin: 0 auto;
-            background: var(--bg-card);
+            background: var(--white);
             padding: 35px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
         }
 
         h2 {
-            color: var(--primary-color);
+            color: var(--primary);
             border-bottom: 2px solid #f1f2f6;
             padding-bottom: 15px;
             margin-bottom: 25px;
         }
 
         h4 {
-            color: var(--primary-color);
+            color: var(--primary);
             margin-top: 30px;
             font-size: 0.85rem;
             text-transform: uppercase;
-            border-left: 4px solid var(--primary-color);
+            border-left: 4px solid var(--primary);
             padding-left: 10px;
         }
 
@@ -73,17 +76,17 @@
         .contenedor-input-especial {
             display: flex;
             align-items: center;
-            border: 1px solid #dfe4ea;
-            border-radius: 10px;
+            border: 2px solid #e8ecf1;
+            border-radius: 12px;
             background: white;
             overflow: hidden;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
 
         .prefijo {
-            background: #f1f2f6;
-            padding: 10px 15px;
-            font-weight: bold;
+            background: var(--light);
+            padding: 13px 15px;
+            font-weight: 700;
             color: #555;
             border-right: 1px solid #dfe4ea;
         }
@@ -91,33 +94,33 @@
         .contenedor-input-especial input {
             border: none !important;
             flex: 1;
-            padding: 10px;
+            padding: 13px;
             outline: none;
         }
 
         input,
         select {
-            padding: 12px;
-            border: 1px solid #dfe4ea;
-            border-radius: 10px;
+            padding: 13px;
+            border: 2px solid #e8ecf1;
+            border-radius: 12px;
             outline: none;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
             font-size: 0.95rem;
         }
 
         input:focus,
         .contenedor-input-especial:focus-within {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 8px rgba(0, 182, 137, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0,182,137,0.1);
         }
 
         .btn-guardar {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, #00b689, #00d4a0);
             color: white;
             border: none;
             padding: 18px;
             border-radius: 12px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             margin-top: 40px;
             width: 100%;
@@ -126,12 +129,12 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
 
         .btn-guardar:hover {
-            background: #00946f;
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, #009671, #00b689);
+            transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,182,137,0.3);
         }
 
         /* MODALES */
@@ -152,7 +155,7 @@
         .modal-content {
             background: white;
             padding: 35px;
-            border-radius: 20px;
+            border-radius: 16px;
             text-align: center;
             max-width: 400px;
             animation: emerge 0.3s ease;
@@ -177,25 +180,25 @@
         }
 
         .btn-si {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, #00b689, #00d4a0);
             color: white;
             flex: 1;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 13px;
+            border-radius: 12px;
             border: none;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 700;
         }
 
         .btn-no {
-            background: #f1f2f6;
+            background: var(--light);
             color: #2d3436;
             flex: 1;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 13px;
+            border-radius: 12px;
             border: none;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 700;
         }
     </style>
 </head>
@@ -283,8 +286,8 @@
     <div id="modalExito" class="modal">
         <div class="modal-content">
             <i class="fas fa-check-circle"
-                style="font-size: 4rem; color: var(--primary-color); margin-bottom: 15px;"></i>
-            <h3 style="color: var(--primary-color);">¡Registro Exitoso!</h3>
+                style="font-size: 4rem; color: var(--primary); margin-bottom: 15px;"></i>
+            <h3 style="color: var(--primary);">¡Registro Exitoso!</h3>
             <p>El representante ha sido almacenado correctamente en el sistema central.</p>
             <button class="btn-si" onclick="location.reload()" style="width: 100%; margin-top: 20px;">Aceptar</button>
         </div>
@@ -366,3 +369,5 @@
 </body>
 
 </html>
+
+

@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Control de Matrícula - Gestión Escolar</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00b689">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,13 +19,13 @@
             --primary: #1e40af;
             --danger: #dc2626;
             --success: #16a34a;
-            --bg: #f8fafc;
+            --light: #f8fafb;
             --white: #ffffff;
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
             margin: 0;
             padding: 20px;
         }
@@ -36,7 +39,7 @@
             background: var(--white);
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.04);
             margin-bottom: 20px;
             border-left: 6px solid var(--primary);
         }
@@ -44,8 +47,8 @@
         .status-alert {
             background: #fff1f2;
             border: 1px solid #fecdd3;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 13px;
+            border-radius: 12px;
             color: #9f1239;
             font-weight: 600;
             margin-top: 15px;
@@ -62,30 +65,29 @@
 
         .search-bar input {
             flex: 1;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 13px;
+            border-radius: 12px;
             border: 1px solid #cbd5e1;
         }
 
         .tab-btn {
-            padding: 10px 20px;
+            padding: 13px 20px;
             border: none;
             background: #e2e8f0;
             cursor: pointer;
-            font-weight: bold;
-            border-radius: 8px;
+            font-weight: 700;
+            border-radius: 12px;
             color: #475569;
         }
 
         .tab-btn.active {
-            background: var(--primary);
+            background: linear-gradient(135deg, #00b689, #00d4a0);
             color: white;
         }
 
         .table-container {
             background: var(--white);
-            border-radius: 12px;
-            overflow: hidden;
+            border-radius: 16px; overflow: hidden;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
@@ -140,14 +142,14 @@
             color: var(--primary);
             border: 1px solid #cbd5e1;
             padding: 8px 12px;
-            border-radius: 6px;
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 700;
             margin-right: 5px;
         }
 
         .btn-modificar:hover {
-            background: var(--primary);
+            background: linear-gradient(135deg, #00b689, #00d4a0);
             color: white;
         }
 
@@ -156,10 +158,7 @@
             color: var(--danger);
             border: 1px solid #fecdd3;
             padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+            border-radius: 12px; cursor: pointer; font-weight: 700; }
 
         .btn-retirar:hover {
             background: var(--danger);
@@ -172,7 +171,7 @@
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 11px;
-            font-weight: bold;
+            font-weight: 700;
         }
 
         .modal {
@@ -191,7 +190,7 @@
         .modal-content {
             background: white;
             padding: 30px;
-            border-radius: 15px;
+            border-radius: 16px;
             width: 480px;
             text-align: center;
         }
@@ -204,7 +203,7 @@
         .form-group label {
             display: block;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 700;
             margin-bottom: 5px;
             color: #64748b;
         }
@@ -213,8 +212,8 @@
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 10px;
-            border-radius: 6px;
+            padding: 13px;
+            border-radius: 12px;
             border: 1px solid #cbd5e1;
             font-family: inherit;
             box-sizing: border-box;
@@ -260,7 +259,7 @@
     <div id="modalModificar" class="modal">
         <div class="modal-content">
             <h2 style="margin-top:0; color:var(--primary); text-align: left;">Modificar Datos</h2>
-            <p id="estudianteSeleccionado" style="font-weight:bold; text-align: left;"></p>
+            <p id="estudianteSeleccionado" style="font-weight: 700; text-align: left;"></p>
             <hr>
             <div class="form-group">
                 <label>GRADO / AÑO</label>
@@ -287,10 +286,10 @@
             </div>
             <div style="display:flex; gap:10px; margin-top:25px;">
                 <button onclick="preguntarGuardar()"
-                    style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold;">Guardar
+                    style="flex:1; background: linear-gradient(135deg, #00b689, #00d4a0); color:white; border:none; padding: 13px; border-radius: 12px; cursor:pointer; font-weight: 700;">Guardar
                     Cambios</button>
                 <button onclick="cerrar()"
-                    style="flex:1; background:#e2e8f0; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold;">Cancelar</button>
+                    style="flex:1; background:#e2e8f0; border:none; padding: 13px; border-radius: 12px; cursor:pointer; font-weight: 700;">Cancelar</button>
             </div>
         </div>
     </div>
@@ -299,7 +298,7 @@
         <div class="modal-content">
             <div class="confirm-icon" style="color:var(--danger)"><i class="fas fa-user-minus"></i></div>
             <h2 style="margin-top:0; color:var(--danger);">Procesar Retiro</h2>
-            <p id="estudianteARetirar" style="font-weight:bold;"></p>
+            <p id="estudianteARetirar" style="font-weight: 700;"></p>
             <div class="form-group">
                 <label>FECHA DE RETIRO</label>
                 <input type="date" id="fechaRetiroInput">
@@ -319,10 +318,10 @@
             </div>
             <div style="display:flex; gap:10px; margin-top:20px;">
                 <button onclick="confirmarExitoRetiro()"
-                    style="flex:1; background:var(--danger); color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold;">Confirmar
+                    style="flex:1; background:var(--danger); color:white; border:none; padding: 13px; border-radius: 12px; cursor:pointer; font-weight: 700;">Confirmar
                     Retiro</button>
                 <button onclick="cerrarRetiro()"
-                    style="flex:1; background:#cbd5e1; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold;">Cancelar</button>
+                    style="flex:1; background:#cbd5e1; border:none; padding: 13px; border-radius: 12px; cursor:pointer; font-weight: 700;">Cancelar</button>
             </div>
         </div>
     </div>
@@ -333,10 +332,10 @@
             <h3>¿Desea guardar esta información?</h3>
             <div style="display:flex; gap:10px; margin-top:20px;">
                     <button onclick="confirmarExito()"
-                    style="flex:1; background:var(--success); color:white; border:none; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold;">Sí,
+                    style="flex:1; background:var(--success); color:white; border:none; padding: 13px; border-radius: 12px; cursor:pointer; font-weight: 700;">Sí,
                     Guardar</button>
                 <button onclick="cerrarPregunta()"
-                    style="flex:1; background:#cbd5e1; border:none; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold;">No,
+                    style="flex:1; background:#cbd5e1; border:none; padding: 13px; border-radius: 12px; cursor:pointer; font-weight: 700;">No,
                     Cancelar</button>
             </div>
         </div>
@@ -348,7 +347,7 @@
             <h3 id="tituloExito">¡Guardado con éxito!</h3>
             <p>La base de datos ha sido actualizada correctamente.</p>
             <button onclick="cerrarTodo()"
-                style="width:100%; background:var(--primary); color:white; border:none; padding:10px; border-radius:8px; margin-top:15px; cursor:pointer; font-weight:bold;">Aceptar</button>
+                style="width:100%; background: linear-gradient(135deg, #00b689, #00d4a0); color:white; border:none; padding: 13px; border-radius: 12px; margin-top:15px; cursor:pointer; font-weight: 700;">Aceptar</button>
         </div>
     </div>
 
@@ -416,7 +415,7 @@
                     tr.innerHTML = `
                     <td>${nombreHTML}</td>
                     <td>${est.cedula}</td>
-                    <td><span style="font-weight:bold; color:#475569;">${est.grado}</span></td>
+                    <td><span style="font-weight: 700; color:#475569;">${est.grado}</span></td>
                     <td><span class="lapso-box l1">${est.l1}</span></td>
                     <td><span class="lapso-box l2">${est.l2}</span></td>
                     <td><span class="lapso-box l3">${est.l3}</span></td>
@@ -432,7 +431,7 @@
                     tr.innerHTML = `
                     <td>${nombreHTML}</td>
                     <td>${est.cedula}</td>
-                    <td><span style="font-weight:bold; color:#475569;">${est.grado}</span></td>
+                    <td><span style="font-weight: 700; color:#475569;">${est.grado}</span></td>
                     <td><span class="badge-info">${est.fecha}</span></td>
                     <td><span class="badge-info">${est.lapsoReg}</span></td>
                     <td><small>${est.motivoRetiro}</small></td>
@@ -445,7 +444,7 @@
                     tr.innerHTML = `
                     <td>${nombreHTML}</td>
                     <td>${est.cedula}</td>
-                    <td><span style="font-weight:bold; color:#475569;">${est.grado}</span></td>
+                    <td><span style="font-weight: 700; color:#475569;">${est.grado}</span></td>
                     <td><span class="badge-info">${est.procedencia}</span></td>
                     <td><span class="badge-info">${est.fecha}</span></td>
                     <td><span class="badge-info">${est.lapsoReg}</span></td>
@@ -565,3 +564,5 @@
 </body>
 
 </html>
+
+

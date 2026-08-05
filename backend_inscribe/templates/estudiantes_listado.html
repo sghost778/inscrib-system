@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00b689">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,16 +16,16 @@
     <style>
         :root {
             --primary: #00b689;
-            --bg-color: #f8fafb;
-            --text-dark: #2d3436;
+            --light: #f8fafb;
+            --dark: #1a1a2e;
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
             margin: 0;
             padding: 25px;
-            color: var(--text-dark);
+            color: var(--dark);
         }
 
         .module-header {
@@ -33,9 +36,9 @@
 
         .card-container {
             background: white;
-            border-radius: 15px;
+            border-radius: 16px;
             padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.04);
         }
 
         .search-bar {
@@ -45,12 +48,12 @@
         }
 
         .search-bar input {
-            padding: 12px 15px;
-            border: 1px solid #edf2f7;
-            border-radius: 8px;
+            padding: 13px 15px;
+            border: 2px solid #e8ecf1;
+            border-radius: 12px;
             width: 350px;
             outline: none;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
 
         .search-bar input:focus {
@@ -58,11 +61,11 @@
         }
 
         .btn-search {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, #00b689, #00d4a0);
             color: white;
-            padding: 10px 20px;
+            padding: 13px 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
         }
@@ -100,9 +103,9 @@
 
         .status {
             padding: 5px 15px;
-            border-radius: 20px;
+            border-radius: 16px;
             font-size: 0.8rem;
-            font-weight: bold;
+            font-weight: 700;
             background: #e6f9f4;
             color: #00b689;
         }
@@ -110,7 +113,7 @@
         .action-link {
             text-decoration: none;
             color: #b3b3b3;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
             font-size: 1.4rem;
             display: flex;
             align-items: center;
@@ -127,7 +130,7 @@
 <body>
 
     <div class="module-header">
-        <h1 style="margin:0; font-size: 1.6rem; color: var(--text-dark);">Listado General de Estudiantes</h1>
+        <h1 style="margin:0; font-size: 1.6rem; color: var(--dark);">Listado General de Estudiantes</h1>
         <p style="margin:5px 0 0; color: #636e72;">Registro completo de alumnos - Educación Primaria</p>
     </div>
 
@@ -228,3 +231,5 @@
 </body>
 
 </html>
+
+

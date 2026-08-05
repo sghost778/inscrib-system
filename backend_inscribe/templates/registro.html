@@ -8,7 +8,10 @@
 
     <link rel="icon" href="logo.png" type="image/png">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00b689">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,7 +20,7 @@
 
     <style>
         :root {
-            --primary-color: #00b689;
+            --primary: #00b689;
             /* Tu nuevo color esmeralda */
             --primary-hover: #009671;
             --error-color: #ff4d4d;
@@ -26,8 +29,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -45,10 +48,10 @@
             transform: translateX(-50%);
             background: var(--error-color);
             color: white;
-            padding: 12px 25px;
-            border-radius: 10px;
+            padding: 13px 25px;
+            border-radius: 12px;
             font-size: 0.9rem;
-            font-weight: bold;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -68,8 +71,8 @@
             width: 100%;
             max-width: 600px;
             padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
             text-align: center;
             animation: fadeIn 0.5s ease-out;
         }
@@ -93,7 +96,7 @@
         }
 
         .system-name {
-            color: var(--primary-color);
+            color: var(--primary);
             font-size: 1.6rem;
             font-weight: 800;
             margin-bottom: 1.5rem;
@@ -129,16 +132,16 @@
 
         input {
             width: 100%;
-            padding: 11px;
+            padding: 13px;
             border: 2px solid #eee;
-            border-radius: 10px;
+            border-radius: 12px;
             box-sizing: border-box;
             font-size: 0.95rem;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
 
         input:focus {
-            border-color: var(--primary-color);
+            border-color: var(--primary);
             outline: none;
         }
 
@@ -147,42 +150,42 @@
             right: 12px;
             cursor: pointer;
             color: #aaa;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
 
         .toggle-password:hover {
-            color: var(--primary-color);
+            color: var(--primary);
         }
 
         .section-divider {
             grid-column: span 2;
-            color: var(--primary-color);
+            color: var(--primary);
             border-bottom: 2px solid #f9f9f9;
             margin: 15px 0 5px;
             padding-bottom: 5px;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 0.9rem;
             text-transform: uppercase;
         }
 
         .btn-submit {
             grid-column: span 2;
-            background: var(--primary-color);
+            background: linear-gradient(135deg, #00b689, #00d4a0);
             color: white;
             padding: 14px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 1rem;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             margin-top: 15px;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
             box-shadow: 0 4px 10px rgba(0, 182, 137, 0.2);
         }
 
         .btn-submit:hover {
             background: var(--primary-hover);
-            transform: translateY(-2px);
+            transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,182,137,0.3);
         }
 
         /* MODAL DE ÉXITO */
@@ -203,7 +206,7 @@
         .modal-content {
             background: white;
             padding: 40px;
-            border-radius: 25px;
+            border-radius: 16px;
             text-align: center;
             max-width: 380px;
             animation: bounceIn 0.5s ease;
@@ -223,7 +226,7 @@
 
         .modal-content i {
             font-size: 4rem;
-            color: var(--primary-color);
+            color: var(--primary);
             margin-bottom: 20px;
         }
     </style>
@@ -391,3 +394,5 @@
 </body>
 
 </html>
+
+
