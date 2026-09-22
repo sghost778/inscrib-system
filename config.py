@@ -13,7 +13,7 @@ class Config:
     FORCE_HTTPS = os.environ.get('FORCE_HTTPS', 'false').lower() == 'true'
 
     # Seguridad de cookies: True en producción (https), False en desarrollo local
-    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', str(not DEBUG)).lower() == 'true'
+    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', str(FORCE_HTTPS)).lower() == 'true'
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
 
@@ -29,6 +29,15 @@ class Config:
     elif SQLALCHEMY_DATABASE_URI.startswith('postgresql://'):
         SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgresql://', 'postgresql+psycopg://', 1)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Timeouts y reconexion para que la app arranque aunque la BD este lenta/caida
+    # (evita que el panel admin se quede colgado al iniciar).
+    if SQLALCHEMY_DATABASE_URI.startswith('postgres'):
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            'pool_pre_ping': True,
+            'pool_recycle': 280,
+            'connect_args': {'connect_timeout': 10},
+        }
 
     # Contraseña inicial para el usuario 'admin' (solo se usa si no existe)
     ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')

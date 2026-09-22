@@ -10,7 +10,7 @@ from config import Config
 from models import db, Usuario
 from sqlalchemy import text
 from routes_admin import api_admin
-from security import hash_password
+from security import hash_password, login_requerido, token_required
 from db_migrate import migrar_bd
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'backend_inscribe', 'static', 'uploads')
@@ -32,7 +32,8 @@ def create_app():
 
     CORS(app)
     limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"])
-    Talisman(app, content_security_policy=None, force_https=Config.FORCE_HTTPS)
+    Talisman(app, content_security_policy=None, force_https=Config.FORCE_HTTPS,
+             session_cookie_secure=Config.SESSION_COOKIE_SECURE)
 
     app.register_blueprint(api_admin, url_prefix='/api')
 
@@ -55,6 +56,7 @@ def create_app():
         return render_template('login.html')
 
     @app.route('/registro')
+    @login_requerido
     def view_registro():
         return render_template('registro.html')
 
@@ -71,6 +73,7 @@ def create_app():
         return redirect('/login')
 
     @app.route('/admin/sitio')
+    @login_requerido
     def view_admin_sitio():
         return render_template('admin_sitio.html')
 
@@ -78,6 +81,7 @@ def create_app():
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
     @app.route('/api/upload', methods=['POST'])
+    @token_required
     def upload_file():
         if 'file' not in request.files:
             return jsonify({'success': False, 'message': 'No se envio archivo'}), 400
@@ -95,58 +99,72 @@ def create_app():
         return send_from_directory(UPLOAD_FOLDER, filename)
 
     @app.route('/inicio')
+    @login_requerido
     def view_inicio():
         return render_template('inicio_contenido.html')
 
     @app.route('/menu')
+    @login_requerido
     def view_menu():
         return render_template('menu.html')
 
     @app.route('/usuarios')
+    @login_requerido
     def view_usuarios():
         return render_template('usuarios.html')
 
     @app.route('/gestion-ano')
+    @login_requerido
     def view_gestion_ano():
         return render_template('gestion_ano.html')
 
     @app.route('/estudiantes')
+    @login_requerido
     def view_estudiantes_listado():
         return render_template('estudiantes_listado.html')
 
     @app.route('/estudiantes/registro')
+    @login_requerido
     def view_estudiantes_registro():
         return render_template('estudiantes_registro.html')
 
     @app.route('/estudiantes/consulta')
+    @login_requerido
     def view_estudiantes_consulta():
         return render_template('estudiantes_consulta.html')
 
     @app.route('/representantes')
+    @login_requerido
     def view_representantes_listado():
         return render_template('representantes_listado.html')
 
     @app.route('/representantes/registro')
+    @login_requerido
     def view_representantes_registro():
         return render_template('representantes_registro.html')
 
     @app.route('/representantes/consulta')
+    @login_requerido
     def view_representantes_consulta():
         return render_template('representantes_consulta.html')
 
     @app.route('/matricula')
+    @login_requerido
     def view_matricula():
         return render_template('matricula.html')
 
     @app.route('/plantillas')
+    @login_requerido
     def view_plantillas_guardadas():
         return render_template('plantillas_guardadas.html')
 
     @app.route('/plantillas/nueva')
+    @login_requerido
     def view_plantilla_nueva():
         return render_template('plantilla_nueva.html')
 
     @app.route('/correos')
+    @login_requerido
     def view_correos():
         return render_template('correos.html')
 
@@ -156,16 +174,25 @@ def create_app():
 
     # ---- DATABASE SETUP ----
     with app.app_context():
-        migrar_bd()
-
         try:
-            db.session.execute(text("ALTER TABLE INSCRIPCION ADD COLUMN estado TEXT DEFAULT 'REGULAR';"))
-            db.session.execute(text("ALTER TABLE INSCRIPCION ADD COLUMN fecha_retiro TEXT;"))
-            db.session.execute(text("ALTER TABLE INSCRIPCION ADD COLUMN lapso_registro TEXT DEFAULT 'Lapso 1';"))
-            db.session.execute(text("ALTER TABLE INSCRIPCION ADD COLUMN motivo_retiro TEXT;"))
-            db.session.commit()
-        except:
+            migrar_bd()
+        except Exception as e:
             db.session.rollback()
+            print(f"[INFO] migrar_bd no critico: {e}")
+
+        # Migraciones legacy (SQLite). Sin efecto en bases nuevas o Postgres.
+        for ddl in (
+            "ALTER TABLE INSCRIPCION ADD COLUMN estado TEXT DEFAULT 'REGULAR';",
+            "ALTER TABLE INSCRIPCION ADD COLUMN fecha_retiro TEXT;",
+            "ALTER TABLE INSCRIPCION ADD COLUMN lapso_registro TEXT DEFAULT 'Lapso 1';",
+            "ALTER TABLE INSCRIPCION ADD COLUMN motivo_retiro TEXT;",
+            "ALTER TABLE USUARIO ADD COLUMN rol TEXT DEFAULT 'admin';",
+        ):
+            try:
+                db.session.execute(text(ddl))
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
 
         try:
             col_type = db.session.execute(
@@ -195,119 +222,20 @@ def create_app():
             print(f"[INFO] Migracion de auditoria omitida: {mig_err}")
 
         try:
-            db.session.execute(text("ALTER TABLE USUARIO ADD COLUMN rol TEXT DEFAULT 'admin';"))
-            db.session.commit()
-        except:
+            admin = Usuario.query.filter_by(usuario='admin').first()
+            if not admin:
+                admin = Usuario(nombre='Administrador', apellido='Sistema', usuario='admin',
+                                password_hash=hash_password(Config.ADMIN_PASSWORD))
+                db.session.add(admin)
+                db.session.commit()
+                print(f"Usuario 'admin' creado con contrasena de la variable ADMIN_PASSWORD")
+        except Exception as admin_err:
             db.session.rollback()
+            print(f"[INFO] Creacion del usuario admin omitida: {admin_err}")
 
-        admin = Usuario.query.filter_by(usuario='admin').first()
-        if not admin:
-            hashed_pw = hash_password(Config.ADMIN_PASSWORD)
-            admin = Usuario(nombre='Administrador', apellido='Sistema', usuario='admin', password_hash=hashed_pw)
-            db.session.add(admin)
-            db.session.commit()
-            print(f"Usuario 'admin' creado con contrasena de la variable ADMIN_PASSWORD")
-
-        from models import Pais, Estado, Ciudad, Representante, Estudiante, Familiar, AnoEscolar, Grado, Inscripcion
         try:
-            if Pais.query.count() == 0:
-                p = Pais(nombre="Venezuela"); db.session.add(p); db.session.commit()
-                e = Estado(nombre="Distrito Capital", id_pais=p.id_pais); db.session.add(e); db.session.commit()
-                c = Ciudad(nombre="Caracas", id_estado=e.id_estado); db.session.add(c); db.session.commit()
-
-            if Representante.query.count() == 0:
-                rep1 = Representante(cedula="V-12345678", nombres="Juan Carlos", apellidos="Perez Silva", email="juan@ejemplo.com", profesion="Ingeniero", telefono="04141234567", direccion_habitacion="Caracas, El Paraiso")
-                rep2 = Representante(cedula="V-87654321", nombres="Maria Fernanda", apellidos="Lopez Diaz", email="maria@ejemplo.com", profesion="Abogada", telefono="04249876543", direccion_habitacion="Caracas, Chacao")
-                db.session.add_all([rep1, rep2]); db.session.commit()
-                print("Datos de prueba: Representantes inyectados.")
-
-            if AnoEscolar.query.count() == 0:
-                ano = AnoEscolar(periodo="2025-2026", estado="ACTIVO"); db.session.add(ano); db.session.commit()
-                for gn in ["1er Ano", "2do Ano", "3er Ano", "4to Ano", "5to Ano"]:
-                    if not Grado.query.filter_by(nombre=gn).first():
-                        db.session.add(Grado(nombre=gn, nivel="BACHILLERATO"))
-                db.session.commit()
-                print("Datos de prueba: Ano y Grados inyectados.")
-
-            if Estudiante.query.count() == 0:
-                ciudad = Ciudad.query.first()
-                if ciudad:
-                    est1 = Estudiante(cedula_escolar="V-11111111", cedula_identidad="V-30111222", nombres="Luis Alejandro", apellidos="Perez Gomez", orden_nacimiento=1, id_ciudad_nacimiento=ciudad.id_ciudad)
-                    est2 = Estudiante(cedula_escolar="V-22222222", cedula_identidad="V-31222333", nombres="Carlos Eduardo", apellidos="Lopez Silva", orden_nacimiento=2, id_ciudad_nacimiento=ciudad.id_ciudad)
-                    db.session.add_all([est1, est2]); db.session.commit()
-                    print("Datos de prueba: Estudiantes inyectados.")
-                    rep = Representante.query.first(); ano = AnoEscolar.query.first()
-                    grado1 = Grado.query.filter_by(nombre="1er Ano").first(); grado2 = Grado.query.filter_by(nombre="2do Ano").first()
-                    if rep and ano and grado1 and grado2:
-                        try:
-                            user_admin = Usuario.query.first(); uid = user_admin.id_usuario if user_admin else 1
-                            db.session.add_all([
-                                Inscripcion(cedula_escolar=est1.cedula_escolar, id_representante=rep.id_representante, id_ano_escolar=ano.id_ano, id_grado=grado1.id_grado, estado="REGULAR", id_usuario=uid),
-                                Inscripcion(cedula_escolar=est2.cedula_escolar, id_representante=rep.id_representante, id_ano_escolar=ano.id_ano, id_grado=grado2.id_grado, estado="REGULAR", id_usuario=uid),
-                            ]); db.session.commit()
-                            print("Datos de prueba: Estudiantes inscritos (Matricula inyectada).")
-                        except: db.session.rollback()
-        except: db.session.rollback()
-
-        from models import Noticia, ProgramaAcademico, Galeria, SiteConfig
-        try:
-            if Noticia.query.count() == 0:
-                for nd in [
-                    {"titulo": "Inicio de Clases 2026-2027", "resumen": "Las inscripciones para el nuevo ano escolar estan abiertas.", "contenido": "Periodo de inscripciones abierto.", "imagen": "/static/uploads/noticia1.jpg"},
-                    {"titulo": "Jornada Deportiva Anual", "resumen": "Jornada deportiva con participacion de todos los niveles.", "contenido": "Jornada Deportiva Anual 2026 realizada con exito.", "imagen": "/static/uploads/noticia2.jpg"},
-                    {"titulo": "Entrega de Boletines", "resumen": "Entrega de boletines del primer lapso el 15 de julio.", "contenido": "Entrega de boletines primer lapso.", "imagen": "/static/uploads/noticia3.jpg"},
-                ]:
-                    db.session.add(Noticia(**nd))
-                db.session.commit()
-                print("Datos de prueba: Noticias inyectadas.")
-
-            if ProgramaAcademico.query.count() == 0:
-                for pd in [
-                    {"nombre": "Educacion Inicial", "descripcion": "Programa para ninos de 3 a 5 anos.", "nivel": "Inicial", "icono": "fa-child"},
-                    {"nombre": "Educacion Primaria", "descripcion": "Formacion integral de 1ero a 6to grado.", "nivel": "Primaria", "icono": "fa-book-open"},
-                    {"nombre": "Educacion Media General", "descripcion": "Bachillerato general de 1ero a 5to ano.", "nivel": "Bachillerato", "icono": "fa-graduation-cap"},
-                    {"nombre": "Educacion Especial", "descripcion": "Atencion educativa integral.", "nivel": "Especial", "icono": "fa-hands-helping"},
-                    {"nombre": "Formacion Docente", "descripcion": "Actualizacion y formacion continua.", "nivel": "Docente", "icono": "fa-chalkboard-teacher"},
-                ]:
-                    db.session.add(ProgramaAcademico(**pd))
-                db.session.commit()
-                print("Datos de prueba: Programas Academicos inyectados.")
-
-            if Galeria.query.count() == 0:
-                for gd in [
-                    {"titulo": "Instalaciones Deportivas", "imagen": "/static/uploads/galeria1.jpg"},
-                    {"titulo": "Salon de Clases", "imagen": "/static/uploads/galeria2.jpg"},
-                    {"titulo": "Laboratorio de Ciencias", "imagen": "/static/uploads/galeria3.jpg"},
-                    {"titulo": "Biblioteca Escolar", "imagen": "/static/uploads/galeria1.jpg"},
-                    {"titulo": "Area de Recreacion", "imagen": "/static/uploads/galeria2.jpg"},
-                    {"titulo": "Auditorio", "imagen": "/static/uploads/galeria3.jpg"},
-                ]:
-                    db.session.add(Galeria(**gd))
-                db.session.commit()
-                print("Datos de prueba: Galeria inyectada.")
-
-            if SiteConfig.query.count() == 0:
-                for k, v in [
-                    ("site_name", "Escuela José Manuel Cova Maza"),
-                    ("site_description", "Formando lideres para el futuro con excelencia educativa"),
-                    ("about_title", "Quienes Somos?"),
-                    ("about_content", "Institucion educativa comprometida con la formacion integral."),
-                    ("about_mision", "Formar ciudadanos integrales con valores eticos."),
-                    ("about_vision", "Ser institucion de referencia nacional."),
-                    ("contact_address", "Av. Principal, Puerto Ordaz, Estado Bolivar"),
-                    ("contact_phone", "+58 412-1234567"),
-                    ("contact_email", "info@uejmcm.edu.ve"),
-                    ("contact_hours", "Lunes a Viernes: 7:00 AM - 3:00 PM"),
-                    ("requisitos_inscripcion", "Partida de Nacimiento\nCedula del Estudiante\nCedula del Representante\nFotos tipo carnet (2)\nCertificado de Estudios"),
-                ]:
-                    db.session.add(SiteConfig(key=k, value=v))
-                db.session.commit()
-                print("Datos de prueba: Configuracion del sitio inyectada.")
-
-            if Usuario.query.filter_by(usuario='secretario').count() == 0:
-                db.session.add(Usuario(nombre='Maria', apellido='Secretaria', usuario='secretario', password_hash=hash_password('secretario123'), rol='secretario'))
-                db.session.commit()
-                print("Usuario 'secretario' creado")
+            from seed_data import seed_datos_iniciales
+            seed_datos_iniciales()
         except Exception as seed_err:
             db.session.rollback()
             print(f"[INFO] Seed data: {seed_err}")

@@ -135,8 +135,15 @@ def eliminar_usuario(id):
 
 
 # ============================
-# SITE CONFIG (PUT admin)
+# SITE CONFIG (GET/PUT admin)
 # ============================
+@api_admin.route("/site-config", methods=["GET"])
+@token_required
+def get_site_config():
+    configs = models.SiteConfig.query.all()
+    return jsonify({c.key: c.value for c in configs})
+
+
 @api_admin.route("/site-config", methods=["PUT"])
 @token_required
 def put_site_config():
@@ -152,8 +159,24 @@ def put_site_config():
 
 
 # ============================
-# NOTICIAS (POST/PUT/DELETE admin)
+# NOTICIAS (GET/POST/PUT/DELETE admin)
 # ============================
+@api_admin.route("/noticias", methods=["GET"])
+@token_required
+def noticias_listar():
+    activas = request.args.get("activas", "false") == "true"
+    q = models.Noticia.query
+    if activas:
+        q = q.filter_by(activo=True)
+    noticias = q.order_by(models.Noticia.fecha_publicacion.desc()).all()
+    return jsonify([{
+        "id": n.id, "titulo": n.titulo, "resumen": n.resumen,
+        "contenido": n.contenido, "imagen": n.imagen,
+        "fecha": n.fecha_publicacion.strftime("%d/%m/%Y") if n.fecha_publicacion else "",
+        "activo": n.activo
+    } for n in noticias])
+
+
 @api_admin.route("/noticias", methods=["POST"])
 @token_required
 def noticias_crear():
@@ -182,8 +205,18 @@ def noticia_id(id):
 
 
 # ============================
-# PROGRAMAS (POST/PUT/DELETE admin)
+# PROGRAMAS (GET/POST/PUT/DELETE admin)
 # ============================
+@api_admin.route("/programas", methods=["GET"])
+@token_required
+def programas_listar():
+    programas = models.ProgramaAcademico.query.order_by(models.ProgramaAcademico.nombre).all()
+    return jsonify([{
+        "id": p.id, "nombre": p.nombre, "descripcion": p.descripcion,
+        "nivel": p.nivel, "icono": p.icono, "activo": p.activo
+    } for p in programas])
+
+
 @api_admin.route("/programas", methods=["POST"])
 @token_required
 def programas_crear():
@@ -212,8 +245,19 @@ def programa_id(id):
 
 
 # ============================
-# GALERIA (POST/DELETE admin)
+# GALERIA (GET/POST/DELETE admin)
 # ============================
+@api_admin.route("/galeria", methods=["GET"])
+@token_required
+def galeria_listar():
+    imagenes = models.Galeria.query.order_by(models.Galeria.fecha_subida.desc()).all()
+    return jsonify([{
+        "id": g.id, "titulo": g.titulo, "imagen": g.imagen,
+        "descripcion": g.descripcion,
+        "fecha": g.fecha_subida.strftime("%d/%m/%Y") if g.fecha_subida else ""
+    } for g in imagenes])
+
+
 @api_admin.route("/galeria", methods=["POST"])
 @token_required
 def galeria_crear():
@@ -338,6 +382,35 @@ def listar_estudiantes():
     } for e in estudiantes])
 
 
+@api_admin.route("/estudiantes/<cedula>", methods=["GET"])
+@token_required
+def buscar_estudiante(cedula):
+    busqueda = (cedula or '').strip().upper()
+    base = busqueda.replace("V-", "")
+    variantes = {busqueda, base, "V-" + base}
+    est = None
+    for v in variantes:
+        est = models.Estudiante.query.filter(
+            (models.Estudiante.cedula_escolar == v) |
+            (models.Estudiante.cedula_identidad == v)
+        ).first()
+        if est:
+            break
+    if not est:
+        return jsonify({"success": False, "message": "Estudiante no registrado"}), 404
+
+    nombres = (est.nombres or "").split(maxsplit=1)
+    apellidos = (est.apellidos or "").split(maxsplit=1)
+    return jsonify({
+        "success": True,
+        "nombre1": nombres[0] if nombres else "",
+        "nombre2": nombres[1] if len(nombres) > 1 else "",
+        "apellido1": apellidos[0] if apellidos else "",
+        "apellido2": apellidos[1] if len(apellidos) > 1 else "",
+        "cedula_escolar": est.cedula_escolar,
+    })
+
+
 # ============================
 # INSCRIPCION (admin)
 # ============================
@@ -378,17 +451,52 @@ def inscribir_plantilla():
 @token_required
 def gestionar_anos():
     if request.method == "GET":
-        anos = models.AnoEscolar.query.all()
+        anos = models.AnoEscolar.query.order_by(models.AnoEscolar.id_ano.desc()).all()
         stats = []
         for ano in anos:
             matricula = models.Inscripcion.query.filter_by(id_ano_escolar=ano.id_ano).count()
-            stats.append({"periodo": ano.periodo, "estado": ano.estado, "matricula": matricula})
+            stats.append({"id_ano": ano.id_ano, "periodo": ano.periodo, "estado": ano.estado, "matricula": matricula})
         return jsonify(stats)
     data = request.get_json()
-    nuevo = models.AnoEscolar(periodo=data["periodo"], estado="ACTIVO")
+    periodo = (data.get("periodo") or "").strip()
+    if not periodo:
+        return jsonify({"success": False, "message": "Debe indicar el periodo"}), 400
+    if models.AnoEscolar.query.filter_by(periodo=periodo).first():
+        return jsonify({"success": False, "message": "Ya existe un ano escolar con ese periodo"}), 400
+    if data.get("cerrar_anteriores"):
+        for ano in models.AnoEscolar.query.filter_by(estado="ACTIVO").all():
+            ano.estado = "CERRADO"
+    nuevo = models.AnoEscolar(periodo=periodo, estado="ACTIVO")
     models.db.session.add(nuevo)
     models.db.session.commit()
-    return jsonify({"message": "Ano escolar abierto"}), 201
+    return jsonify({"success": True, "message": "Ano escolar abierto"}), 201
+
+
+@api_admin.route("/anos-escolares/<int:id_ano>", methods=["PUT", "DELETE"])
+@token_required
+def gestionar_ano_id(id_ano):
+    ano = models.AnoEscolar.query.get(id_ano)
+    if not ano:
+        return jsonify({"success": False, "message": "Ano escolar no encontrado"}), 404
+    if request.method == "DELETE":
+        ano.estado = "CERRADO"
+        models.db.session.commit()
+        return jsonify({"success": True, "message": "Ano escolar cerrado"})
+    data = request.get_json()
+    periodo = (data.get("periodo") or "").strip()
+    if not periodo:
+        return jsonify({"success": False, "message": "Debe indicar el periodo"}), 400
+    duplicado = models.AnoEscolar.query.filter(
+        models.AnoEscolar.periodo == periodo,
+        models.AnoEscolar.id_ano != id_ano
+    ).first()
+    if duplicado:
+        return jsonify({"success": False, "message": "Ya existe un ano escolar con ese periodo"}), 400
+    ano.periodo = periodo
+    if "estado" in data:
+        ano.estado = data["estado"]
+    models.db.session.commit()
+    return jsonify({"success": True, "message": "Ano escolar actualizado"})
 
 
 # ============================
@@ -551,6 +659,7 @@ def ver_matricula():
 # RECUPERACION DE CONTRASENA
 # ============================
 @api_admin.route("/registro", methods=["POST"])
+@token_required
 def registrarse():
     data = request.get_json() or {}
     usuario = (data.get('usuario') or '').strip()
