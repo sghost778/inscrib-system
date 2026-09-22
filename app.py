@@ -108,6 +108,11 @@ def create_app():
     def view_menu():
         return render_template('menu.html')
 
+    @app.route('/reportes')
+    @login_requerido
+    def view_reportes():
+        return render_template('reportes.html')
+
     @app.route('/usuarios')
     @login_requerido
     def view_usuarios():

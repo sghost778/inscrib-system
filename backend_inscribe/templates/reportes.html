@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes - INSCRIB SYSTEM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00b689">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
+    <style>
+        :root {
+            --primary: #00b689;
+            --bg-color: #f8fafb;
+            --text-dark: #2d3436;
+            --white: #ffffff;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 30px;
+            color: var(--text-dark);
+        }
+        .page-header {
+            background: linear-gradient(135deg, var(--primary), #00d2ad);
+            padding: 35px;
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 182, 137, 0.15);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header h1 { margin: 0; font-size: 1.8rem; }
+        .page-header p { opacity: 0.9; font-size: 1rem; margin-top: 8px; }
+        .page-header i.bg-icon {
+            position: absolute; right: -15px; bottom: -20px;
+            font-size: 8rem; opacity: 0.15;
+        }
+        .back-link {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+        .back-link:hover { opacity: 1; text-decoration: underline; }
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .report-card {
+            background: var(--white);
+            border: 1px solid #edf2f7;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .report-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.07);
+        }
+        .report-card .icon-wrap {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .report-card h3 { margin: 0; font-size: 1.1rem; }
+        .report-card p {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        .btn-download {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+        .btn-download:hover { background: #009e77; }
+        .btn-download:disabled { opacity: 0.6; cursor: wait; }
+        .error-box {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .note {
+            margin-top: 28px;
+            background: var(--white);
+            border: 1px solid #edf2f7;
+            border-left: 4px solid var(--primary);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-header">
+        <a class="back-link" href="/inicio"><i class="fas fa-arrow-left"></i> Volver al panel</a>
+        <h1>Reportes del Sistema</h1>
+        <p>Genere documentos PDF con la informacion actual del plantel.</p>
+        <i class="fas fa-file-pdf bg-icon"></i>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="reports-grid">
+        <div class="report-card">
+            <div class="icon-wrap"><i class="fas fa-user-graduate"></i></div>
+            <h3>Listado de Estudiantes</h3>
+            <p>Lista completa de estudiantes registrados con sus datos personales, lugar de nacimiento y contacto.</p>
+            <button class="btn-download" data-url="/api/reportes/estudiantes"><i class="fas fa-download"></i> Descargar PDF</button>
+        </div>
+
+        <div class="report-card">
+            <div class="icon-wrap"><i class="fas fa-id-card"></i></div>
+            <h3>Matricula por Grado</h3>
+            <p>Resumen de la matricula activa del ano escolar en curso, desglosada por grado y estado.</p>
+            <button class="btn-download" data-url="/api/reportes/matricula"><i class="fas fa-download"></i> Descargar PDF</button>
+        </div>
+
+        <div class="report-card">
+            <div class="icon-wrap"><i class="fas fa-users"></i></div>
+            <h3>Representantes</h3>
+            <p>Directorio de representantes con sus datos de contacto, correo electronico y estudiantes vinculados.</p>
+            <button class="btn-download" data-url="/api/reportes/representantes"><i class="fas fa-download"></i> Descargar PDF</button>
+        </div>
+
+        <div class="report-card">
+            <div class="icon-wrap"><i class="fas fa-user-shield"></i></div>
+            <h3>Usuarios del Sistema</h3>
+            <p>Usuarios internos del panel de administracion con su rol asignado y estado de cuenta.</p>
+            <button class="btn-download" data-url="/api/reportes/usuarios"><i class="fas fa-download"></i> Descargar PDF</button>
+        </div>
+
+        <div class="report-card">
+            <div class="icon-wrap"><i class="fas fa-chart-pie"></i></div>
+            <h3>Resumen Estadistico</h3>
+            <p>Indicadores clave: totales de estudiantes, representantes, matricula por grado y usuarios por rol.</p>
+            <button class="btn-download" data-url="/api/reportes/estadistico"><i class="fas fa-download"></i> Descargar PDF</button>
+        </div>
+    </div>
+
+    <div class="note">
+        <i class="fas fa-info-circle" style="color: var(--primary);"></i>
+        Los reportes se generan al instante con la informacion vigente en la base de datos.
+        Si la descarga no comienza, verifique que su sesion este activa.
+    </div>
+
+<script>
+    function mostrarError(msg) {
+        const box = document.getElementById('errorBox');
+        box.textContent = msg;
+        box.style.display = 'block';
+    }
+
+    document.querySelectorAll('.btn-download').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const url = btn.getAttribute('data-url');
+            btn.disabled = true;
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
+            try {
+                const res = await fetch(url, { credentials: 'same-origin' });
+                if (res.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const blob = await res.blob();
+                const cd = res.headers.get('Content-Disposition') || '';
+                const m = cd.match(/filename="?([^";]+)"?/);
+                const filename = m ? m[1] : 'reporte.pdf';
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(a.href);
+            } catch (e) {
+                console.error(e);
+                mostrarError('No se pudo generar el reporte. Intente nuevamente.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = original;
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

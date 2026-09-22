@@ -73,7 +73,7 @@ class Usuario(db.Model):
     apellido = db.Column(db.String(100))
     usuario = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    rol = db.Column(db.String(20), default='admin')  # admin / secretario / docente
+    rol = db.Column(db.String(20), default='admin')  # admin / director / secretario / coordinador / docente
     email = db.Column(db.String(100))
 
 class ResetToken(db.Model):

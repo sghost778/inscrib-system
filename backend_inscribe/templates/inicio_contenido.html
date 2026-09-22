@@ -1,180 +1,399 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#00b689">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
-
-    <style>
-        :root {
-            --primary: #00b689;
-            --bg-color: #f8fafb;
-            --text-dark: #2d3436;
-            --white: #ffffff;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 30px;
-            color: var(--text-dark);
-        }
-
-        /* CABECERA */
-        .welcome-section {
-            background: linear-gradient(135deg, var(--primary), #00d2ad);
-            padding: 35px;
-            border-radius: 20px;
-            color: white;
-            box-shadow: 0 10px 20px rgba(0, 182, 137, 0.15);
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .welcome-section h1 { margin: 0; font-size: 1.8rem; }
-        .welcome-section p { opacity: 0.9; font-size: 1rem; margin-top: 8px; }
-        .welcome-section i.bg-icon { 
-            position: absolute; right: -15px; bottom: -20px; 
-            font-size: 8rem; opacity: 0.15; 
-        }
-
-        /* CONTENEDOR DE LA TABLA */
-        .table-container {
-            background: var(--white);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
-            border: 1px solid #edf2f7;
-        }
-
-        .table-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            gap: 10px;
-        }
-
-        .table-header i { color: var(--primary); font-size: 1.2rem; }
-        .table-header h2 { margin: 0; font-size: 1.3rem; color: var(--text-dark); }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        thead {
-            background-color: #f1f3f5;
-        }
-
-        th {
-            padding: 15px;
-            font-weight: 600;
-            color: #636e72;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #edf2f7;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #f1f3f5;
-            color: #2d3436;
-            font-size: 0.95rem;
-        }
-
-        tr:hover {
-            background-color: #fcfdfe;
-        }
-
-        /* ETIQUETA DE USUARIO */
-        .user-pill {
-            background: var(--primary-soft);
-            color: var(--primary);
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-weight: 600;
-            background-color: rgba(0, 182, 137, 0.1);
-            font-size: 0.85rem;
-        }
-
-        .time-text {
-            color: #636e72;
-            font-weight: 500;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="welcome-section">
-        <h1>¡Hola, Administrador!</h1>
-        <p>Bienvenido al sistema <strong>INSCRIBE SYSTEM</strong>. Registro de actividad reciente.</p>
-        <i class="fas fa-shield-alt bg-icon"></i>
-    </div>
-
-    <div class="table-container">
-        <div class="table-header">
-            <i class="fas fa-history"></i>
-            <h2>Últimos Accesos al Sistema</h2>
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Usuario</th>
-                    <th>Nombre Completo</th>
-                    <th>Fecha de Acceso</th>
-                    <th>Hora de Entrada</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><span class="user-pill">admin_01</span></td>
-                    <td>Juan Perez</td>
-                    <td>09/02/2026</td>
-                    <td class="time-text">08:30 AM</td>
-                    <td><i class="fas fa-circle" style="color: #00b689; font-size: 0.7rem;"></i> Activo</td>
-                </tr>
-                <tr>
-                    <td><span class="user-pill">soporte_tec</span></td>
-                    <td>Maria Garcia</td>
-                    <td>09/02/2026</td>
-                    <td class="time-text">09:15 AM</td>
-                    <td><i class="fas fa-circle" style="color: #00b689; font-size: 0.7rem;"></i> Activo</td>
-                </tr>
-                <tr>
-                    <td><span class="user-pill">recepcion_01</span></td>
-                    <td>Carlos Ruiz</td>
-                    <td>08/02/2026</td>
-                    <td class="time-text">02:00 PM</td>
-                    <td><i class="fas fa-circle" style="color: #cbd5e0; font-size: 0.7rem;"></i> Desconectado</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
-<script>
-    // Registrar el Service Worker para la PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registrado con exito:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('Error al registrar el ServiceWorker:', error);
-                    });
-            });
-        }
-</script>
-</body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - INSCRIB SYSTEM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00b689">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #00b689;
+            --bg-color: #f8fafb;
+            --text-dark: #2d3436;
+            --white: #ffffff;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 30px;
+            color: var(--text-dark);
+        }
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary), #00d2ad);
+            padding: 35px;
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 182, 137, 0.15);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .welcome-section h1 { margin: 0; font-size: 1.8rem; }
+        .welcome-section p { opacity: 0.9; font-size: 1rem; margin-top: 8px; }
+        .welcome-section .ano-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 12px;
+        }
+        .welcome-section i.bg-icon {
+            position: absolute; right: -15px; bottom: -20px;
+            font-size: 8rem; opacity: 0.15;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+        .kpi-card {
+            background: var(--white);
+            border: 1px solid #edf2f7;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+            transition: transform 0.15s ease;
+        }
+        .kpi-card:hover { transform: translateY(-3px); }
+        .kpi-icon {
+            width: 46px; height: 46px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            color: var(--primary);
+            background: rgba(0, 182, 137, 0.1);
+            flex-shrink: 0;
+        }
+        .kpi-icon.amber { color: #f59e0b; background: rgba(245, 158, 11, 0.12); }
+        .kpi-icon.blue { color: #3b82f6; background: rgba(59, 130, 246, 0.12); }
+        .kpi-icon.red { color: #ef4444; background: rgba(239, 68, 68, 0.12); }
+        .kpi-icon.purple { color: #8b5cf6; background: rgba(139, 92, 246, 0.12); }
+        .kpi-value { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+        .kpi-label { font-size: 0.8rem; color: #64748b; margin-top: 4px; }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .chart-card {
+            background: var(--white);
+            border: 1px solid #edf2f7;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+        }
+        .chart-card h3 {
+            margin: 0 0 15px 0;
+            font-size: 1rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .chart-card h3 i { color: var(--primary); }
+        .chart-wrap { position: relative; height: 260px; }
+        .table-container {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+            border: 1px solid #edf2f7;
+        }
+        .table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        .table-header .th-left { display: flex; align-items: center; gap: 10px; }
+        .table-header i { color: var(--primary); font-size: 1.2rem; }
+        .table-header h2 { margin: 0; font-size: 1.3rem; color: var(--text-dark); }
+        .btn-report {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-report:hover { background: #009e77; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        thead { background-color: #f1f3f5; }
+        th {
+            padding: 15px;
+            font-weight: 600;
+            color: #636e72;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #edf2f7;
+        }
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f3f5;
+            color: #2d3436;
+            font-size: 0.95rem;
+        }
+        tr:hover { background-color: #fcfdfe; }
+        .user-pill {
+            background-color: rgba(0, 182, 137, 0.1);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .time-text { color: #636e72; font-weight: 500; }
+        .empty-row { text-align: center; color: #94a3b8; padding: 25px; }
+        .error-box {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="welcome-section">
+        <h1 id="saludo">¡Hola, Administrador!</h1>
+        <p>Bienvenido al panel de control de <strong>INSCRIB SYSTEM</strong>.</p>
+        <span class="ano-badge" id="anoActivo" style="display:none;"></span>
+        <i class="fas fa-chart-line bg-icon"></i>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-user-graduate"></i></div>
+            <div><div class="kpi-value" id="kpiEstudiantes">–</div><div class="kpi-label">Estudiantes</div></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon blue"><i class="fas fa-users"></i></div>
+            <div><div class="kpi-value" id="kpiRepresentantes">–</div><div class="kpi-label">Representantes</div></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon amber"><i class="fas fa-id-card"></i></div>
+            <div><div class="kpi-value" id="kpiMatricula">–</div><div class="kpi-label">Matrícula activa</div></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon purple"><i class="fas fa-user-shield"></i></div>
+            <div><div class="kpi-value" id="kpiUsuarios">–</div><div class="kpi-label">Usuarios del sistema</div></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon red"><i class="fas fa-envelope-open-text"></i></div>
+            <div><div class="kpi-value" id="kpiMensajes">–</div><div class="kpi-label">Mensajes sin leer</div></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon amber"><i class="fas fa-user-minus"></i></div>
+            <div><div class="kpi-value" id="kpiRetiros">–</div><div class="kpi-label">Retiros / no regulares</div></div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-bar"></i> Matrícula por grado</h3>
+            <div class="chart-wrap"><canvas id="chartGrado"></canvas></div>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-line"></i> Inscripciones por mes</h3>
+            <div class="chart-wrap"><canvas id="chartMes"></canvas></div>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-pie"></i> Usuarios por rol</h3>
+            <div class="chart-wrap"><canvas id="chartRoles"></canvas></div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-header">
+            <div class="th-left">
+                <i class="fas fa-history"></i>
+                <h2>Últimos Accesos al Sistema</h2>
+            </div>
+            <a class="btn-report" href="/reportes"><i class="fas fa-file-pdf"></i> Generar reportes</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Nombre Completo</th>
+                    <th>Fecha de Acceso</th>
+                    <th>Hora de Entrada</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="logsBody">
+                <tr><td colspan="5" class="empty-row">Cargando actividad...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+<script>
+    const token = localStorage.getItem('token');
+    const usuario = localStorage.getItem('usuario') || 'Administrador';
+    const rol = localStorage.getItem('rol') || 'admin';
+    const nombresRol = {
+        admin: 'Administrador', director: 'Director/a', secretario: 'Secretario/a',
+        coordinador: 'Coordinador/a', docente: 'Docente', representante: 'Representante'
+    };
+    document.getElementById('saludo').textContent = '¡Hola, ' + usuario + '! (' + (nombresRol[rol] || rol) + ')';
+
+    const AUTH = { 'Authorization': 'Bearer ' + token };
+    const COLores = ['#00b689', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#ec4899', '#84cc16'];
+
+    function mostrarError(msg) {
+        const box = document.getElementById('errorBox');
+        box.textContent = msg;
+        box.style.display = 'block';
+    }
+
+    async function cargarStats() {
+        try {
+            const res = await fetch('/api/dashboard/stats', { headers: AUTH });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const d = await res.json();
+
+            document.getElementById('kpiEstudiantes').textContent = d.total_estudiantes;
+            document.getElementById('kpiRepresentantes').textContent = d.total_representantes;
+            document.getElementById('kpiMatricula').textContent = d.matricula_total;
+            document.getElementById('kpiUsuarios').textContent = d.total_usuarios;
+            document.getElementById('kpiMensajes').textContent = d.total_mensajes;
+            document.getElementById('kpiRetiros').textContent = d.retiros;
+
+            if (d.ano_activo) {
+                const badge = document.getElementById('anoActivo');
+                badge.textContent = 'Año escolar activo: ' + d.ano_activo;
+                badge.style.display = 'inline-block';
+            }
+
+            const porGrado = d.inscripciones_por_grado || [];
+            new Chart(document.getElementById('chartGrado'), {
+                type: 'bar',
+                data: {
+                    labels: porGrado.map(g => g.grado),
+                    datasets: [{
+                        label: 'Estudiantes',
+                        data: porGrado.map(g => g.total),
+                        backgroundColor: '#00b689',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                }
+            });
+
+            const porMes = d.inscripciones_por_mes || [];
+            new Chart(document.getElementById('chartMes'), {
+                type: 'line',
+                data: {
+                    labels: porMes.map(m => m.mes),
+                    datasets: [{
+                        label: 'Inscripciones',
+                        data: porMes.map(m => m.total),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59,130,246,0.12)',
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#3b82f6'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                }
+            });
+
+            const porRol = d.por_rol || [];
+            new Chart(document.getElementById('chartRoles'), {
+                type: 'doughnut',
+                data: {
+                    labels: porRol.map(r => r.rol),
+                    datasets: [{
+                        data: porRol.map(r => r.total),
+                        backgroundColor: COLores
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    cutout: '60%'
+                }
+            });
+        } catch (e) {
+            console.error(e);
+            mostrarError('No se pudieron cargar las estadísticas del panel. Verifique su sesión.');
+        }
+    }
+
+    async function cargarLogs() {
+        try {
+            const res = await fetch('/api/dashboard/logs', { headers: AUTH });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const logs = await res.json();
+            const body = document.getElementById('logsBody');
+            if (!logs.length) {
+                body.innerHTML = '<tr><td colspan="5" class="empty-row">Sin actividad registrada aun.</td></tr>';
+                return;
+            }
+            body.innerHTML = logs.map(l => `
+                <tr>
+                    <td><span class="user-pill">${l.usuario}</span></td>
+                    <td>${l.nombre}</td>
+                    <td>${l.fecha}</td>
+                    <td class="time-text">${l.hora}</td>
+                    <td>${l.accion}</td>
+                </tr>`).join('');
+        } catch (e) {
+            console.error(e);
+            document.getElementById('logsBody').innerHTML =
+                '<tr><td colspan="5" class="empty-row">No se pudo cargar la actividad.</td></tr>';
+        }
+    }
+
+    cargarStats();
+    cargarLogs();
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('ServiceWorker registrado con exito:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('Error al registrar el ServiceWorker:', error);
+                });
+        });
+    }
+</script>
+
+</body>
 </html>
