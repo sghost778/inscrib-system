@@ -4,6 +4,7 @@
 Plataforma web: https://inscrib-admin.onrender.com
 
 Esta guía explica, paso a paso, cómo usar el panel administrativo de INSCRIB.
+También está disponible **dentro del panel**: menú **Guía de Uso** (en la barra izquierda).
 
 ---
 
@@ -31,6 +32,7 @@ Esta guía explica, paso a paso, cómo usar el panel administrativo de INSCRIB.
 | **Usuario** | Crear y editar usuarios del sistema. |
 | **Configurar Sitio Web** | Noticias, galería, mensajes del sitio público. |
 | **Reportes PDF** | Descargar listados en PDF. |
+| **Guía de Uso** | Esta misma guía, dentro del panel. |
 | **Salir del Sistema** | Cerrar sesión. |
 
 ---
@@ -207,6 +209,26 @@ No. Si el estudiante ya tiene planilla en el año activo, el sistema lo avisa y 
 
 Menú **Salir del Sistema → Confirmar**.  
 Si usa una computadora compartida, **siempre** cierre la sesión.
+
+---
+
+## 14. Qué se guarda en el sistema
+
+Casi todo lo que usted **escribe y registra** se guarda en la base de datos del servidor:
+
+| Lo que registra | ¿Se guarda? |
+|-----------------|-------------|
+| Estudiantes, representantes, planillas | **Sí** |
+| Matrícula y retiros (fecha, lapso, motivo) | **Sí** |
+| Usuarios y roles | **Sí** |
+| Noticias, galería, imágenes, mensajes de contacto | **Sí** (imágenes en la BD) |
+| Año escolar y configuración del sitio | **Sí** |
+| Búsquedas/filtros en pantalla | No (solo visual) |
+| SMS/correo al registrar estudiante | No (campo oculto) |
+
+Si pulsa **Guardar**, el dato queda en la BD y se ve en listados, reportes PDF y el sitio público. El sistema **no envía correos** a representantes ni padres.
+
+Esta misma guía está **dentro del panel**: menú **Guía de Uso**.
 
 ---
 

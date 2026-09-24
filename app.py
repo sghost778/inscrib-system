@@ -122,6 +122,11 @@ def create_app():
     def view_reportes():
         return render_template('reportes.html')
 
+    @app.route('/guia')
+    @login_requerido
+    def view_guia():
+        return render_template('guia.html')
+
     @app.route('/usuarios')
     @login_requerido
     def view_usuarios():

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Uso - INSCRIB SYSTEM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00b689">
+    <style>
+        :root {
+            --primary: #00b689;
+            --bg-color: #f8fafb;
+            --text-dark: #2d3436;
+            --white: #ffffff;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 30px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        .page-header {
+            background: linear-gradient(135deg, var(--primary), #00d2ad);
+            padding: 35px;
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 182, 137, 0.15);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header h1 { margin: 0; font-size: 1.8rem; }
+        .page-header p { opacity: 0.9; font-size: 1rem; margin-top: 8px; }
+        .page-header i.bg-icon {
+            position: absolute; right: -15px; bottom: -20px;
+            font-size: 8rem; opacity: 0.15;
+        }
+        .toc {
+            background: var(--white);
+            border: 1px solid #edf2f7;
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+        .toc h2 { margin: 0 0 12px; font-size: 1.05rem; color: var(--primary); }
+        .toc ol { margin: 0; padding-left: 20px; columns: 2; gap: 24px; }
+        .toc a { color: #2d3436; text-decoration: none; }
+        .toc a:hover { color: var(--primary); text-decoration: underline; }
+        .section {
+            background: var(--white);
+            border: 1px solid #edf2f7;
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+        .section h2 {
+            margin: 0 0 14px;
+            font-size: 1.2rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section h2 .num {
+            background: rgba(0, 182, 137, 0.12);
+            color: var(--primary);
+            width: 32px; height: 32px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+        .section h3 { margin: 16px 0 8px; font-size: 1.02rem; color: #1a202c; }
+        .section p, .section li { color: #4a5568; font-size: 0.95rem; }
+        .section ol, .section ul { padding-left: 22px; margin: 8px 0; }
+        .section li { margin: 4px 0; }
+        .note {
+            background: #ecfaf5;
+            border-left: 4px solid var(--primary);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            color: #276749;
+            font-size: 0.92rem;
+        }
+        .warn {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            color: #92400e;
+            font-size: 0.92rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 0.92rem;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th { background: var(--primary); color: white; font-weight: 600; }
+        tr:nth-child(even) td { background: #f0faf7; }
+        .faq-item {
+            border-bottom: 1px solid #edf2f7;
+            padding: 12px 0;
+        }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-item strong { color: var(--text-dark); display: block; margin-bottom: 4px; }
+        .footer-note {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: 24px;
+            padding-bottom: 20px;
+        }
+        strong { color: var(--text-dark); }
+        code {
+            background: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.88em;
+        }
+        @media (max-width: 700px) {
+            body { padding: 16px; }
+            .toc ol { columns: 1; }
+            .section { padding: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-header">
+        <h1><i class="fas fa-book-open"></i> Guía de Usuarios</h1>
+        <p>Escuela José Manuel Cova Maza · Sistema INSCRIB · Cómo usar el panel administrativo paso a paso</p>
+        <i class="fas fa-book bg-icon"></i>
+    </div>
+
+    <nav class="toc">
+        <h2><i class="fas fa-list"></i> Contenido</h2>
+        <ol>
+            <li><a href="#s1">Acceso al sistema</a></li>
+            <li><a href="#s2">Menú principal</a></li>
+            <li><a href="#s3">Estudiantes</a></li>
+            <li><a href="#s4">Representantes</a></li>
+            <li><a href="#s5">Plantillas de inscripción</a></li>
+            <li><a href="#s6">Matrícula y retiros</a></li>
+            <li><a href="#s7">Inicio (panel)</a></li>
+            <li><a href="#s8">Reportes PDF</a></li>
+            <li><a href="#s9">Usuarios del sistema</a></li>
+            <li><a href="#s10">Configurar sitio web</a></li>
+            <li><a href="#s11">Gestión de año escolar</a></li>
+            <li><a href="#s12">Preguntas frecuentes</a></li>
+            <li><a href="#s13">Cierre de sesión</a></li>
+            <li><a href="#s14">Qué se guarda en el sistema</a></li>
+        </ol>
+    </nav>
+
+    <section class="section" id="s1">
+        <h2><span class="num">1</span> Acceso al sistema</h2>
+        <ol>
+            <li>Abra el navegador y entre a: <strong>https://inscrib-admin.onrender.com</strong></li>
+            <li>Inicie sesión con su <strong>usuario</strong> y <strong>contraseña</strong>.</li>
+            <li>Si olvidó la contraseña del panel, use <strong>“¿Olvidó su contraseña?”</strong> en el login (solo administradores; requiere SMTP configurado).</li>
+            <li>Al entrar, verá el <strong>Inicio</strong> (panel con estadísticas).</li>
+        </ol>
+        <div class="note">Consejo: si la pantalla se ve vieja o desactualizada, presione <strong>Ctrl + F5</strong> (o Ctrl + Shift + R) para recargar sin caché.</div>
+    </section>
+
+    <section class="section" id="s2">
+        <h2><span class="num">2</span> Menú principal (barra izquierda)</h2>
+        <table>
+            <thead>
+                <tr><th>Opción</th><th>Para qué sirve</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Inicio</strong></td><td>Panel de control: totales, gráficas y últimos accesos.</td></tr>
+                <tr><td><strong>Estudiantes</strong></td><td>Registrar y listar estudiantes.</td></tr>
+                <tr><td><strong>Representante</strong></td><td>Registrar y listar representantes (padres/tutores).</td></tr>
+                <tr><td><strong>Plantilla Inscripción</strong></td><td>Crear y ver planillas de inscripción.</td></tr>
+                <tr><td><strong>Matrícula</strong></td><td>Matrícula activa, nuevos ingresos y <strong>retiros</strong>.</td></tr>
+                <tr><td><strong>Gestión de Año</strong></td><td>Abrir/cerrar el año escolar.</td></tr>
+                <tr><td><strong>Usuario</strong></td><td>Crear y editar usuarios del sistema.</td></tr>
+                <tr><td><strong>Configurar Sitio Web</strong></td><td>Noticias, galería, mensajes del sitio público.</td></tr>
+                <tr><td><strong>Reportes PDF</strong></td><td>Descargar listados en PDF.</td></tr>
+                <tr><td><strong>Guía de Uso</strong></td><td>Esta misma guía (siempre disponible en el menú).</td></tr>
+                <tr><td><strong>Salir del Sistema</strong></td><td>Cerrar sesión.</td></tr>
+            </tbody>
+        </table>
+        <div class="note">El sistema <strong>no envía correos a representantes ni padres</strong>. La opción “Enviar Correo” fue retirada del menú.</div>
+    </section>
+
+    <section class="section" id="s3">
+        <h2><span class="num">3</span> Estudiantes</h2>
+        <h3>3.1 Registrar Estudiante (1.ª opción del menú)</h3>
+        <ol>
+            <li>Menú <strong>Estudiantes → Registrar Estudiante</strong>.</li>
+            <li>Complete los datos obligatorios:
+                <ul>
+                    <li><strong>Nº Cédula Escolar (C.E.)</strong></li>
+                    <li>Nombres y apellidos</li>
+                    <li>Fecha de nacimiento, lugar, etc.</li>
+                </ul>
+            </li>
+            <li>Pulse <strong>Guardar</strong> y confirme.</li>
+        </ol>
+        <div class="note"><strong>Nota:</strong> los campos de <strong>teléfono/SMS</strong> y <strong>correo electrónico</strong> están ocultos a propósito en este formulario (no se usan en el registro del estudiante).</div>
+
+        <h3>3.2 Listado General (2.ª opción del menú)</h3>
+        <ol>
+            <li>Menú <strong>Estudiantes → Listado General</strong>.</li>
+            <li>Aquí puede <strong>buscar</strong> estudiantes y ver el listado completo.</li>
+        </ol>
+        <div class="warn">La opción <strong>“Consulta Individual”</strong> fue <strong>eliminada</strong> del menú. Use el listado para localizar al estudiante.</div>
+    </section>
+
+    <section class="section" id="s4">
+        <h2><span class="num">4</span> Representantes</h2>
+        <ol>
+            <li>Menú <strong>Representante → Registrar Representante</strong> para dar de alta al padre/madre/tutor.</li>
+            <li>Menú <strong>Representante → Listado General</strong> para verlos o buscarlos.</li>
+        </ol>
+        <p>Igual que en estudiantes, <strong>Consulta Individual</strong> ya no aparece en el menú.</p>
+    </section>
+
+    <section class="section" id="s5">
+        <h2><span class="num">5</span> Plantillas de inscripción</h2>
+        <h3>5.1 Nueva Plantilla</h3>
+        <ol>
+            <li>Menú <strong>Plantilla Inscripción → Nueva Plantilla</strong>.</li>
+            <li>Busque al estudiante por <strong>cédula</strong>.</li>
+            <li>Seleccione el <strong>grado</strong>.</li>
+            <li>Indique la cédula del <strong>representante</strong>.</li>
+            <li>Pulse <strong>Guardar</strong>.</li>
+        </ol>
+        <p><strong>Si el estudiante ya tiene una planilla este año:</strong></p>
+        <ul>
+            <li>El sistema lo <strong>avisa</strong> en pantalla.</li>
+            <li>Puede abrir la <strong>planilla existente</strong> con un enlace.</li>
+            <li>Si intenta guardar de nuevo, recibirá un mensaje y se abrirá la planilla que ya existe (no se duplica).</li>
+        </ul>
+
+        <h3>5.2 Plantillas Guardadas</h3>
+        <ol>
+            <li>Menú <strong>Plantilla Inscripción → Plantillas Guardadas</strong>.</li>
+            <li>Cada ficha muestra grado, fecha y lapso.</li>
+            <li>Botón <strong>VER PLANILLA</strong>: descarga/abre el <strong>PDF</strong> de esa inscripción.</li>
+        </ol>
+    </section>
+
+    <section class="section" id="s6">
+        <h2><span class="num">6</span> Matrícula y retiros</h2>
+        <ol>
+            <li>Menú <strong>Matrícula</strong>.</li>
+            <li>Pestañas:
+                <ul>
+                    <li><strong>Matrícula Total</strong>: todos los inscritos del año activo. Puede <strong>Modificar</strong> o <strong>Retirar</strong>.</li>
+                    <li><strong>Nuevos Ingresos</strong>: solo inscritos nuevos.</li>
+                    <li><strong>Retiros</strong>: historial de retiros (fecha, lapso, motivo).</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>Procesar un retiro</h3>
+        <ol>
+            <li>En <strong>Matrícula Total</strong>, localice al estudiante.</li>
+            <li>Pulse <strong>Retirar</strong>.</li>
+            <li>Complete <strong>fecha</strong>, <strong>lapso</strong> y <strong>motivo</strong>.</li>
+            <li>Confirme. El estudiante pasará a la pestaña <strong>Retiros</strong>.</li>
+        </ol>
+        <div class="note">Los retiros <strong>solo</strong> se gestionan en <strong>Matrícula → Retiros</strong> (y desde el botón Retirar de la matrícula). En el <strong>Inicio</strong> ya no se muestra el contador de retiros.</div>
+    </section>
+
+    <section class="section" id="s7">
+        <h2><span class="num">7</span> Inicio (panel)</h2>
+        <p>Tarjetas de resumen:</p>
+        <ul>
+            <li>Estudiantes registrados</li>
+            <li>Representantes registrados</li>
+            <li>Matrícula activa</li>
+            <li>Usuarios del sistema</li>
+        </ul>
+        <p>Gráficas: matrícula por grado, inscripciones por mes, usuarios por rol.<br>
+        Tabla: últimos accesos al sistema.</p>
+        <div class="note"><strong>Mensajes sin leer</strong> y <strong>Retiros</strong> ya <strong>no</strong> aparecen en el Inicio (simplificado a petición).</div>
+    </section>
+
+    <section class="section" id="s8">
+        <h2><span class="num">8</span> Reportes PDF</h2>
+        <ol>
+            <li>Menú <strong>Reportes PDF</strong>.</li>
+            <li>Elija el reporte:
+                <ul>
+                    <li>Listado general de estudiantes</li>
+                    <li>Matrícula activa</li>
+                    <li>Representantes</li>
+                    <li>Usuarios</li>
+                    <li>Estadístico general</li>
+                </ul>
+            </li>
+            <li>Se descarga un <strong>PDF</strong> con:
+                <ul>
+                    <li><strong>Encabezado verde institucional</strong> (Escuela José Manuel Cova Maza)</li>
+                    <li>Título del reporte y fecha/hora de generación</li>
+                    <li><strong>Línea de resumen</strong> (totales del reporte)</li>
+                    <li>Tablas con bandas alternas, acentos correctos y columnas legibles</li>
+                    <li>Texto largo recortado con “…” para que no se desborde</li>
+                    <li>Tablas que <strong>continúan en varias hojas</strong> si hace falta</li>
+                    <li><strong>Pie de página</strong> en cada hoja: <em>INSCRIB · Página X de Y</em></li>
+                </ul>
+            </li>
+        </ol>
+        <p>También puede descargar la <strong>planilla</strong> individual desde <strong>Plantillas Guardadas → VER PLANILLA</strong> (formato ficha con datos del estudiante, representante y grado).</p>
+        <div class="note">El PDF se genera en el servidor sin dependencias externas (evita errores 502 en Render).</div>
+    </section>
+
+    <section class="section" id="s9">
+        <h2><span class="num">9</span> Usuarios del sistema</h2>
+        <ol>
+            <li>Menú <strong>Usuario</strong>.</li>
+            <li><strong>Nuevo usuario</strong>: nombre, usuario, contraseña, rol (admin, director, secretario, coordinador, docente).</li>
+            <li><strong>Editar</strong>: puede cambiar nombre completo y rol; la contraseña es opcional al editar.</li>
+        </ol>
+    </section>
+
+    <section class="section" id="s10">
+        <h2><span class="num">10</span> Configurar sitio web (público)</h2>
+        <p>Menú <strong>Configurar Sitio Web</strong>:</p>
+        <ul>
+            <li><strong>Configuración</strong> general del sitio</li>
+            <li><strong>Noticias</strong> (con imagen)</li>
+            <li><strong>Programas</strong></li>
+            <li><strong>Galería</strong></li>
+            <li><strong>Mensajes</strong> recibidos del formulario de contacto</li>
+        </ul>
+        <p>Las imágenes subidas se guardan de forma que <strong>sobreviven al reinicio</strong> del servidor (van en la base de datos).</p>
+    </section>
+
+    <section class="section" id="s11">
+        <h2><span class="num">11</span> Gestión de año escolar</h2>
+        <p>Menú <strong>Gestión de Año</strong>:</p>
+        <ol>
+            <li>Cree un año (ej. <code>2025-2026</code>) y márquelo <strong>ACTIVO</strong>.</li>
+            <li>Solo puede haber <strong>un</strong> año activo a la vez.</li>
+            <li>Las inscripciones y matrículas se asocian al año activo.</li>
+        </ol>
+        <div class="warn"><strong>Nota:</strong> el sistema <strong>no envía correos a representantes ni padres</strong> (ni de bienvenida, ni de inscripción, ni de retiros).</div>
+    </section>
+
+    <section class="section" id="s12">
+        <h2><span class="num">12</span> Preguntas frecuentes</h2>
+        <div class="faq-item">
+            <strong>¿No descarga el PDF?</strong>
+            Verifique que inició sesión y que no haya error 502; recargue con Ctrl+F5. Si persiste, contacte al administrador del servidor.
+        </div>
+        <div class="faq-item">
+            <strong>¿No se ve una imagen nueva?</strong>
+            Recargue con Ctrl+F5. Las imágenes nuevas se guardan en la base de datos.
+        </div>
+        <div class="faq-item">
+            <strong>¿Se cerró la sesión sola?</strong>
+            Vuelva a entrar; por seguridad la sesión expira.
+        </div>
+        <div class="faq-item">
+            <strong>¿Aparece “año escolar activo”?</strong>
+            Vaya a <strong>Gestión de Año</strong> y active el año en curso.
+        </div>
+        <div class="faq-item">
+            <strong>¿Puedo duplicar una planilla?</strong>
+            No. Si el estudiante ya tiene planilla en el año activo, el sistema lo avisa y muestra la existente.
+        </div>
+    </section>
+
+    <section class="section" id="s13">
+        <h2><span class="num">13</span> Cierre de sesión</h2>
+        <p>Menú <strong>Salir del Sistema → Confirmar</strong>.<br>
+        Si usa una computadora compartida, <strong>siempre</strong> cierre la sesión.</p>
+    </section>
+
+    <section class="section" id="s14">
+        <h2><span class="num">14</span> Qué se guarda en el sistema</h2>
+        <p>Casi todo lo que usted <strong>escribe y registra</strong> se guarda en la base de datos del servidor (no solo en la pantalla). Al iniciar sesión y trabajar:</p>
+        <table>
+            <thead>
+                <tr><th>Lo que registra</th><th>¿Se guarda?</th><th>Dónde se ve después</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Estudiante (cédula, nombres, datos)</td><td><strong>Sí</strong></td><td>Estudiantes → Listado; Reportes PDF</td></tr>
+                <tr><td>Representante / padre</td><td><strong>Sí</strong></td><td>Representante → Listado; Reportes PDF</td></tr>
+                <tr><td>Planilla de inscripción</td><td><strong>Sí</strong> (una por estudiante por año)</td><td>Plantillas Guardadas; VER PLANILLA</td></tr>
+                <tr><td>Matrícula y retiros (fecha, lapso, motivo)</td><td><strong>Sí</strong></td><td>Matrícula → pestañas; Reportes</td></tr>
+                <tr><td>Usuarios del panel y roles</td><td><strong>Sí</strong></td><td>Usuario; Reportes PDF</td></tr>
+                <tr><td>Noticias, programas, galería, imágenes</td><td><strong>Sí</strong> (imágenes en la BD, sobreviven reinicios)</td><td>Configurar Sitio Web; sitio público</td></tr>
+                <tr><td>Mensajes del formulario de contacto público</td><td><strong>Sí</strong></td><td>Configurar Sitio Web → Mensajes</td></tr>
+                <tr><td>Configuración del sitio y año escolar</td><td><strong>Sí</strong></td><td>Configurar Sitio; Gestión de Año</td></tr>
+                <tr><td>Accesos y acciones importantes (auditoría)</td><td><strong>Sí</strong></td><td>Registro interno del servidor</td></tr>
+                <tr><td>Búsquedas y filtros en pantalla</td><td>No (solo visual)</td><td>—</td></tr>
+                <tr><td>Campo SMS/correo al registrar estudiante</td><td>No (oculto, no se usa)</td><td>—</td></tr>
+            </tbody>
+        </table>
+        <div class="note">En resumen: si pulsa <strong>Guardar</strong> (o confirma un retiro, crea un usuario, publica una noticia…), el dato queda en la base de datos y se verá en los listados, reportes PDF y en el sitio público correspondiente.</div>
+        <div class="warn">El sistema <strong>no envía correos</strong> a representantes ni padres; el registro no depende del correo.</div>
+    </section>
+
+    <p class="footer-note">Guía del Sistema INSCRIB — Escuela José Manuel Cova Maza · Disponible también en el menú <strong>Guía de Uso</strong></p>
+
+</body>
+</html>
