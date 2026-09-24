@@ -145,7 +145,8 @@ def create_app():
     @app.route('/estudiantes/consulta')
     @login_requerido
     def view_estudiantes_consulta():
-        return render_template('estudiantes_consulta.html')
+        from flask import redirect, url_for
+        return redirect(url_for('view_estudiantes_listado'))
 
     @app.route('/representantes')
     @login_requerido
@@ -160,7 +161,8 @@ def create_app():
     @app.route('/representantes/consulta')
     @login_requerido
     def view_representantes_consulta():
-        return render_template('representantes_consulta.html')
+        from flask import redirect, url_for
+        return redirect(url_for('view_representantes_listado'))
 
     @app.route('/matricula')
     @login_requerido

@@ -204,14 +204,6 @@
             <div class="kpi-icon purple"><i class="fas fa-user-shield"></i></div>
             <div><div class="kpi-value" id="kpiUsuarios">–</div><div class="kpi-label">Usuarios del sistema</div></div>
         </div>
-        <div class="kpi-card">
-            <div class="kpi-icon red"><i class="fas fa-envelope-open-text"></i></div>
-            <div><div class="kpi-value" id="kpiMensajes">–</div><div class="kpi-label">Mensajes sin leer</div></div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-icon amber"><i class="fas fa-user-minus"></i></div>
-            <div><div class="kpi-value" id="kpiRetiros">–</div><div class="kpi-label">Retiros / no regulares</div></div>
-        </div>
     </div>
 
     <div class="charts-grid">
@@ -282,8 +274,6 @@
             document.getElementById('kpiRepresentantes').textContent = d.total_representantes;
             document.getElementById('kpiMatricula').textContent = d.matricula_total;
             document.getElementById('kpiUsuarios').textContent = d.total_usuarios;
-            document.getElementById('kpiMensajes').textContent = d.total_mensajes;
-            document.getElementById('kpiRetiros').textContent = d.retiros;
 
             if (d.ano_activo) {
                 const badge = document.getElementById('anoActivo');

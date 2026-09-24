@@ -433,7 +433,7 @@ def listar_estudiantes():
     return jsonify([{
         "cedula": e.cedula_escolar,
         "nombre_completo": f"{e.nombres} {e.apellidos}",
-        "grado": e.inscripciones[-1].grado.nombre if e.inscripciones else "Sin inscripcion",
+        "grado": e.inscripciones[-1].grado.nombre if e.inscripciones else "Sin inscripción",
     } for e in estudiantes])
 
 
@@ -476,7 +476,18 @@ def inscribir_plantilla():
     try:
         ano_activo = models.AnoEscolar.query.filter_by(estado="ACTIVO").first()
         if not ano_activo:
-            return jsonify({"message": "No hay ano escolar activo"}), 400
+            return jsonify({"message": "No hay año escolar activo"}), 400
+        ced_est = data.get("cedula_estudiante", "")
+        ya_existe = models.Inscripcion.query.filter_by(
+            cedula_escolar=ced_est, id_ano_escolar=ano_activo.id_ano
+        ).first()
+        if ya_existe:
+            return jsonify({
+                "message": "Este estudiante ya tiene una planilla registrada este año",
+                "existe": True,
+                "id_inscripcion": ya_existe.id_inscripcion,
+                "grado": ya_existe.grado.nombre if ya_existe.grado else "",
+            }), 409
         rep_data = data.get("representante")
         rep = models.Representante.query.filter_by(cedula=rep_data["cedula"]).first()
         if not rep:
@@ -493,10 +504,10 @@ def inscribir_plantilla():
         models.db.session.add(nueva_inscripcion)
         models.db.session.commit()
         log_audit(request.user.id_usuario, "INSCRIPCION", f"Est: {data['cedula_estudiante']} - Ano: {ano_activo.periodo}")
-        return jsonify({"message": "Ficha de inscripcion guardada exitosamente"}), 201
+        return jsonify({"message": "Ficha de inscripción guardada exitosamente"}), 201
     except Exception as e:
         models.db.session.rollback()
-        return jsonify({"message": f"Error en inscripcion: {str(e)}"}), 500
+        return jsonify({"message": f"Error en inscripción: {str(e)}"}), 500
 
 
 # ============================
@@ -906,24 +917,45 @@ def restablecer():
 # ============================
 def _pdf_base(titulo):
     pdf = MiniPDF()
-    pdf.set_font("Helvetica", "B", 16)
-    pdf.set_text_color(0, 182, 137)
-    pdf.cell(0, 10, "Escuela Jose Manuel Cova Maza", new_x="LMARGIN", new_y="NEXT", align="C")
-    pdf.set_font("Helvetica", "", 10)
-    pdf.set_text_color(100, 100, 100)
-    pdf.cell(0, 6, "Sistema INSCRIB", new_x="LMARGIN", new_y="NEXT", align="C")
-    pdf.ln(4)
+    # Banda superior verde
+    pdf.set_fill_color(0, 182, 137)
+    pdf.set_draw_color(0, 182, 137)
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font("Helvetica", "B", 15)
+    pdf.cell(0, 14, "Escuela José Manuel Cova Maza", border=0, fill=True,
+             align="C", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_font("Helvetica", "", 9)
+    pdf.set_text_color(230, 250, 245)
+    pdf.cell(0, 6, "Sistema INSCRIB · Gestión Escolar", fill=True, align="C",
+             new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(6)
+    pdf.set_text_color(40, 40, 40)
+    pdf.set_font("Helvetica", "B", 13)
+    pdf.cell(0, 9, titulo, new_x="LMARGIN", new_y="NEXT", align="L")
+    pdf.set_font("Helvetica", "", 8)
+    pdf.set_text_color(120, 120, 120)
+    pdf.cell(0, 5, f"Generado: {datetime.now().strftime('%d/%m/%Y %I:%M %p')}",
+             new_x="LMARGIN", new_y="NEXT", align="R")
     pdf.set_draw_color(0, 182, 137)
     pdf.line(10, pdf.get_y(), 200, pdf.get_y())
-    pdf.ln(4)
-    pdf.set_font("Helvetica", "B", 14)
-    pdf.set_text_color(40, 40, 40)
-    pdf.cell(0, 10, titulo, new_x="LMARGIN", new_y="NEXT", align="L")
-    pdf.set_font("Helvetica", "", 9)
-    pdf.set_text_color(120, 120, 120)
-    pdf.cell(0, 6, f"Generado: {datetime.now().strftime('%d/%m/%Y %I:%M %p')}", new_x="LMARGIN", new_y="NEXT", align="R")
-    pdf.ln(6)
+    pdf.ln(5)
     return pdf
+
+
+def _pdf_fin(pdf, filename, accion):
+    """Pie de página con número de página en todas las hojas."""
+    total = len(pdf.pages)
+    for i, ops in enumerate(pdf.pages, start=1):
+        # dibujar al final de cada página sin desplazar y actual
+        y_pie = PAGE_H_PDF - 12
+        r, g, b = 0.6, 0.6, 0.6
+        ops.append(f"BT /F1 8 Tf {r} {g} {b} rg 1 0 0 1 10 {y_pie:.2f} Tm "
+                   f"(INSCRIB · Página {i} de {total}) Tj ET")
+        ops.append(f"0.85 0.85 0.85 RG 0.4 w 10 {y_pie + 8:.2f} m 200 {y_pie + 8:.2f} l S")
+    return _pdf_ok(pdf, filename, accion)
+
+
+PAGE_H_PDF = 297.0
 
 
 def _pdf_ok(pdf, filename, accion):
@@ -944,20 +976,43 @@ def _pdf_error(e):
     return jsonify({"success": False, "message": f"Error al generar PDF: {e}"}), 500
 
 
+def _pdf_fit(text, width, size=9):
+    """Trunca texto para que quepa en el ancho de celda (aprox Helvetica)."""
+    s = "" if text is None else str(text)
+    max_chars = max(3, int(width / (size * 0.5)))
+    if len(s) <= max_chars:
+        return s
+    if max_chars <= 3:
+        return s[:max_chars]
+    return s[: max_chars - 1].rstrip() + "…"
+
+
 def _pdf_tabla(pdf, headers, rows, col_widths):
     pdf.set_font("Helvetica", "B", 9)
     pdf.set_fill_color(0, 182, 137)
     pdf.set_text_color(255, 255, 255)
+    pdf.set_draw_color(0, 150, 110)
     for i, h in enumerate(headers):
-        pdf.cell(col_widths[i], 8, h, border=1, fill=True, align="C")
+        pdf.cell(col_widths[i], 8, _pdf_fit(h, col_widths[i] - 2, 9), border=1, fill=True, align="C")
     pdf.ln()
     pdf.set_font("Helvetica", "", 9)
     pdf.set_text_color(40, 40, 40)
     fill = False
     for row in rows:
+        if pdf.get_y() > 275:
+            pdf.add_page()
+            pdf.set_font("Helvetica", "B", 9)
+            pdf.set_fill_color(0, 182, 137)
+            pdf.set_text_color(255, 255, 255)
+            for i, h in enumerate(headers):
+                pdf.cell(col_widths[i], 8, _pdf_fit(h, col_widths[i] - 2, 9), border=1, fill=True, align="C")
+            pdf.ln()
+            pdf.set_font("Helvetica", "", 9)
+            pdf.set_text_color(40, 40, 40)
         pdf.set_fill_color(240, 250, 247) if fill else pdf.set_fill_color(255, 255, 255)
         for i, val in enumerate(row):
-            pdf.cell(col_widths[i], 7, str(val), border=1, fill=True, align="L" if i > 0 else "C")
+            txt = _pdf_fit(val, col_widths[i] - 2, 9)
+            pdf.cell(col_widths[i], 7, txt, border=1, fill=True, align="L" if i > 0 else "C")
         pdf.ln()
         fill = not fill
 
@@ -970,13 +1025,13 @@ def reporte_estudiantes():
         estudiantes = models.Estudiante.query.all()
         rows = []
         for e in estudiantes:
-            grado = e.inscripciones[-1].grado.nombre if e.inscripciones else "Sin inscripcion"
+            grado = e.inscripciones[-1].grado.nombre if e.inscripciones else "Sin inscripción"
             rows.append([e.cedula_escolar, f"{e.nombres} {e.apellidos}", grado])
         if rows:
-            _pdf_tabla(pdf, ["Cedula", "Nombre Completo", "Grado"], rows, [40, 90, 60])
+            _pdf_tabla(pdf, ["Cédula", "Nombre Completo", "Grado"], rows, [40, 90, 60])
         else:
             pdf.cell(0, 10, "No hay estudiantes registrados.", new_x="LMARGIN", new_y="NEXT")
-        return _pdf_ok(pdf, "estudiantes.pdf", "PDF estudiantes")
+        return _pdf_fin(pdf, "estudiantes.pdf", "PDF estudiantes")
     except Exception as e:
         return _pdf_error(e)
 
@@ -985,11 +1040,11 @@ def reporte_estudiantes():
 @token_required
 def reporte_matricula():
     try:
-        pdf = _pdf_base("Matricula Activa")
+        pdf = _pdf_base("Matrícula Activa")
         ano_activo = models.AnoEscolar.query.filter_by(estado="ACTIVO").first()
         if ano_activo:
             pdf.set_font("Helvetica", "", 10)
-            pdf.cell(0, 8, f"Ano escolar: {ano_activo.periodo}", new_x="LMARGIN", new_y="NEXT")
+            pdf.cell(0, 8, f"Año escolar: {ano_activo.periodo}", new_x="LMARGIN", new_y="NEXT")
             pdf.ln(2)
             inscripciones = models.Inscripcion.query.filter_by(id_ano_escolar=ano_activo.id_ano).all()
             rows = []
@@ -1002,12 +1057,12 @@ def reporte_matricula():
                     ins.estado or "REGULAR",
                 ])
             if rows:
-                _pdf_tabla(pdf, ["Cedula", "Estudiante", "Grado", "Estado"], rows, [35, 80, 45, 30])
+                _pdf_tabla(pdf, ["Cédula", "Estudiante", "Grado", "Estado"], rows, [35, 80, 45, 30])
             else:
-                pdf.cell(0, 10, "No hay inscripciones este ano.", new_x="LMARGIN", new_y="NEXT")
+                pdf.cell(0, 10, "No hay inscripciones este año.", new_x="LMARGIN", new_y="NEXT")
         else:
-            pdf.cell(0, 10, "No hay ano escolar activo.", new_x="LMARGIN", new_y="NEXT")
-        return _pdf_ok(pdf, "matricula.pdf", "PDF matricula")
+            pdf.cell(0, 10, "No hay año escolar activo.", new_x="LMARGIN", new_y="NEXT")
+        return _pdf_fin(pdf, "matricula.pdf", "PDF matricula")
     except Exception as e:
         return _pdf_error(e)
 
@@ -1024,7 +1079,7 @@ def reporte_usuarios():
             _pdf_tabla(pdf, ["Usuario", "Nombre Completo", "Rol"], rows, [45, 90, 55])
         else:
             pdf.cell(0, 10, "No hay usuarios.", new_x="LMARGIN", new_y="NEXT")
-        return _pdf_ok(pdf, "usuarios.pdf", "PDF usuarios")
+        return _pdf_fin(pdf, "usuarios.pdf", "PDF usuarios")
     except Exception as e:
         return _pdf_error(e)
 
@@ -1039,10 +1094,10 @@ def reporte_representantes():
                  r.email or "-", str(models.Inscripcion.query.filter_by(id_representante=r.id_representante).count())]
                 for r in reps]
         if rows:
-            _pdf_tabla(pdf, ["Cedula", "Nombre", "Telefono", "Correo", "Hijos"], rows, [30, 55, 35, 50, 20])
+            _pdf_tabla(pdf, ["Cédula", "Nombre", "Teléfono", "Correo", "Hijos"], rows, [30, 55, 35, 50, 20])
         else:
             pdf.cell(0, 10, "No hay representantes.", new_x="LMARGIN", new_y="NEXT")
-        return _pdf_ok(pdf, "representantes.pdf", "PDF representantes")
+        return _pdf_fin(pdf, "representantes.pdf", "PDF representantes")
     except Exception as e:
         return _pdf_error(e)
 
@@ -1051,7 +1106,7 @@ def reporte_representantes():
 @token_required
 def reporte_estadistico():
     try:
-        pdf = _pdf_base("Reporte Estadistico General")
+        pdf = _pdf_base("Reporte Estadístico General")
         ano_activo = models.AnoEscolar.query.filter_by(estado="ACTIVO").first()
         pdf.set_font("Helvetica", "B", 11)
         pdf.set_text_color(0, 182, 137)
@@ -1059,13 +1114,12 @@ def reporte_estadistico():
         pdf.set_font("Helvetica", "", 10)
         pdf.set_text_color(40, 40, 40)
         stats = [
-            ("Ano escolar activo", ano_activo.periodo if ano_activo else "Ninguno"),
+            ("Año escolar activo", ano_activo.periodo if ano_activo else "Ninguno"),
             ("Estudiantes registrados", str(models.Estudiante.query.count())),
             ("Representantes registrados", str(models.Representante.query.count())),
             ("Usuarios del sistema", str(models.Usuario.query.count())),
             ("Inscripciones activas", str(models.Inscripcion.query.filter_by(id_ano_escolar=ano_activo.id_ano).count()) if ano_activo else "0"),
             ("Noticias publicadas", str(models.Noticia.query.count())),
-            ("Mensajes sin leer", str(models.MensajeContacto.query.filter_by(leido=False).count())),
         ]
         for label, val in stats:
             pdf.set_font("Helvetica", "B", 10)
@@ -1089,7 +1143,7 @@ def reporte_estadistico():
             else:
                 pdf.cell(0, 8, "Sin inscripciones.", new_x="LMARGIN", new_y="NEXT")
 
-        return _pdf_ok(pdf, "estadistico.pdf", "PDF estadistico")
+        return _pdf_fin(pdf, "estadistico.pdf", "PDF estadistico")
     except Exception as e:
         return _pdf_error(e)
 
@@ -1101,14 +1155,14 @@ def reporte_planilla(id_inscripcion):
         ins = models.Inscripcion.query.get_or_404(id_inscripcion)
         est = ins.estudiante
         rep = ins.representante
-        pdf = _pdf_base("Planilla de Inscripcion")
+        pdf = _pdf_base("Planilla de Inscripción")
         pdf.set_font("Helvetica", "", 11)
         pdf.set_text_color(40, 40, 40)
         campos = [
-            ("Cedula escolar", est.cedula_escolar if est else "-"),
+            ("Cédula escolar", est.cedula_escolar if est else "-"),
             ("Estudiante", f"{est.nombres} {est.apellidos}" if est else "-"),
             ("Grado", ins.grado.nombre if ins.grado else "-"),
-            ("Ano escolar", ins.ano_escolar.periodo if ins.ano_escolar else "-"),
+            ("Año escolar", ins.ano_escolar.periodo if ins.ano_escolar else "-"),
             ("Fecha de inscripcion",
              ins.fecha_inscripcion.strftime("%d/%m/%Y") if ins.fecha_inscripcion else "-"),
             ("Lapso de registro", ins.lapso_registro or "Lapso 1"),
@@ -1116,7 +1170,7 @@ def reporte_planilla(id_inscripcion):
             ("Representante",
              f"{rep.nombres} {rep.apellidos}" if rep else "-"),
             ("Cedula del representante", rep.cedula if rep else "-"),
-            ("Telefono", (rep.telefono if rep else "") or "-"),
+            ("Teléfono", (rep.telefono if rep else "") or "-"),
             ("Correo", (rep.email if rep else "") or "-"),
         ]
         for label, val in campos:
@@ -1132,8 +1186,8 @@ def reporte_planilla(id_inscripcion):
         pdf.set_text_color(100, 100, 100)
         pdf.cell(0, 8, "_______________________________", align="C",
                  new_x="LMARGIN", new_y="NEXT")
-        pdf.cell(0, 8, "Firma del representante / Sello de la institucion", align="C",
+        pdf.cell(0, 8, "Firma del representante / Sello de la institución", align="C",
                  new_x="LMARGIN", new_y="NEXT")
-        return _pdf_ok(pdf, f"planilla_{id_inscripcion}.pdf", "PDF planilla")
+        return _pdf_fin(pdf, f"planilla_{id_inscripcion}.pdf", "PDF planilla")
     except Exception as e:
         return _pdf_error(e)

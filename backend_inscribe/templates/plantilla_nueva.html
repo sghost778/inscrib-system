@@ -1941,6 +1941,35 @@
 
 
 
+        
+        async function verificarPlanillaExistente(cedula) {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('/api/matricula', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!res.ok) return;
+                const rows = await res.json();
+                const ced = (cedula || '').replace(/^V-/i, '');
+                const found = (Array.isArray(rows) ? rows : []).find(r => {
+                    const rc = (r.cedula || r.cedula_escolar || '').replace(/^V-/i, '');
+                    return rc === ced || rc === cedula;
+                });
+                if (found && found.id_inscripcion) {
+                    window.__planillaExistente = found;
+                    mostrarAviso("Este estudiante ya tiene una planilla este año (grado: " + (found.grado || '-') + "). Puede verla o registrar otra.", "#f39c12");
+                    const box = document.getElementById('avisoPlanillaExistente');
+                    if (box) {
+                        box.style.display = 'block';
+                        box.innerHTML = '<i class="fas fa-file-alt"></i> Ya existe una planilla. ' +
+                            '<a href="javascript:void(0)" onclick="window.open(\'/api/reportes/planilla/' + found.id_inscripcion + '\',\'_blank\')" style="color:#00b689;font-weight:700;">VER PLANILLA EXISTENTE</a>';
+                    }
+                } else {
+                    window.__planillaExistente = null;
+                    const box = document.getElementById('avisoPlanillaExistente');
+                    if (box) box.style.display = 'none';
+                }
+            } catch (e) { console.error(e); }
+        }
+
         async function buscarEstudiante() {
 
 
@@ -2002,6 +2031,13 @@
 
 
                     document.getElementById('est_cedula').value = data.cedula_escolar;
+                    verificarPlanillaExistente(data.cedula_escolar);
+                    verificarPlanillaExistente(data.cedula_escolar);
+                    verificarPlanillaExistente(data.cedula_escolar);
+                    verificarPlanillaExistente(data.cedula_escolar);
+                    verificarPlanillaExistente(data.cedula_escolar);
+                    verificarPlanillaExistente(data.cedula_escolar);
+                    verificarPlanillaExistente(data.cedula_escolar);
 
 
                 } else {
@@ -2044,6 +2080,13 @@
 
 
                         document.getElementById('est_cedula').value = altData.cedula_escolar;
+                        verificarPlanillaExistente(altData.cedula_escolar);
+                        verificarPlanillaExistente(altData.cedula_escolar);
+                        verificarPlanillaExistente(altData.cedula_escolar);
+                        verificarPlanillaExistente(altData.cedula_escolar);
+                        verificarPlanillaExistente(altData.cedula_escolar);
+                        verificarPlanillaExistente(altData.cedula_escolar);
+                        verificarPlanillaExistente(altData.cedula_escolar);
 
 
                     }
@@ -2216,16 +2259,25 @@
 
 
 
-                if (res.ok) {
+                                                                                                                                if (res.ok) {
 
 
                     mostrarAviso("!La planilla de inscripcion ha sido guardada exitosamente!", "#27ae60");
 
 
+                } else if (res.status === 409 && result.id_inscripcion) {
+
+
+                    mostrarAviso(result.message || "Este estudiante ya tiene una planilla.", "#f39c12");
+
+
+                    window.open('/api/reportes/planilla/' + result.id_inscripcion, '_blank');
+
+
                 } else {
 
 
-                    mostrarAviso("Error: " + result.message, "#e74c3c");
+                    mostrarAviso("Error: " + (result.message || res.status), "#e74c3c");
 
 
                 }
