@@ -43,7 +43,7 @@
         :root {
 
 
-            --primary: #1e40af;
+            --primary: #00b689;
 
 
             --danger: #dc2626;
@@ -652,7 +652,9 @@
                         <th>Nombre Completo</th>
 
 
-                        <th>Usuario</th>
+                        <th>Usuario</th>
+
+
 <th>Rol</th>
 
 
@@ -690,243 +692,60 @@
 
 
     <div id="modalUsuario" class="modal">
-
-
-        <div class="modal-content">
-
-
-            <h2 id="tituloModal" style="margin-top:0; color:var(--primary);"><i class="fas fa-user-circle"></i> Nuevo
-
-
-                Usuario</h2>
-
-
+        <div class="modal-content" style="width:520px;">
+            <h2 id="tituloModal" style="margin-top:0; color:var(--primary);"><i class="fas fa-user-circle"></i> Nuevo Usuario</h2>
             <hr style="border:0; border-top:1px solid #eee; margin-bottom:15px;">
-
-
-
-
-
-            <form id="formUsuario">
-
-
+            <form id="formUsuario" onsubmit="return false;">
                 <div class="section-title"><i class="fas fa-id-card"></i> Datos Personales</div>
-
-
                 <div class="form-grid">
-
-
                     <div class="form-group">
-
-
                         <label>Nombre y Apellido</label>
-
-
                         <input type="text" id="nombreCompleto" placeholder="Ej: Carlos Sosa" required>
-
-
                     </div>
-
-
                     <div class="form-group">
-
-
                         <label>Nombre de Usuario</label>
-
-
                         <input type="text" id="username" placeholder="Ej: csosa88" required>
-
-
                     </div>
-
-
                     <div class="form-group">
-
-
                         <label>Rol</label>
-
-
-                        <select id="userRol" style="width:100%;padding:11px;border:2px solid #eee;border-radius:10px;font-size:0.95rem;">
-
-
+                        <select id="userRol" style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:6px;">
                             <option value="secretario">Secretario/a</option>
-
-
                             <option value="director">Director/a</option>
-
-
                             <option value="coordinador">Coordinador/a</option>
-
-
                             <option value="docente">Docente</option>
-
-
                             <option value="admin">Administrador</option>
-
-
                         </select>
-
-
                     </div>
-
-
-
-
-                    </div>
-
-
                 </div>
 
-
-
-
-
-                <div class="section-title"><i class="fas fa-key"></i> Seguridad de Acceso</div>
-
-
+                <div class="section-title"><i class="fas fa-key"></i> <span id="lblPassSection">Contraseña</span></div>
+                <p id="hintPass" style="display:none; font-size:12px; color:var(--gray); margin:-4px 0 10px;">
+                    Deje los campos en blanco para mantener la contraseña actual.
+                </p>
                 <div class="form-grid">
-
-
                     <div class="form-group">
-
-
                         <label>Contraseña</label>
-
-
-                        <input type="password" id="pass" required>
-
-
+                        <input type="password" id="pass" autocomplete="new-password">
                     </div>
-
-
                     <div class="form-group">
-
-
                         <label>Confirmar Contraseña</label>
-
-
-                        <input type="password" id="passConfirm" required>
-
-
+                        <input type="password" id="passConfirm" autocomplete="new-password">
                     </div>
-
-
                 </div>
-
-
-
-
-
-                <div class="section-title"><i class="fas fa-shield-alt"></i> Preguntas de Recuperación</div>
-
-
-                <div class="form-grid">
-
-
-                    <div class="form-group">
-
-
-                        <label>Color Favorito</label>
-
-
-                        <input type="text" id="pregunta1" required>
-
-
-                    </div>
-
-
-                    <div class="form-group">
-
-
-                        <label>Comida Favorita</label>
-
-
-                        <input type="text" id="pregunta2" required>
-
-
-                    </div>
-
-
-                    <div class="form-group">
-
-
-                        <label>Nombre de Mascota</label>
-
-
-                        <input type="text" id="pregunta3" required>
-
-
-                    </div>
-
-
-                    <div class="form-group">
-
-
-                        <label>Nombre Materno</label>
-
-
-                        <input type="text" id="pregunta4" required>
-
-
-                    </div>
-
-
-                    <div class="form-group">
-
-
-                        <label>Estado de Usuario</label>
-
-
-                        <select id="estadoUser">
-
-
-                            <option value="activo">Activo</option>
-
-
-                            <option value="inactivo">Inactivo</option>
-
-
-                        </select>
-
-
-                    </div>
-
-
-                </div>
-
-
-
-
 
                 <div style="display:flex; gap:10px; margin-top:20px;">
-
-
-                    <button type="button" onclick="guardarUsuario()"
-
-
-                        style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Guardar
-
-
-                        Usuario</button>
-
-
+                    <button type="button" class="btn-save" onclick="guardarUsuario()"
+                        style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">
+                        <i class="fas fa-save"></i> Guardar Usuario
+                    </button>
                     <button type="button" onclick="cerrarModal('modalUsuario')"
-
-
-                        style="flex:1; background:#e2e8f0; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Cancelar</button>
-
-
+                        style="flex:1; background:#e2e8f0; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">
+                        Cancelar
+                    </button>
                 </div>
-
-
             </form>
-
-
         </div>
-
-
     </div>
-
 
 
 
@@ -1016,29 +835,17 @@
 
 
         function abrirModal(id) {
-
-
             usuarioAEditar = null;
-
-
             document.getElementById('formUsuario').reset();
-
-
             document.getElementById('tituloModal').innerHTML = '<i class="fas fa-user-plus"></i> Nuevo Usuario';
-
-
-            // En modo nuevo, password y confirm. son obligatorios
-
-
+            document.getElementById('lblPassSection').textContent = 'Contraseña';
+            document.getElementById('hintPass').style.display = 'none';
+            document.getElementById('username').readOnly = false;
             document.getElementById('pass').required = true;
-
-
             document.getElementById('passConfirm').required = true;
-
-
+            const rolSel = document.getElementById('userRol');
+            if (rolSel) rolSel.value = 'secretario';
             document.getElementById(id).style.display = 'flex';
-
-
         }
 
 
@@ -1102,8 +909,12 @@
                             <td><b>${u.nombre_completo}</b></td>
 
 
-                            <td>${u.usuario}</td>
-
+                            <td>${u.usuario}</td>
+
+
+
+
+
                             <td><span class="badge badge-active">${u.rol || 'admin'}</span></td>
 
 
@@ -1168,39 +979,19 @@
 
 
         function editarUsuario(id, nombre, user, rol) {
-
-
             usuarioAEditar = id;
-
-
+            document.getElementById('formUsuario').reset();
             document.getElementById('tituloModal').innerHTML = '<i class="fas fa-user-edit"></i> Modificar Usuario';
-
-
-            document.getElementById('nombreCompleto').value = nombre;
-
-
-            document.getElementById('username').value = user;
-
-            const rolSel = document.getElementById('userRol');
-
+            document.getElementById('nombreCompleto').value = nombre || '';
+            document.getElementById('username').value = user || '';
+            const rolSel = document.getElementById('userRol');
             if (rolSel && rol) rolSel.value = rol;
-
-
-            // En modo edicion, el password es opcional
-
-
+            document.getElementById('username').readOnly = true;
             document.getElementById('pass').required = false;
-
-
             document.getElementById('passConfirm').required = false;
-
-
-            document.getElementById('pregunta1').value = "Azul";
-
-
+            document.getElementById('lblPassSection').textContent = 'Contraseña (opcional)';
+            document.getElementById('hintPass').style.display = 'block';
             document.getElementById('modalUsuario').style.display = 'flex';
-
-
         }
 
 

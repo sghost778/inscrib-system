@@ -23,3 +23,21 @@ def migrar_bd():
     except Exception as e:
         db.session.rollback()
         print(f"[MIGRACION] Error al agregar USUARIO.email: {e}")
+
+    for tabla, columna in (("NOTICIA", "imagen"), ("GALERIA", "imagen")):
+        try:
+            if db.engine.dialect.name == "sqlite":
+                continue
+            insp2 = inspect(db.engine)
+            if tabla in insp2.get_table_names():
+                cols = {c["name"] for c in insp2.get_columns(tabla)}
+                if columna in cols:
+                    preparer = db.engine.dialect.identifier_preparer
+                    t = preparer.quote(tabla)
+                    col = preparer.quote(columna)
+                    db.session.execute(text(f"ALTER TABLE {t} ALTER COLUMN {col} TYPE TEXT"))
+                    db.session.commit()
+                    print(f"[MIGRACION] {tabla}.{columna} convertida a TEXT")
+        except Exception as e:
+            db.session.rollback()
+            print(f"[MIGRACION] {tabla}.{columna} (skip): {e}")

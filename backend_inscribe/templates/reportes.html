@@ -197,7 +197,10 @@
                     window.location.href = '/login';
                     return;
                 }
-                if (!res.ok) throw new Error('HTTP ' + res.status);
+                if (!res.ok) {
+                    window.open(url, '_blank');
+                    throw new Error('HTTP ' + res.status);
+                }
                 const blob = await res.blob();
                 const cd = res.headers.get('Content-Disposition') || '';
                 const m = cd.match(/filename="?([^";]+)"?/);
@@ -211,7 +214,8 @@
                 URL.revokeObjectURL(a.href);
             } catch (e) {
                 console.error(e);
-                mostrarError('No se pudo generar el reporte. Intente nuevamente.');
+                window.open(url, '_blank');
+                mostrarError('Se abrió la descarga en otra pestaña. Si no inicia, verifique su sesión.');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = original;

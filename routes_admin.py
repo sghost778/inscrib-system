@@ -5,6 +5,7 @@ from flask import Blueprint, jsonify, request, session
 import models
 from security import check_password, log_audit, token_required
 from email_service import smtp_configurado, enviar_correo_recuperacion, enviar_aviso_cambio_contrasena
+from mini_pdf import MiniPDF
 
 api_admin = Blueprint("api_admin", __name__)
 
@@ -159,6 +160,10 @@ def crear_usuario():
 def actualizar_usuario(id):
     u = models.Usuario.query.get_or_404(id)
     data = request.get_json()
+    if "nombre_completo" in data and data.get("nombre_completo"):
+        partes = str(data["nombre_completo"]).strip().split(None, 1)
+        u.nombre = partes[0]
+        u.apellido = partes[1] if len(partes) > 1 else ""
     if "nombre" in data: u.nombre = data["nombre"]
     if "apellido" in data: u.apellido = data["apellido"]
     if "password" in data and data["password"]:
@@ -169,6 +174,7 @@ def actualizar_usuario(id):
         if data["rol"] in roles_validos:
             u.rol = data["rol"]
     models.db.session.commit()
+    log_audit(request.user.id_usuario, "ACTUALIZAR_USUARIO", f"ID: {id}")
     return jsonify({"success": True, "message": "Usuario actualizado"})
 
 
@@ -696,12 +702,88 @@ def ver_matricula():
     inscripciones = models.Inscripcion.query.filter_by(id_ano_escolar=ano_activo.id_ano).all()
     resultado = []
     for ins in inscripciones:
+        est = ins.estudiante
+        estado = (ins.estado or "REGULAR").upper()
+        total_ins = models.Inscripcion.query.filter_by(
+            cedula_escolar=ins.cedula_escolar).count()
+        if estado not in ("REGULAR",):
+            tipo = "retiro"
+        elif total_ins <= 1:
+            tipo = "nuevo"
+        else:
+            tipo = "regular"
+        fecha_retiro = ""
+        if ins.fecha_retiro:
+            try:
+                fecha_retiro = ins.fecha_retiro.strftime("%d/%m/%Y")
+            except Exception:
+                fecha_retiro = str(ins.fecha_retiro)
+        lapso = ins.lapso_registro or "Lapso 1"
+        activo = estado == "REGULAR"
         resultado.append({
-            "nombre": f"{ins.estudiante.nombres} {ins.estudiante.apellidos}",
-            "cedula": ins.estudiante.cedula_escolar,
-            "grado": ins.grado.nombre, "tipo": "regular",
+            "id_inscripcion": ins.id_inscripcion,
+            "nombre": f"{est.nombres} {est.apellidos}" if est else "-",
+            "cedula": est.cedula_escolar if est else "-",
+            "grado": ins.grado.nombre if ins.grado else "-",
+            "id_grado": ins.id_grado,
+            "tipo": tipo,
+            "estado": estado,
+            "fecha": fecha_retiro or (
+                ins.fecha_inscripcion.strftime("%d/%m/%Y") if ins.fecha_inscripcion else ""
+            ),
+            "fecha_inscripcion": ins.fecha_inscripcion.strftime("%d/%m/%Y") if ins.fecha_inscripcion else "",
+            "fecha_retiro": fecha_retiro,
+            "lapsoReg": lapso,
+            "ano": ins.ano_escolar.periodo if ins.ano_escolar else "-",
+            "motivoRetiro": ins.motivo_retiro or "-",
+            "l1": "OK" if activo else "-",
+            "l2": "OK" if activo and lapso in ("Lapso 2", "Lapso 3") else ("OK" if activo else "-"),
+            "l3": "OK" if activo and lapso == "Lapso 3" else ("OK" if activo and lapso in ("Lapso 1", "Lapso 2") else ("-")),
+            "plantel": "-",
         })
     return jsonify(resultado)
+
+
+@api_admin.route("/matricula/<int:id_inscripcion>", methods=["PUT"])
+@token_required
+def actualizar_matricula(id_inscripcion):
+    ins = models.Inscripcion.query.get_or_404(id_inscripcion)
+    data = request.get_json() or {}
+    try:
+        if data.get("estado") in ("retiro", "RETIRADO", "retirado", "RETIRO"):
+            ins.estado = "RETIRADO"
+            if data.get("fecha_retiro"):
+                from datetime import datetime as _dt
+                try:
+                    ins.fecha_retiro = _dt.strptime(data["fecha_retiro"], "%Y-%m-%d").date()
+                except Exception:
+                    pass
+            if data.get("lapso_registro"):
+                ins.lapso_registro = data["lapso_registro"]
+            if "motivo_retiro" in data:
+                ins.motivo_retiro = data.get("motivo_retiro") or ""
+            log_audit(request.user.id_usuario, "RETIRO",
+                      f"Inscripcion {id_inscripcion}")
+        else:
+            if "lapso_registro" in data and data["lapso_registro"]:
+                ins.lapso_registro = data["lapso_registro"]
+            if data.get("id_grado"):
+                ins.id_grado = int(data["id_grado"])
+            log_audit(request.user.id_usuario, "ACTUALIZAR_INSCRIPCION",
+                      f"Inscripcion {id_inscripcion}")
+        models.db.session.commit()
+        return jsonify({"success": True, "message": "Inscripcion actualizada"})
+    except Exception as e:
+        models.db.session.rollback()
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
+@api_admin.route("/grados", methods=["GET"])
+@token_required
+def listar_grados():
+    grados = models.Grado.query.order_by(models.Grado.id_grado).all()
+    return jsonify([{"id": g.id_grado, "id_grado": g.id_grado,
+                     "nombre": g.nombre, "nivel": g.nivel or ""} for g in grados])
 
 
 # ============================
@@ -823,9 +905,7 @@ def restablecer():
 # REPORTES PDF
 # ============================
 def _pdf_base(titulo):
-    from fpdf import FPDF
-    pdf = FPDF()
-    pdf.add_page()
+    pdf = MiniPDF()
     pdf.set_font("Helvetica", "B", 16)
     pdf.set_text_color(0, 182, 137)
     pdf.cell(0, 10, "Escuela Jose Manuel Cova Maza", new_x="LMARGIN", new_y="NEXT", align="C")
@@ -844,6 +924,24 @@ def _pdf_base(titulo):
     pdf.cell(0, 6, f"Generado: {datetime.now().strftime('%d/%m/%Y %I:%M %p')}", new_x="LMARGIN", new_y="NEXT", align="R")
     pdf.ln(6)
     return pdf
+
+
+def _pdf_ok(pdf, filename, accion):
+    try:
+        log_audit(request.user.id_usuario, "REPORTE", accion)
+    except Exception:
+        pass
+    data = pdf.output()
+    return data, 200, {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": f"attachment; filename={filename}",
+    }
+
+
+def _pdf_error(e):
+    import traceback
+    traceback.print_exc()
+    return jsonify({"success": False, "message": f"Error al generar PDF: {e}"}), 500
 
 
 def _pdf_tabla(pdf, headers, rows, col_widths):
@@ -867,126 +965,175 @@ def _pdf_tabla(pdf, headers, rows, col_widths):
 @api_admin.route("/reportes/estudiantes", methods=["GET"])
 @token_required
 def reporte_estudiantes():
-    pdf = _pdf_base("Listado General de Estudiantes")
-    estudiantes = models.Estudiante.query.all()
-    rows = []
-    for e in estudiantes:
-        grado = e.inscripciones[-1].grado.nombre if e.inscripciones else "Sin inscripcion"
-        rows.append([e.cedula_escolar, f"{e.nombres} {e.apellidos}", grado])
-    if rows:
-        _pdf_tabla(pdf, ["Cedula", "Nombre Completo", "Grado"], rows, [40, 90, 60])
-    else:
-        pdf.cell(0, 10, "No hay estudiantes registrados.", new_x="LMARGIN", new_y="NEXT")
-    log_audit(request.user.id_usuario, "REPORTE", "PDF estudiantes")
-    return pdf.output(), 200, {"Content-Type": "application/pdf",
-                                "Content-Disposition": "attachment; filename=estudiantes.pdf"}
+    try:
+        pdf = _pdf_base("Listado General de Estudiantes")
+        estudiantes = models.Estudiante.query.all()
+        rows = []
+        for e in estudiantes:
+            grado = e.inscripciones[-1].grado.nombre if e.inscripciones else "Sin inscripcion"
+            rows.append([e.cedula_escolar, f"{e.nombres} {e.apellidos}", grado])
+        if rows:
+            _pdf_tabla(pdf, ["Cedula", "Nombre Completo", "Grado"], rows, [40, 90, 60])
+        else:
+            pdf.cell(0, 10, "No hay estudiantes registrados.", new_x="LMARGIN", new_y="NEXT")
+        return _pdf_ok(pdf, "estudiantes.pdf", "PDF estudiantes")
+    except Exception as e:
+        return _pdf_error(e)
 
 
 @api_admin.route("/reportes/matricula", methods=["GET"])
 @token_required
 def reporte_matricula():
-    pdf = _pdf_base("Matricula Activa")
-    ano_activo = models.AnoEscolar.query.filter_by(estado="ACTIVO").first()
-    if ano_activo:
-        pdf.set_font("Helvetica", "", 10)
-        pdf.cell(0, 8, f"Ano escolar: {ano_activo.periodo}", new_x="LMARGIN", new_y="NEXT")
-        pdf.ln(2)
-        inscripciones = models.Inscripcion.query.filter_by(id_ano_escolar=ano_activo.id_ano).all()
-        rows = []
-        for ins in inscripciones:
-            est = ins.estudiante
-            rows.append([
-                est.cedula_escolar if est else "-",
-                f"{est.nombres} {est.apellidos}" if est else "-",
-                ins.grado.nombre if ins.grado else "-",
-                ins.estado or "REGULAR",
-            ])
-        if rows:
-            _pdf_tabla(pdf, ["Cedula", "Estudiante", "Grado", "Estado"], rows, [35, 80, 45, 30])
+    try:
+        pdf = _pdf_base("Matricula Activa")
+        ano_activo = models.AnoEscolar.query.filter_by(estado="ACTIVO").first()
+        if ano_activo:
+            pdf.set_font("Helvetica", "", 10)
+            pdf.cell(0, 8, f"Ano escolar: {ano_activo.periodo}", new_x="LMARGIN", new_y="NEXT")
+            pdf.ln(2)
+            inscripciones = models.Inscripcion.query.filter_by(id_ano_escolar=ano_activo.id_ano).all()
+            rows = []
+            for ins in inscripciones:
+                est = ins.estudiante
+                rows.append([
+                    est.cedula_escolar if est else "-",
+                    f"{est.nombres} {est.apellidos}" if est else "-",
+                    ins.grado.nombre if ins.grado else "-",
+                    ins.estado or "REGULAR",
+                ])
+            if rows:
+                _pdf_tabla(pdf, ["Cedula", "Estudiante", "Grado", "Estado"], rows, [35, 80, 45, 30])
+            else:
+                pdf.cell(0, 10, "No hay inscripciones este ano.", new_x="LMARGIN", new_y="NEXT")
         else:
-            pdf.cell(0, 10, "No hay inscripciones este ano.", new_x="LMARGIN", new_y="NEXT")
-    else:
-        pdf.cell(0, 10, "No hay ano escolar activo.", new_x="LMARGIN", new_y="NEXT")
-    log_audit(request.user.id_usuario, "REPORTE", "PDF matricula")
-    return pdf.output(), 200, {"Content-Type": "application/pdf",
-                                "Content-Disposition": "attachment; filename=matricula.pdf"}
+            pdf.cell(0, 10, "No hay ano escolar activo.", new_x="LMARGIN", new_y="NEXT")
+        return _pdf_ok(pdf, "matricula.pdf", "PDF matricula")
+    except Exception as e:
+        return _pdf_error(e)
 
 
 @api_admin.route("/reportes/usuarios", methods=["GET"])
 @token_required
 def reporte_usuarios():
-    pdf = _pdf_base("Listado de Usuarios del Sistema")
-    usuarios = models.Usuario.query.all()
-    rows = [[u.usuario, f"{u.nombre or ''} {u.apellido or ''}".strip() or u.usuario,
-             getattr(u, 'rol', 'admin')] for u in usuarios]
-    if rows:
-        _pdf_tabla(pdf, ["Usuario", "Nombre Completo", "Rol"], rows, [45, 90, 55])
-    else:
-        pdf.cell(0, 10, "No hay usuarios.", new_x="LMARGIN", new_y="NEXT")
-    log_audit(request.user.id_usuario, "REPORTE", "PDF usuarios")
-    return pdf.output(), 200, {"Content-Type": "application/pdf",
-                                "Content-Disposition": "attachment; filename=usuarios.pdf"}
+    try:
+        pdf = _pdf_base("Listado de Usuarios del Sistema")
+        usuarios = models.Usuario.query.all()
+        rows = [[u.usuario, f"{u.nombre or ''} {u.apellido or ''}".strip() or u.usuario,
+                 getattr(u, 'rol', 'admin')] for u in usuarios]
+        if rows:
+            _pdf_tabla(pdf, ["Usuario", "Nombre Completo", "Rol"], rows, [45, 90, 55])
+        else:
+            pdf.cell(0, 10, "No hay usuarios.", new_x="LMARGIN", new_y="NEXT")
+        return _pdf_ok(pdf, "usuarios.pdf", "PDF usuarios")
+    except Exception as e:
+        return _pdf_error(e)
 
 
 @api_admin.route("/reportes/representantes", methods=["GET"])
 @token_required
 def reporte_representantes():
-    pdf = _pdf_base("Listado de Representantes")
-    reps = models.Representante.query.all()
-    rows = [[r.cedula, f"{r.nombres} {r.apellidos}", r.telefono or "-",
-             r.email or "-", str(models.Inscripcion.query.filter_by(id_representante=r.id_representante).count())]
-            for r in reps]
-    if rows:
-        _pdf_tabla(pdf, ["Cedula", "Nombre", "Telefono", "Correo", "Hijos"], rows, [30, 55, 35, 50, 20])
-    else:
-        pdf.cell(0, 10, "No hay representantes.", new_x="LMARGIN", new_y="NEXT")
-    log_audit(request.user.id_usuario, "REPORTE", "PDF representantes")
-    return pdf.output(), 200, {"Content-Type": "application/pdf",
-                                "Content-Disposition": "attachment; filename=representantes.pdf"}
+    try:
+        pdf = _pdf_base("Listado de Representantes")
+        reps = models.Representante.query.all()
+        rows = [[r.cedula, f"{r.nombres} {r.apellidos}", r.telefono or "-",
+                 r.email or "-", str(models.Inscripcion.query.filter_by(id_representante=r.id_representante).count())]
+                for r in reps]
+        if rows:
+            _pdf_tabla(pdf, ["Cedula", "Nombre", "Telefono", "Correo", "Hijos"], rows, [30, 55, 35, 50, 20])
+        else:
+            pdf.cell(0, 10, "No hay representantes.", new_x="LMARGIN", new_y="NEXT")
+        return _pdf_ok(pdf, "representantes.pdf", "PDF representantes")
+    except Exception as e:
+        return _pdf_error(e)
 
 
 @api_admin.route("/reportes/estadistico", methods=["GET"])
 @token_required
 def reporte_estadistico():
-    pdf = _pdf_base("Reporte Estadistico General")
-    ano_activo = models.AnoEscolar.query.filter_by(estado="ACTIVO").first()
-
-    pdf.set_font("Helvetica", "B", 11)
-    pdf.set_text_color(0, 182, 137)
-    pdf.cell(0, 10, "Resumen General", new_x="LMARGIN", new_y="NEXT")
-    pdf.set_font("Helvetica", "", 10)
-    pdf.set_text_color(40, 40, 40)
-    stats = [
-        ("Ano escolar activo", ano_activo.periodo if ano_activo else "Ninguno"),
-        ("Estudiantes registrados", str(models.Estudiante.query.count())),
-        ("Representantes registrados", str(models.Representante.query.count())),
-        ("Usuarios del sistema", str(models.Usuario.query.count())),
-        ("Inscripciones activas", str(models.Inscripcion.query.filter_by(id_ano_escolar=ano_activo.id_ano).count()) if ano_activo else "0"),
-        ("Noticias publicadas", str(models.Noticia.query.count())),
-        ("Mensajes sin leer", str(models.MensajeContacto.query.filter_by(leido=False).count())),
-    ]
-    for label, val in stats:
-        pdf.set_font("Helvetica", "B", 10)
-        pdf.cell(80, 8, f"{label}:", border=0)
-        pdf.set_font("Helvetica", "", 10)
-        pdf.cell(0, 8, val, new_x="LMARGIN", new_y="NEXT")
-
-    if ano_activo:
-        pdf.ln(6)
+    try:
+        pdf = _pdf_base("Reporte Estadistico General")
+        ano_activo = models.AnoEscolar.query.filter_by(estado="ACTIVO").first()
         pdf.set_font("Helvetica", "B", 11)
         pdf.set_text_color(0, 182, 137)
-        pdf.cell(0, 10, "Inscripciones por Grado", new_x="LMARGIN", new_y="NEXT")
-        inscripciones = models.Inscripcion.query.filter_by(id_ano_escolar=ano_activo.id_ano).all()
-        grados = {}
-        for ins in inscripciones:
-            nombre = ins.grado.nombre if ins.grado else "Sin grado"
-            grados[nombre] = grados.get(nombre, 0) + 1
-        if grados:
-            _pdf_tabla(pdf, ["Grado", "Cantidad"],
-                       [[k, str(v)] for k, v in sorted(grados.items())], [120, 70])
-        else:
-            pdf.cell(0, 8, "Sin inscripciones.", new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 10, "Resumen General", new_x="LMARGIN", new_y="NEXT")
+        pdf.set_font("Helvetica", "", 10)
+        pdf.set_text_color(40, 40, 40)
+        stats = [
+            ("Ano escolar activo", ano_activo.periodo if ano_activo else "Ninguno"),
+            ("Estudiantes registrados", str(models.Estudiante.query.count())),
+            ("Representantes registrados", str(models.Representante.query.count())),
+            ("Usuarios del sistema", str(models.Usuario.query.count())),
+            ("Inscripciones activas", str(models.Inscripcion.query.filter_by(id_ano_escolar=ano_activo.id_ano).count()) if ano_activo else "0"),
+            ("Noticias publicadas", str(models.Noticia.query.count())),
+            ("Mensajes sin leer", str(models.MensajeContacto.query.filter_by(leido=False).count())),
+        ]
+        for label, val in stats:
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.cell(80, 8, f"{label}:", border=0)
+            pdf.set_font("Helvetica", "", 10)
+            pdf.cell(0, 8, val, new_x="LMARGIN", new_y="NEXT")
 
-    log_audit(request.user.id_usuario, "REPORTE", "PDF estadistico")
-    return pdf.output(), 200, {"Content-Type": "application/pdf",
-                                "Content-Disposition": "attachment; filename=estadistico.pdf"}
+        if ano_activo:
+            pdf.ln(6)
+            pdf.set_font("Helvetica", "B", 11)
+            pdf.set_text_color(0, 182, 137)
+            pdf.cell(0, 10, "Inscripciones por Grado", new_x="LMARGIN", new_y="NEXT")
+            inscripciones = models.Inscripcion.query.filter_by(id_ano_escolar=ano_activo.id_ano).all()
+            grados = {}
+            for ins in inscripciones:
+                nombre = ins.grado.nombre if ins.grado else "Sin grado"
+                grados[nombre] = grados.get(nombre, 0) + 1
+            if grados:
+                _pdf_tabla(pdf, ["Grado", "Cantidad"],
+                           [[k, str(v)] for k, v in sorted(grados.items())], [120, 70])
+            else:
+                pdf.cell(0, 8, "Sin inscripciones.", new_x="LMARGIN", new_y="NEXT")
+
+        return _pdf_ok(pdf, "estadistico.pdf", "PDF estadistico")
+    except Exception as e:
+        return _pdf_error(e)
+
+
+@api_admin.route("/reportes/planilla/<int:id_inscripcion>", methods=["GET"])
+@token_required
+def reporte_planilla(id_inscripcion):
+    try:
+        ins = models.Inscripcion.query.get_or_404(id_inscripcion)
+        est = ins.estudiante
+        rep = ins.representante
+        pdf = _pdf_base("Planilla de Inscripcion")
+        pdf.set_font("Helvetica", "", 11)
+        pdf.set_text_color(40, 40, 40)
+        campos = [
+            ("Cedula escolar", est.cedula_escolar if est else "-"),
+            ("Estudiante", f"{est.nombres} {est.apellidos}" if est else "-"),
+            ("Grado", ins.grado.nombre if ins.grado else "-"),
+            ("Ano escolar", ins.ano_escolar.periodo if ins.ano_escolar else "-"),
+            ("Fecha de inscripcion",
+             ins.fecha_inscripcion.strftime("%d/%m/%Y") if ins.fecha_inscripcion else "-"),
+            ("Lapso de registro", ins.lapso_registro or "Lapso 1"),
+            ("Estado", ins.estado or "REGULAR"),
+            ("Representante",
+             f"{rep.nombres} {rep.apellidos}" if rep else "-"),
+            ("Cedula del representante", rep.cedula if rep else "-"),
+            ("Telefono", (rep.telefono if rep else "") or "-"),
+            ("Correo", (rep.email if rep else "") or "-"),
+        ]
+        for label, val in campos:
+            pdf.set_font("Helvetica", "B", 11)
+            pdf.set_text_color(0, 182, 137)
+            pdf.cell(60, 9, label + ":", border=1, fill=True, align="L")
+            pdf.set_font("Helvetica", "", 11)
+            pdf.set_text_color(40, 40, 40)
+            pdf.cell(130, 9, str(val), border=1, fill=True, align="L",
+                     new_x="LMARGIN", new_y="NEXT")
+        pdf.ln(10)
+        pdf.set_font("Helvetica", "", 10)
+        pdf.set_text_color(100, 100, 100)
+        pdf.cell(0, 8, "_______________________________", align="C",
+                 new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 8, "Firma del representante / Sello de la institucion", align="C",
+                 new_x="LMARGIN", new_y="NEXT")
+        return _pdf_ok(pdf, f"planilla_{id_inscripcion}.pdf", "PDF planilla")
+    except Exception as e:
+        return _pdf_error(e)

@@ -93,9 +93,18 @@ def create_app():
             return jsonify({'success': False, 'message': 'Archivo no valido'}), 400
         ext = file.filename.rsplit('.', 1)[1].lower()
         filename = f"{uuid.uuid4().hex}.{ext}"
-        file.save(os.path.join(UPLOAD_FOLDER, filename))
-        url = f"/static/uploads/{filename}"
-        return jsonify({'success': True, 'url': url})
+        raw = file.read()
+        try:
+            with open(os.path.join(UPLOAD_FOLDER, filename), 'wb') as fh:
+                fh.write(raw)
+        except Exception as save_err:
+            print(f"[UPLOAD] disco no disponible: {save_err}")
+        import base64 as _b64
+        mime = {'jpg': 'jpeg', 'jpeg': 'jpeg', 'png': 'png', 'gif': 'gif',
+                'webp': 'webp', 'svg': 'svg+xml'}.get(ext, ext)
+        data_uri = f"data:image/{mime};base64," + _b64.b64encode(raw).decode('ascii')
+        return jsonify({'success': True, 'url': data_uri,
+                        'path': f"/static/uploads/{filename}"})
 
     @app.route('/uploads/<path:filename>')
     def uploaded_file(filename):

@@ -174,7 +174,7 @@ class Noticia(db.Model):
     titulo = db.Column(db.String(200), nullable=False)
     resumen = db.Column(db.Text)
     contenido = db.Column(db.Text)
-    imagen = db.Column(db.String(500))
+    imagen = db.Column(db.Text)
     fecha_publicacion = db.Column(db.DateTime, default=datetime.utcnow)
     activo = db.Column(db.Boolean, default=True)
 
@@ -191,7 +191,7 @@ class Galeria(db.Model):
     __tablename__ = 'GALERIA'
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(200))
-    imagen = db.Column(db.String(500), nullable=False)
+    imagen = db.Column(db.Text, nullable=False)
     descripcion = db.Column(db.Text)
     fecha_subida = db.Column(db.DateTime, default=datetime.utcnow)
 
