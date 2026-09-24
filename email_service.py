@@ -66,7 +66,7 @@ def plantilla_correo(nombre_destinatario, cuerpo, escapar=True):
 
 
 # ============================
-# CORREOS AUTOMATICOS DEL SISTEMA
+# RECUPERACION (solo administradores)
 # ============================
 
 def _boton_enlace(url, texto):
@@ -75,26 +75,7 @@ def _boton_enlace(url, texto):
             f'margin:8px 0;">{texto}</a>')
 
 
-def enviar_bienvenida(nombre, email_destino):
-    cuerpo = ("Tu cuenta en el <strong>Portal de Representantes</strong> fue creada correctamente. "
-              "Ya puedes iniciar sesion con tu cedula y la contrasena que registraste. "
-              "Si tienes dudas, contacta a la institucion.")
-    enviar_correo(email_destino, "Bienvenido/a al Portal de Representantes",
-                  plantilla_correo(nombre, cuerpo))
 
-
-def enviar_confirmacion_inscripcion(nombre, email_destino, estudiante, grado, periodo):
-    cuerpo = (f"Te confirmamos que el estudiante <strong>{estudiante}</strong> fue inscrito "
-              f"en el grado <strong>{grado}</strong> para el periodo <strong>{periodo}</strong>.")
-    enviar_correo(email_destino, "Confirmacion de Inscripcion",
-                  plantilla_correo(nombre, cuerpo))
-
-
-def enviar_aviso_cambio_contrasena(nombre, email_destino):
-    cuerpo = ("Tu contrasena fue cambiada correctamente. "
-              "Si no realizaste este cambio, contacta de inmediato a la institucion.")
-    enviar_correo(email_destino, "Contrasena actualizada",
-                  plantilla_correo(nombre, cuerpo))
 
 
 def enviar_correo_recuperacion(nombre, email_destino, enlace):

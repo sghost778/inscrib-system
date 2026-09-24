@@ -179,11 +179,6 @@ def create_app():
     def view_plantilla_nueva():
         return render_template('plantilla_nueva.html')
 
-    @app.route('/correos')
-    @login_requerido
-    def view_correos():
-        return render_template('correos.html')
-
     @app.errorhandler(404)
     def not_found(e):
         return render_template('404.html'), 404

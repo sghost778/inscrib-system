@@ -3,13 +3,6 @@ from datetime import datetime, timedelta
 from flask import Blueprint, jsonify, request, session
 
 import models
-from email_service import (
-    smtp_configurado,
-    enviar_bienvenida,
-    enviar_confirmacion_inscripcion,
-    enviar_aviso_cambio_contrasena,
-    enviar_correo_recuperacion,
-)
 
 api_public = Blueprint("api_public", __name__)
 
@@ -116,12 +109,6 @@ def portal_registro():
         )
         models.db.session.add(user)
         models.db.session.commit()
-
-        try:
-            if rep.email and smtp_configurado():
-                enviar_bienvenida(f"{rep.nombres} {rep.apellidos}", rep.email)
-        except Exception as e:
-            print(f"[CORREO] Bienvenida no enviada: {e}")
 
         return jsonify({"success": True, "message": "Registro exitoso. Ya puedes iniciar sesion."}), 201
     except Exception as e:
@@ -266,17 +253,6 @@ def portal_inscribir():
         models.db.session.add(inscripcion)
         models.db.session.commit()
 
-        try:
-            if rep.email and smtp_configurado():
-                grado_nombre = inscripcion.grado.nombre if inscripcion.grado else "N/A"
-                enviar_confirmacion_inscripcion(
-                    f"{rep.nombres} {rep.apellidos}", rep.email,
-                    f"{estudiante.nombres} {estudiante.apellidos}",
-                    grado_nombre, ano_activo.periodo
-                )
-        except Exception as e:
-            print(f"[CORREO] Confirmacion de inscripcion no enviada: {e}")
-
         return jsonify({"success": True, "message": "Inscripcion realizada exitosamente"}), 201
     except Exception as e:
         models.db.session.rollback()
@@ -334,13 +310,6 @@ def portal_password():
     user.password_hash = hash_password(new_pass)
     models.db.session.commit()
 
-    rep = models.Representante.query.filter_by(cedula=cedula_rep).first()
-    try:
-        if rep and rep.email and smtp_configurado():
-            enviar_aviso_cambio_contrasena(f"{rep.nombres} {rep.apellidos}", rep.email)
-    except Exception as e:
-        print(f"[CORREO] Aviso de cambio de contrasena no enviado: {e}")
-
     return jsonify({"success": True, "message": "Contrasena cambiada exitosamente"})
 
 
@@ -368,32 +337,8 @@ def portal_recuperar():
         rep.email = email
         models.db.session.commit()
 
-    if not smtp_configurado():
-        return jsonify({"success": False,
-                        "message": "El envio de correos no esta configurado en el servidor. Contacta a la institucion para restablecer tu contrasena."}), 500
-
-    token = secrets.token_urlsafe(32)
-    for viejo in models.ResetToken.query.filter_by(id_usuario=user.id_usuario, usado=False).all():
-        viejo.usado = True
-    nuevo = models.ResetToken(
-        token=token,
-        id_usuario=user.id_usuario,
-        expiracion=datetime.utcnow() + timedelta(hours=1),
-        usado=False
-    )
-    models.db.session.add(nuevo)
-    models.db.session.commit()
-
-    base = request.host_url.rstrip('/')
-    enlace = f"{base}/restablecer?token={token}"
-    try:
-        enviar_correo_recuperacion(f"{rep.nombres} {rep.apellidos}", rep.email, enlace)
-    except Exception as e:
-        print(f"[CORREO] Correo de recuperacion no enviado: {e}")
-        return jsonify({"success": False, "message": f"Error al enviar el correo: {str(e)}"}), 500
-
     return jsonify({"success": True,
-                    "message": "Te enviamos un enlace a tu correo electronico para restablecer tu contrasena. Revisa tu bandeja de entrada."})
+                    "message": "Solicitud registrada. Contacte a la institucion para restablecer su contrasena."})
 
 
 @api_public.route("/restablecer", methods=["POST"])
@@ -421,14 +366,7 @@ def restablecer():
     rt.usado = True
     models.db.session.commit()
 
-    redirect_destino = "/portal" if getattr(user, 'rol', '') == 'representante' else "/login"
-    rep = models.Representante.query.filter_by(cedula=user.usuario).first()
-    try:
-        if rep and rep.email and smtp_configurado():
-            enviar_aviso_cambio_contrasena(f"{rep.nombres} {rep.apellidos}", rep.email)
-    except Exception as e:
-        print(f"[CORREO] Aviso de restablecimiento no enviado: {e}")
-
+    redirect_destino = "/portal" if getattr(user, 'rol', '') == "representante" else "/login"
     return jsonify({"success": True, "message": "Contrasena restablecida correctamente", "redirect": redirect_destino})
 
 

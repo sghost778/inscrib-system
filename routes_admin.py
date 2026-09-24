@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request, session
 
 import models
 from security import check_password, log_audit, token_required
-from email_service import smtp_configurado, enviar_correo_recuperacion, enviar_aviso_cambio_contrasena
+from email_service import smtp_configurado, enviar_correo_recuperacion
 from mini_pdf import MiniPDF
 
 api_admin = Blueprint("api_admin", __name__)
@@ -641,67 +641,6 @@ def eliminar_representante(cedula):
 
 
 # ============================
-# CORREOS A REPRESENTANTES
-# ============================
-@api_admin.route("/correos/representantes", methods=["GET"])
-@token_required
-def correos_representantes():
-    search = request.args.get("search", "")
-    query = models.Representante.query
-    if search:
-        query = query.filter(
-            models.Representante.nombres.contains(search) |
-            models.Representante.apellidos.contains(search) |
-            models.Representante.cedula.contains(search))
-    reps = query.limit(100).all()
-    return jsonify([{
-        "cedula": r.cedula,
-        "nombre_completo": f"{r.nombres or ''} {r.apellidos or ''}".strip(),
-        "email": r.email or "",
-    } for r in reps if r.email])
-
-
-@api_admin.route("/correos/enviar", methods=["POST"])
-@token_required
-def correos_enviar():
-    data = request.get_json() or {}
-    cedula = (data.get("cedula") or "").strip()
-    destinatario = (data.get("destinatario") or "").strip()
-    asunto = (data.get("asunto") or "").strip()
-    mensaje = (data.get("mensaje") or "").strip()
-
-    if not asunto:
-        return jsonify({"success": False, "message": "Debe escribir un asunto"}), 400
-    if not mensaje:
-        return jsonify({"success": False, "message": "Debe escribir un mensaje"}), 400
-    if not destinatario:
-        return jsonify({"success": False, "message": "Debe indicar el correo del destinatario"}), 400
-
-    rep = None
-    if cedula:
-        rep = models.Representante.query.filter_by(cedula=cedula).first()
-        if rep and rep.email:
-            destinatario = rep.email
-
-    if "@" not in destinatario or "." not in destinatario.split("@")[-1]:
-        return jsonify({"success": False, "message": "El correo del destinatario no parece valido"}), 400
-
-    try:
-        from email_service import enviar_correo, plantilla_correo, smtp_configurado
-        if not smtp_configurado():
-            return jsonify({"success": False,
-                            "message": "El servidor de correo no esta configurado. Agregue SMTP_HOST, SMTP_USER y SMTP_PASSWORD (variables de entorno) y vuelva a intentar."}), 500
-        nombre_rep = f"{rep.nombres} {rep.apellidos}".strip() if rep else ""
-        cuerpo = plantilla_correo(nombre_rep or destinatario, mensaje)
-        enviar_correo(destinatario, asunto, cuerpo)
-        log_audit(request.user.id_usuario, "ENVIO_CORREO", f"A: {destinatario} - {asunto}")
-        return jsonify({"success": True, "message": f"Correo enviado a {destinatario}"})
-    except Exception as e:
-        models.db.session.rollback()
-        return jsonify({"success": False, "message": f"Error al enviar el correo: {str(e)}"}), 500
-
-
-# ============================
 # MATRICULA
 # ============================
 @api_admin.route("/matricula", methods=["GET"])
@@ -903,12 +842,6 @@ def restablecer():
     models.db.session.commit()
 
     redirect_destino = "/portal" if getattr(user, 'rol', '') == 'representante' else "/login"
-    try:
-        if user.email and smtp_configurado():
-            enviar_aviso_cambio_contrasena(f"{user.nombre or ''} {user.apellido or ''}".strip() or user.usuario, user.email)
-    except Exception as e:
-        print(f"[CORREO] Aviso de restablecimiento no enviado: {e}")
-
     return jsonify({"success": True, "message": "Contrasena restablecida correctamente", "redirect": redirect_destino})
 
 
@@ -939,6 +872,19 @@ def _pdf_base(titulo):
     pdf.set_draw_color(0, 182, 137)
     pdf.line(10, pdf.get_y(), 200, pdf.get_y())
     pdf.ln(5)
+    return pdf
+
+
+def _pdf_resumen(pdf, texto):
+    """Caja de resumen bajo el titulo."""
+    pdf.set_fill_color(236, 250, 247)
+    pdf.set_draw_color(0, 182, 137)
+    pdf.set_text_color(0, 120, 90)
+    pdf.set_font("Helvetica", "B", 9)
+    pdf.cell(190, 7, "  " + texto, border=1, fill=True, align="L",
+             new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(3)
+    pdf.set_text_color(40, 40, 40)
     return pdf
 
 
@@ -1027,6 +973,7 @@ def reporte_estudiantes():
         for e in estudiantes:
             grado = e.inscripciones[-1].grado.nombre if e.inscripciones else "Sin inscripción"
             rows.append([e.cedula_escolar, f"{e.nombres} {e.apellidos}", grado])
+        _pdf_resumen(pdf, f"Total de estudiantes: {len(rows)}")
         if rows:
             _pdf_tabla(pdf, ["Cédula", "Nombre Completo", "Grado"], rows, [40, 90, 60])
         else:
@@ -1056,6 +1003,7 @@ def reporte_matricula():
                     ins.grado.nombre if ins.grado else "-",
                     ins.estado or "REGULAR",
                 ])
+            _pdf_resumen(pdf, f"Inscripciones en el año activo: {len(rows)}")
             if rows:
                 _pdf_tabla(pdf, ["Cédula", "Estudiante", "Grado", "Estado"], rows, [35, 80, 45, 30])
             else:
@@ -1075,6 +1023,7 @@ def reporte_usuarios():
         usuarios = models.Usuario.query.all()
         rows = [[u.usuario, f"{u.nombre or ''} {u.apellido or ''}".strip() or u.usuario,
                  getattr(u, 'rol', 'admin')] for u in usuarios]
+        _pdf_resumen(pdf, f"Total de usuarios: {len(rows)}")
         if rows:
             _pdf_tabla(pdf, ["Usuario", "Nombre Completo", "Rol"], rows, [45, 90, 55])
         else:
@@ -1093,6 +1042,7 @@ def reporte_representantes():
         rows = [[r.cedula, f"{r.nombres} {r.apellidos}", r.telefono or "-",
                  r.email or "-", str(models.Inscripcion.query.filter_by(id_representante=r.id_representante).count())]
                 for r in reps]
+        _pdf_resumen(pdf, f"Total de representantes: {len(rows)}")
         if rows:
             _pdf_tabla(pdf, ["Cédula", "Nombre", "Teléfono", "Correo", "Hijos"], rows, [30, 55, 35, 50, 20])
         else:

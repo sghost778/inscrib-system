@@ -11,7 +11,7 @@ Esta guía explica, paso a paso, cómo usar el panel administrativo de INSCRIB.
 
 1. Abra el navegador y entre a: **https://inscrib-admin.onrender.com**
 2. Inicie sesión con su **usuario** y **contraseña**.
-3. Si olvidó la contraseña, use **“¿Olvidó su contraseña?”** en la pantalla de login y siga el enlace que llega por correo (requiere que el correo esté configurado).
+3. Si olvidó la contraseña del panel, use **“¿Olvidó su contraseña?”** en el login (solo administradores; requiere SMTP configurado).
 4. Al entrar, verá el **Inicio** (panel con estadísticas).
 
 > Consejo: si la pantalla se ve vieja o desactualizada, presione **Ctrl + F5** (o Ctrl + Shift + R) para recargar sin caché.
@@ -30,7 +30,6 @@ Esta guía explica, paso a paso, cómo usar el panel administrativo de INSCRIB.
 | **Gestión de Año** | Abrir/cerrar el año escolar. |
 | **Usuario** | Crear y editar usuarios del sistema. |
 | **Configurar Sitio Web** | Noticias, galería, mensajes del sitio público. |
-| **Enviar Correo** | Enviar correos a representantes. |
 | **Reportes PDF** | Descargar listados en PDF. |
 | **Salir del Sistema** | Cerrar sesión. |
 
@@ -137,12 +136,17 @@ Tabla: últimos accesos al sistema.
    - Estadístico general  
 3. Se descarga un **PDF** con:
 
-   - Encabezado verde de la escuela  
-   - Título y fecha de generación  
-   - Tablas con acentos y formato legible  
-   - **Pie de página** con número de página  
+   - **Encabezado verde institucional** (Escuela José Manuel Cova Maza)  
+   - Título del reporte y fecha/hora de generación  
+   - **Línea de resumen** (totales del reporte)  
+   - Tablas con bandas alternas, acentos correctos y columnas legibles  
+   - Texto largo recortado con “…” para que no se desborde  
+   - Tablas que **continúan en varias hojas** si hace falta  
+   - **Pie de página** en cada hoja: *INSCRIB · Página X de Y*  
 
-También puede descargar la **planilla** individual desde **Plantillas Guardadas → VER PLANILLA**.
+También puede descargar la **planilla** individual desde **Plantillas Guardadas → VER PLANILLA** (formato ficha con datos del estudiante, representante y grado).
+
+> El PDF se genera en el servidor sin dependencias externas (evita errores 502 en Render).
 
 ---
 
@@ -175,6 +179,8 @@ Menú **Gestión de Año**:
 1. Cree un año (ej. `2025-2026`) y márquelo **ACTIVO**.
 2. Solo puede haber **un** año activo a la vez.
 3. Las inscripciones y matrículas se asocian al año activo.
+
+> **Nota:** el sistema **no envía correos a representantes ni padres** (ni de bienvenida, ni de inscripción, ni de retiros). La opción **Enviar Correo** fue retirada del menú.
 
 ---
 

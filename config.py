@@ -42,7 +42,7 @@ class Config:
     # Contraseña inicial para el usuario 'admin' (solo se usa si no existe)
     ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
 
-    # --- CORREO SMTP (para que el administrador envie correos a representantes) ---
+    # --- CORREO SMTP (solo recuperacion de clave de administradores; no se envia a representantes) ---
     SMTP_HOST = os.environ.get('SMTP_HOST', '')
     SMTP_USER = os.environ.get('SMTP_USER', '')
     SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
