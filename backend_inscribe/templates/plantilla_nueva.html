@@ -1955,7 +1955,7 @@
                 });
                 if (found && found.id_inscripcion) {
                     window.__planillaExistente = found;
-                    mostrarAviso("Este estudiante ya tiene una planilla este año (grado: " + (found.grado || '-') + "). Puede verla o registrar otra.", "#f39c12");
+                    mostrarAviso("Este estudiante ya tiene una planilla en el año escolar activo (grado: " + (found.grado || '-') + "). Puede verla o registrar otra.", "#f39c12");
                     const box = document.getElementById('avisoPlanillaExistente');
                     if (box) {
                         box.style.display = 'block';

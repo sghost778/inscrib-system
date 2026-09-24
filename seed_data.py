@@ -65,7 +65,7 @@ def seed_datos_iniciales():
     if Noticia.query.count() == 0:
         for nd in [
             {"titulo": "Inicio de Clases 2026-2027",
-             "resumen": "Las inscripciones para el nuevo ano escolar estan abiertas.",
+             "resumen": "Las inscripciones para el nuevo año escolar estan abiertas.",
              "contenido": "Periodo de inscripciones abierto.",
              "imagen": "/static/uploads/noticia1.jpg"},
             {"titulo": "Jornada Deportiva Anual",

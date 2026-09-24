@@ -80,7 +80,7 @@ def contacto_publico():
 def portal_registro():
     data = request.get_json()
     if not data or not data.get('cedula') or not data.get('password'):
-        return jsonify({"success": False, "message": "Cedula y contrasena requeridas"}), 400
+        return jsonify({"success": False, "message": "Cédula y contraseña requeridas"}), 400
     try:
         cedula = data['cedula'].strip()
         if models.Representante.query.filter_by(cedula=cedula).first():
@@ -110,7 +110,7 @@ def portal_registro():
         models.db.session.add(user)
         models.db.session.commit()
 
-        return jsonify({"success": True, "message": "Registro exitoso. Ya puedes iniciar sesion."}), 201
+        return jsonify({"success": True, "message": "Registro exitoso. Ya puedes iniciar sesión."}), 201
     except Exception as e:
         models.db.session.rollback()
         return jsonify({"success": False, "message": f"Error al registrar: {str(e)}"}), 500
@@ -122,7 +122,7 @@ def portal_login():
     cedula = (data.get('usuario') or '').strip()
     password = data.get('password', '')
     if not cedula or not password:
-        return jsonify({"success": False, "message": "Cedula y contrasena requeridas"}), 400
+        return jsonify({"success": False, "message": "Cédula y contraseña requeridas"}), 400
 
     user = models.Usuario.query.filter_by(usuario=cedula, rol='representante').first()
     if not user:
@@ -230,7 +230,7 @@ def portal_inscribir():
     try:
         ano_activo = models.AnoEscolar.query.filter_by(estado="ACTIVO").first()
         if not ano_activo:
-            return jsonify({"success": False, "message": "No hay ano escolar activo"}), 400
+            return jsonify({"success": False, "message": "No hay año escolar activo"}), 400
         rep = models.Representante.query.filter_by(cedula=cedula_rep).first()
         if not rep:
             return jsonify({"success": False, "message": "Representante no encontrado"}), 404
@@ -241,7 +241,7 @@ def portal_inscribir():
             cedula_escolar=data["cedula_escolar"], id_ano_escolar=ano_activo.id_ano
         ).first()
         if existe:
-            return jsonify({"success": False, "message": "Este estudiante ya esta inscrito en el ano escolar activo"}), 400
+            return jsonify({"success": False, "message": "Este estudiante ya está inscrito en el año escolar activo"}), 400
         inscripcion = models.Inscripcion(
             cedula_escolar=data["cedula_escolar"],
             id_representante=rep.id_representante,
@@ -300,7 +300,7 @@ def portal_password():
     if not current or not new_pass:
         return jsonify({"success": False, "message": "Contrasena actual y nueva requeridas"}), 400
     if len(new_pass) < 4:
-        return jsonify({"success": False, "message": "La nueva contrasena debe tener al menos 4 caracteres"}), 400
+        return jsonify({"success": False, "message": "La nueva contraseña debe tener al menos 4 caracteres"}), 400
     user = models.Usuario.query.filter_by(usuario=cedula_rep, rol='representante').first()
     if not user:
         return jsonify({"success": False, "message": "Usuario no encontrado"}), 404
@@ -338,7 +338,7 @@ def portal_recuperar():
         models.db.session.commit()
 
     return jsonify({"success": True,
-                    "message": "Solicitud registrada. Contacte a la institucion para restablecer su contrasena."})
+                    "message": "Solicitud registrada. Contacte a la institucion para restablecer su contraseña."})
 
 
 @api_public.route("/restablecer", methods=["POST"])
@@ -347,9 +347,9 @@ def restablecer():
     token = (data.get('token') or '').strip()
     new_pass = data.get('new_password', '')
     if not token or not new_pass:
-        return jsonify({"success": False, "message": "Token y nueva contrasena requeridos"}), 400
+        return jsonify({"success": False, "message": "Token y nueva contraseña requeridos"}), 400
     if len(new_pass) < 4:
-        return jsonify({"success": False, "message": "La nueva contrasena debe tener al menos 4 caracteres"}), 400
+        return jsonify({"success": False, "message": "La nueva contraseña debe tener al menos 4 caracteres"}), 400
 
     rt = models.ResetToken.query.filter_by(token=token, usado=False).first()
     if not rt:

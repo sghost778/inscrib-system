@@ -244,7 +244,7 @@ def create_app():
                                 password_hash=hash_password(Config.ADMIN_PASSWORD))
                 db.session.add(admin)
                 db.session.commit()
-                print(f"Usuario 'admin' creado con contrasena de la variable ADMIN_PASSWORD")
+                print(f"Usuario 'admin' creado con contraseña de la variable ADMIN_PASSWORD")
         except Exception as admin_err:
             db.session.rollback()
             print(f"[INFO] Creacion del usuario admin omitida: {admin_err}")

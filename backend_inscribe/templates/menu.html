@@ -1187,7 +1187,7 @@
 
 
         function confirmarSalida() {
-            // Cerrar sesion via API y redirigir al login
+            // Cerrar sesión via API y redirigir al login
             fetch('/api/logout', {method:'POST'}).then(() => {
                 localStorage.removeItem('usuario');
                 window.location.href = '/login';

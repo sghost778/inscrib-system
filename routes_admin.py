@@ -23,7 +23,7 @@ def _hacer_sesion_y_responder(user):
     session["usuario"] = uname
     session["rol"] = rol
     session.permanent = True
-    log_audit(uid, "LOGIN", "Inicio de sesion exitoso")
+    log_audit(uid, "LOGIN", "Inicio de sesión exitoso")
     return jsonify({"success": True, "usuario": nombre, "rol": rol})
 
 
@@ -483,7 +483,7 @@ def inscribir_plantilla():
         ).first()
         if ya_existe:
             return jsonify({
-                "message": "Este estudiante ya tiene una planilla registrada este año",
+                "message": "Este estudiante ya tiene una planilla registrada en el año escolar activo",
                 "existe": True,
                 "id_inscripcion": ya_existe.id_inscripcion,
                 "grado": ya_existe.grado.nombre if ya_existe.grado else "",
@@ -528,14 +528,14 @@ def gestionar_anos():
     if not periodo:
         return jsonify({"success": False, "message": "Debe indicar el periodo"}), 400
     if models.AnoEscolar.query.filter_by(periodo=periodo).first():
-        return jsonify({"success": False, "message": "Ya existe un ano escolar con ese periodo"}), 400
+        return jsonify({"success": False, "message": "Ya existe un año escolar con ese periodo"}), 400
     if data.get("cerrar_anteriores"):
         for ano in models.AnoEscolar.query.filter_by(estado="ACTIVO").all():
             ano.estado = "CERRADO"
     nuevo = models.AnoEscolar(periodo=periodo, estado="ACTIVO")
     models.db.session.add(nuevo)
     models.db.session.commit()
-    return jsonify({"success": True, "message": "Ano escolar abierto"}), 201
+    return jsonify({"success": True, "message": "Año escolar abierto"}), 201
 
 
 @api_admin.route("/anos-escolares/<int:id_ano>", methods=["PUT", "DELETE"])
@@ -543,11 +543,11 @@ def gestionar_anos():
 def gestionar_ano_id(id_ano):
     ano = models.AnoEscolar.query.get(id_ano)
     if not ano:
-        return jsonify({"success": False, "message": "Ano escolar no encontrado"}), 404
+        return jsonify({"success": False, "message": "Año escolar no encontrado"}), 404
     if request.method == "DELETE":
         ano.estado = "CERRADO"
         models.db.session.commit()
-        return jsonify({"success": True, "message": "Ano escolar cerrado"})
+        return jsonify({"success": True, "message": "Año escolar cerrado"})
     data = request.get_json()
     periodo = (data.get("periodo") or "").strip()
     if not periodo:
@@ -557,12 +557,12 @@ def gestionar_ano_id(id_ano):
         models.AnoEscolar.id_ano != id_ano
     ).first()
     if duplicado:
-        return jsonify({"success": False, "message": "Ya existe un ano escolar con ese periodo"}), 400
+        return jsonify({"success": False, "message": "Ya existe un año escolar con ese periodo"}), 400
     ano.periodo = periodo
     if "estado" in data:
         ano.estado = data["estado"]
     models.db.session.commit()
-    return jsonify({"success": True, "message": "Ano escolar actualizado"})
+    return jsonify({"success": True, "message": "Año escolar actualizado"})
 
 
 # ============================
@@ -749,9 +749,9 @@ def registrarse():
     apellido = (data.get('apellido') or '').strip()
     email = (data.get('email') or '').strip()
     if not usuario or not password:
-        return jsonify({"success": False, "message": "Usuario y contrasena requeridos"}), 400
+        return jsonify({"success": False, "message": "Usuario y contraseña requeridos"}), 400
     if len(password) < 4:
-        return jsonify({"success": False, "message": "La contrasena debe tener al menos 4 caracteres"}), 400
+        return jsonify({"success": False, "message": "La contraseña debe tener al menos 4 caracteres"}), 400
     if models.Usuario.query.filter_by(usuario=usuario).first():
         return jsonify({"success": False, "message": "El usuario ya existe"}), 400
     roles_validos = ('admin', 'director', 'secretario', 'coordinador', 'docente')
@@ -772,7 +772,7 @@ def recuperar():
     usuario = (data.get('usuario') or '').strip()
     email = (data.get('email') or '').strip().lower()
     if not usuario or not email:
-        return jsonify({"success": False, "message": "Ingresa tu usuario y tu correo electronico"}), 400
+        return jsonify({"success": False, "message": "Ingresa tu usuario y tu correo electrónico"}), 400
     if "@" not in email or "." not in email.split("@")[-1]:
         return jsonify({"success": False, "message": "El correo no parece valido"}), 400
 
@@ -789,7 +789,7 @@ def recuperar():
 
     if not smtp_configurado():
         return jsonify({"success": False,
-                        "message": "El envio de correos no esta configurado en el servidor. Agregue las variables SMTP_* para poder enviar el enlace."}), 500
+                        "message": "El envío de correos no está configurado en el servidor. Agregue las variables SMTP_* para poder enviar el enlace."}), 500
 
     token = secrets.token_urlsafe(32)
     for viejo in models.ResetToken.query.filter_by(id_usuario=user.id_usuario, usado=False).all():
@@ -813,7 +813,7 @@ def recuperar():
         return jsonify({"success": False, "message": f"Error al enviar el correo: {str(e)}"}), 500
 
     return jsonify({"success": True,
-                    "message": "Te enviamos un enlace a tu correo electronico para restablecer tu contrasena. Revisa tu bandeja de entrada."})
+                    "message": "Te enviamos un enlace a tu correo electrónico para restablecer tu contraseña. Revisa tu bandeja de entrada."})
 
 
 @api_admin.route("/restablecer", methods=["POST"])
@@ -822,9 +822,9 @@ def restablecer():
     token = (data.get('token') or '').strip()
     new_pass = data.get('new_password', '')
     if not token or not new_pass:
-        return jsonify({"success": False, "message": "Token y nueva contrasena requeridos"}), 400
+        return jsonify({"success": False, "message": "Token y nueva contraseña requeridos"}), 400
     if len(new_pass) < 4:
-        return jsonify({"success": False, "message": "La nueva contrasena debe tener al menos 4 caracteres"}), 400
+        return jsonify({"success": False, "message": "La nueva contraseña debe tener al menos 4 caracteres"}), 400
 
     rt = models.ResetToken.query.filter_by(token=token, usado=False).first()
     if not rt:
@@ -1003,11 +1003,11 @@ def reporte_matricula():
                     ins.grado.nombre if ins.grado else "-",
                     ins.estado or "REGULAR",
                 ])
-            _pdf_resumen(pdf, f"Inscripciones en el año activo: {len(rows)}")
+            _pdf_resumen(pdf, f"Inscripciones en el año escolar activo: {len(rows)}")
             if rows:
                 _pdf_tabla(pdf, ["Cédula", "Estudiante", "Grado", "Estado"], rows, [35, 80, 45, 30])
             else:
-                pdf.cell(0, 10, "No hay inscripciones este año.", new_x="LMARGIN", new_y="NEXT")
+                pdf.cell(0, 10, "No hay inscripciones en el año escolar activo.", new_x="LMARGIN", new_y="NEXT")
         else:
             pdf.cell(0, 10, "No hay año escolar activo.", new_x="LMARGIN", new_y="NEXT")
         return _pdf_fin(pdf, "matricula.pdf", "PDF matricula")

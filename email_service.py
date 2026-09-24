@@ -1,4 +1,4 @@
-# email_service.py - Envio de correos SMTP para el panel admin
+# email_service.py - Envío de correos SMTP para el panel admin
 import smtplib
 import ssl
 from email.mime.multipart import MIMEMultipart
@@ -79,9 +79,9 @@ def _boton_enlace(url, texto):
 
 
 def enviar_correo_recuperacion(nombre, email_destino, enlace):
-    cuerpo = ("Recibimos una solicitud para restablecer tu contrasena. "
+    cuerpo = ("Recibimos una solicitud para restablecer tu contraseña. "
               "Abre el siguiente enlace para continuar (valido por 1 hora):<br><br>"
               + _boton_enlace(enlace, "Restablecer Contrasena") +
               "<br>Si no solicitaste este cambio, ignora este mensaje.")
-    enviar_correo(email_destino, "Restablecer contrasena",
+    enviar_correo(email_destino, "Restablecer contraseña",
                   plantilla_correo(nombre, cuerpo, escapar=False))

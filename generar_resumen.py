@@ -69,7 +69,7 @@ portal = [
     'Registro con cedula, correo y clave (cuenta con rol representante).',
     'Inicio de sesion con cedula y clave.',
     'Consulta de estudiantes vinculados y su estado de inscripcion.',
-    'Inscripcion en linea: seleccion de grado y ano escolar activo.',
+    'Inscripcion en linea: seleccion de grado y año escolar activo.',
     'Actualizacion de perfil y cambio de clave.',
     'Recuperacion de clave por enlace enviado a su correo electronico.',
     'Correos automaticos: bienvenida, confirmacion de inscripcion y aviso de cambio de clave.',
@@ -91,7 +91,7 @@ admin_sections = [
     ('Gestion de Ano Escolar', 'Apertura y cierre de anos escolares con periodo y cupo.'),
     ('Usuarios', 'CRUD de usuarios con selector de rol (5 roles) y columna de rol en la tabla.'),
     ('Configurar Sitio Web', 'Edicion de noticias, programas, galeria, datos de la escuela y mensajes de contacto.'),
-    ('Enviar Correo', 'Envio de correos HTML a representantes desde el panel (con plantilla institucional).'),
+    ('Correos (solo recuperacion)', 'Envio SMTP unico para recuperar la clave de administradores (no a representantes).'),
     ('Reportes PDF (/reportes)', 'Generacion y descarga de 5 reportes en PDF: estudiantes, matricula, representantes, usuarios y resumen estadistico.'),
 ]
 for t, desc in admin_sections:
@@ -125,9 +125,9 @@ doc.add_paragraph(
 emails = [
     'Bienvenida al crear cuenta en el portal.',
     'Confirmacion de inscripcion del estudiante.',
-    'Aviso de cambio de contrasena.',
-    'Recuperacion de contrasena con enlace seguro (token valido por 1 hora).',
-    'Envio manual de correos desde el panel administrativo.',
+    'Recuperacion de contraseña de administradores (sin envios a representantes).',
+    'Recuperacion de contraseña con enlace seguro (token valido por 1 hora).',
+    'Recuperacion de clave de administradores por correo (si SMTP_* esta configurado).',
 ]
 for e in emails:
     doc.add_paragraph(e, style='List Bullet')
@@ -175,7 +175,7 @@ tables = [
     'ESTUDIANTE - Datos personales y academicos',
     'REPRESENTANTE - Datos de tutores legales',
     'FAMILIAR - Informacion familiar complementaria',
-    'INSCRIPCION - Matricula por grado, ano y estado',
+    'INSCRIPCION - Matricula por grado, año y estado',
     'ANO_ESCOLAR - Anos escolares con periodo y estado',
     'GRADO - Grados academicos por nivel',
     'PAIS / ESTADO / CIUDAD / CODIGO_AREA - Datos geograficos',

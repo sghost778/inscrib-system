@@ -1025,7 +1025,7 @@
             if (!usuarioAEditar && !p1) { alert("Contrasena requerida al crear."); return; }
 
 
-            if (p1 !== p2 && p1 !== "") { alert("Las contrasenas no coinciden"); return; }
+            if (p1 !== p2 && p1 !== "") { alert("Las contraseñas no coinciden"); return; }
 
 
 
@@ -1039,7 +1039,7 @@
                 if (rolSel) payload.rol = rolSel.value;
 
 
-                if (p1) payload.password = p1; // Si envio contrasenas
+                if (p1) payload.password = p1; // Si envió contraseñas
 
 
                 // Si hay que crear (Fase 2, de momento usamos /api/registro para crear como en login)

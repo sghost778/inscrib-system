@@ -407,7 +407,7 @@
             });
             const r = await res.json();
             if (r.success) {
-                mostrarToast('Registro exitoso. Inicia sesion.');
+                mostrarToast('Registro exitoso. Inicia sesión.');
                 document.getElementById('loginCedula').value = data.cedula;
                 cambiarAuthTab('login', document.querySelector('.tabs button:first-child'));
             } else {
@@ -576,7 +576,7 @@
         const current = document.getElementById('passActual').value;
         const new_pass = document.getElementById('passNueva').value;
         if (!current || !new_pass) { document.getElementById('passError').textContent = 'Completa ambos campos'; document.getElementById('passError').style.display = 'block'; document.getElementById('passSuccess').style.display = 'none'; return; }
-        if (new_pass.length < 4) { document.getElementById('passError').textContent = 'La nueva contrasena debe tener al menos 4 caracteres'; document.getElementById('passError').style.display = 'block'; document.getElementById('passSuccess').style.display = 'none'; return; }
+        if (new_pass.length < 4) { document.getElementById('passError').textContent = 'La nueva contraseña debe tener al menos 4 caracteres'; document.getElementById('passError').style.display = 'block'; document.getElementById('passSuccess').style.display = 'none'; return; }
         try {
             const res = await fetch('/api/portal/password', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({current, new_password: new_pass}) });
             const r = await res.json();

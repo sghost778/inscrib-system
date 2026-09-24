@@ -1,4 +1,4 @@
-# security.py - Autenticacion por sesion (Flask session)
+# security.py - Autenticación por sesión (Flask session)
 from functools import wraps
 from flask import request, jsonify, session, redirect, url_for
 import bcrypt
@@ -42,7 +42,7 @@ def token_required(f):
         user = _usuario_actual()
         if not user:
             return jsonify({"success": False,
-                            "message": "Sesion expirada o no iniciada. Inicia sesion nuevamente."}), 401
+                            "message": "Sesión expirada o no iniciada. Inicia sesión nuevamente."}), 401
         request.user = user
         return f(*args, **kwargs)
     return decorated

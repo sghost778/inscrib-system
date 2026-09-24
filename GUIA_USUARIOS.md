@@ -78,7 +78,7 @@ Igual que en estudiantes, **Consulta Individual** ya no aparece en el menú.
 4. Indique la cédula del **representante**.
 5. Pulse **Guardar**.
 
-**Si el estudiante ya tiene una planilla este año:**
+**Si el estudiante ya tiene una planilla en el año escolar activo:**
 
 - El sistema lo **avisa** en pantalla.
 - Puede abrir la **planilla existente** con un enlace.
@@ -96,7 +96,7 @@ Igual que en estudiantes, **Consulta Individual** ya no aparece en el menú.
 
 1. Menú **Matrícula**.
 2. Pestañas:
-   - **Matrícula Total**: todos los inscritos del año activo. Puede **Modificar** o **Retirar**.
+   - **Matrícula Total**: todos los inscritos del año escolar activo (por grado). Puede **Modificar** o **Retirar**.
    - **Nuevos Ingresos**: solo inscritos nuevos.
    - **Retiros**: historial de retiros (fecha, lapso, motivo).
 
@@ -180,7 +180,7 @@ Menú **Gestión de Año**:
 
 1. Cree un año (ej. `2025-2026`) y márquelo **ACTIVO**.
 2. Solo puede haber **un** año activo a la vez.
-3. Las inscripciones y matrículas se asocian al año activo.
+3. Las inscripciones y matrículas se asocian al año escolar activo; los estudiantes se listan y reportan por grado.
 
 > **Nota:** el sistema **no envía correos a representantes ni padres** (ni de bienvenida, ni de inscripción, ni de retiros). La opción **Enviar Correo** fue retirada del menú.
 
@@ -201,7 +201,7 @@ Vuelva a entrar; por seguridad la sesión expira.
 Vaya a **Gestión de Año** y active el año en curso.
 
 **¿Puedo duplicar una planilla?**  
-No. Si el estudiante ya tiene planilla en el año activo, el sistema lo avisa y muestra la existente.
+No. Si el estudiante ya tiene planilla en el año escolar activo, el sistema lo avisa y muestra la existente.
 
 ---
 
@@ -222,7 +222,7 @@ Casi todo lo que usted **escribe y registra** se guarda en la base de datos del 
 | Matrícula y retiros (fecha, lapso, motivo) | **Sí** |
 | Usuarios y roles | **Sí** |
 | Noticias, galería, imágenes, mensajes de contacto | **Sí** (imágenes en la BD) |
-| Año escolar y configuración del sitio | **Sí** |
+| Año escolar, grados y configuración del sitio | **Sí** |
 | Búsquedas/filtros en pantalla | No (solo visual) |
 | SMS/correo al registrar estudiante | No (campo oculto) |
 

@@ -215,14 +215,14 @@
         <div class="form-group">
             <label>Confirmar Contraseña</label>
             <div class="password-wrapper">
-                <input type="password" id="pass2" placeholder="Repite la contrasena">
+                <input type="password" id="pass2" placeholder="Repite la contraseña">
                 <i class="fa-solid fa-eye toggle-password" onclick="togglePass('pass2', this)"></i>
             </div>
         </div>
 
         <button class="btn" onclick="restablecer()">RESTABLECER</button>
 
-        <a class="back" href="/login"><i class="fas fa-arrow-left"></i> Volver al inicio de sesion</a>
+        <a class="back" href="/login"><i class="fas fa-arrow-left"></i> Volver al inicio de sesión</a>
     </div>
 
     <div class="modal-overlay" id="successModal">
@@ -270,11 +270,11 @@
                 return;
             }
             if (p1 !== p2) {
-                mostrarError("Las contrasenas no coinciden");
+                mostrarError("Las contraseñas no coinciden");
                 return;
             }
             if (p1.length < 4) {
-                mostrarError("La contrasena debe tener al menos 4 caracteres");
+                mostrarError("La contraseña debe tener al menos 4 caracteres");
                 return;
             }
             try {
@@ -292,7 +292,7 @@
                     btnFinal.onclick = () => { window.location.href = destino; };
                     setTimeout(() => { window.location.href = destino; }, 2500);
                 } else {
-                    mostrarError(data.message || 'No se pudo restablecer la contrasena');
+                    mostrarError(data.message || 'No se pudo restablecer la contraseña');
                 }
             } catch (e) {
                 mostrarError('Error de conexion. Intenta de nuevo.');
