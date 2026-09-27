@@ -119,8 +119,8 @@
         <div class="hero">
             <div class="icon"><i class="fas fa-school"></i></div>
             <h2 id="heroTitle">Escuela José Manuel Cova Maza</h2>
-            <p id="heroDesc">Formando líderes para el futuro con excelencia educativa. Accede al portal para registrar a tus representados, realizar inscripciones y consultar el estatus.</p>
-            <button class="btn-hero" onclick="document.getElementById('authSection').scrollIntoView({behavior:'smooth'})"><i class="fas fa-user-plus"></i> Registrarse o Iniciar Sesión</button>
+            <p id="heroDesc">Consulta la constancia de inscripción de tus representados. Accede al portal con tu cédula y contraseña para imprimirla.</p>
+            <button class="btn-hero" onclick="document.getElementById('authSection').scrollIntoView({behavior:'smooth'})"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</button>
         </div>
 
         <div id="noticiasSection" class="hidden">
@@ -151,7 +151,6 @@
                 <div class="form-group"><label>Cédula de Identidad</label><input type="text" id="loginCedula" placeholder="V-12345678"></div>
                 <div class="form-group"><label>Contraseña</label><input type="password" id="loginPassword" placeholder="********"></div>
                 <button class="btn btn-primary" onclick="iniciarSesion()"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</button>
-                <p style="margin-top:10px;font-size:0.85rem;text-align:center;"><a href="#" onclick="mostrarRecuperar();return false;" style="color:var(--primary);text-decoration:none;">Olvidaste tu contraseña?</a></p>
                 <p id="loginError" style="color:#dc2626;margin-top:10px;font-size:0.85rem;display:none;"></p>
             </div>
 
@@ -183,58 +182,14 @@
 
         <div class="card">
             <div class="card-header">
-                <h3><i class="fas fa-user-graduate"></i> Mis Estudiantes</h3>
-                <button class="btn btn-primary btn-sm" onclick="mostrarFormularioEstudiante()"><i class="fas fa-plus"></i> Registrar Estudiante</button>
+                <h3><i class="fas fa-user-graduate"></i> Mis Estudiantes Inscritos</h3>
             </div>
-            <div id="estudiantesContainer"><div class="empty-state"><i class="fas fa-user-graduate"></i><p>No tienes estudiantes registrados. Registra el primero!</p></div></div>
-        </div>
-
-        <div class="card hidden" id="formEstudianteCard">
-            <h3><i class="fas fa-plus-circle"></i> <span id="tituloFormEstudiante">Registrar Estudiante</span></h3>
-            <div class="grid-2">
-                <div class="form-group"><label>Cédula Escolar</label><input type="text" id="estCedulaEscolar" placeholder="V-12345678"></div>
-                <div class="form-group"><label>Cédula de Identidad</label><input type="text" id="estCedulaIdentidad" placeholder="V-12345678 (opcional)"></div>
-            </div>
-            <div class="grid-2">
-                <div class="form-group"><label>Nombres</label><input type="text" id="estNombres" placeholder="Nombres del estudiante"></div>
-                <div class="form-group"><label>Apellidos</label><input type="text" id="estApellidos" placeholder="Apellidos del estudiante"></div>
-            </div>
-            <div class="grid-2">
-                <div class="form-group"><label>Fecha de Nacimiento</label><input type="date" id="estFechaNac"></div>
-                <div class="form-group"><label>Orden de Nacimiento</label><input type="number" id="estOrden" value="1" min="1"></div>
-            </div>
-            <div style="display:flex;gap:10px;">
-                <button class="btn btn-primary btn-sm" onclick="guardarEstudiante()"><i class="fas fa-save"></i> Guardar Estudiante</button>
-                <button class="btn btn-outline btn-sm" onclick="cancelarFormEstudiante()">Cancelar</button>
-            </div>
-        </div>
-
-        <div class="card hidden" id="formInscripcionCard">
-            <h3><i class="fas fa-pen"></i> Inscribir Estudiante</h3>
-            <div class="form-group"><label>Estudiante</label><select id="insEstudiante"></select></div>
-            <div class="form-group"><label>Grado</label><select id="insGrado"></select></div>
-            <button class="btn btn-primary btn-sm" onclick="inscribirEstudiante()"><i class="fas fa-check"></i> Inscribir</button>
-            <button class="btn btn-outline btn-sm" onclick="cancelarInscripcion()" style="margin-left:8px;">Cancelar</button>
+            <div id="estudiantesContainer"><div class="empty-state"><i class="fas fa-user-graduate"></i><p>No tienes estudiantes inscritos. Consulta a la institución.</p></div></div>
         </div>
     </div>
 </div>
 
 <!-- ============ MODALS ============ -->
-<div class="modal" id="modalRecuperar">
-    <div class="modal-content">
-        <h3><i class="fas fa-key"></i> Recuperar Contraseña</h3>
-        <p style="margin:10px 0;color:#636e72;font-size:0.9rem;">Ingresa tu cédula y el correo registrado. Te enviaremos un enlace para restablecer tu contraseña.</p>
-        <div class="form-group"><label>Cédula</label><input type="text" id="recCedula" placeholder="V-12345678"></div>
-        <div class="form-group"><label>Correo Electrónico</label><input type="email" id="recEmail" placeholder="correo@ejemplo.com"></div>
-        <p id="recError" style="color:#dc2626;font-size:0.85rem;display:none;"></p>
-        <p id="recSuccess" style="color:#16a34a;font-size:0.85rem;display:none;"></p>
-        <div class="modal-actions">
-            <button class="btn btn-outline" onclick="cerrarModal('modalRecuperar')">Cerrar</button>
-            <button class="btn btn-primary" onclick="recuperarCuenta()" style="width:auto;">Enviar enlace</button>
-        </div>
-    </div>
-</div>
-
 <div class="modal" id="modalPerfil">
     <div class="modal-content">
         <h3><i class="fas fa-user-edit"></i> Mi Perfil</h3>
@@ -278,7 +233,6 @@
 
 <script>
     let estudiantes = [];
-    let grados = [];
 
     function mostrarToast(msg, error) {
         const t = document.getElementById('toast');
@@ -430,112 +384,29 @@
 
     async function cargarDashboard() {
         try {
-            const [estudiantesRes, gradosRes] = await Promise.all([
-                fetch('/api/portal/estudiantes'),
-                fetch('/api/portal/grados')
-            ]);
-            estudiantes = await estudiantesRes.json();
-            grados = await gradosRes.json();
+            const res = await fetch('/api/portal/estudiantes');
+            estudiantes = await res.json();
             document.getElementById('statEstudiantes').textContent = estudiantes.length;
             document.getElementById('statInscritos').textContent = estudiantes.filter(e => e.estado === 'REGULAR').length;
             if (estudiantes.length > 0) document.getElementById('statPeriodo').textContent = estudiantes[0].periodo;
             renderEstudiantes();
-            cargarSelectGrados();
         } catch(e) { console.error(e); }
     }
 
     function renderEstudiantes() {
         const container = document.getElementById('estudiantesContainer');
         if (!estudiantes.length) {
-            container.innerHTML = '<div class="empty-state"><i class="fas fa-user-graduate"></i><p>No tienes estudiantes registrados. Registra el primero!</p></div>';
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-user-graduate"></i><p>No tienes estudiantes inscritos. Consulta a la institución.</p></div>';
             return;
         }
         container.innerHTML = '<table><thead><tr><th>Cedula Escolar</th><th>Nombre</th><th>Grado</th><th>Periodo</th><th>Estado</th><th>Accion</th></tr></thead><tbody>' +
-            estudiantes.map(e => '<tr><td>' + e.cedula_escolar + '</td><td>' + e.nombres + ' ' + e.apellidos + '</td><td>' + e.grado + '</td><td>' + e.periodo + '</td><td><span class="badge ' + (e.estado === 'REGULAR' ? 'badge-s' : 'badge-n') + '">' + e.estado + '</span></td><td><div style="display:flex;gap:5px;">' +
-            (e.estado !== 'REGULAR' ? '<button class="btn btn-primary btn-sm" onclick="mostrarInscripcion(\'' + e.cedula_escolar + '\')"><i class="fas fa-pen"></i> Inscribir</button>' : '<span style="color:#16a34a;font-size:0.85rem;">Inscrito</span>') +
-            (e.estado === 'REGULAR' ? '<button class="btn btn-outline btn-sm" onclick="imprimirConstancia(\'' + e.cedula_escolar + '\')"><i class="fas fa-print"></i> Imprimir</button>' : '') +
-            '</div></td></tr>').join('') + '</tbody></table>';
-    }
-
-    function cargarSelectGrados() {
-        const sel = document.getElementById('insGrado');
-        sel.innerHTML = grados.map(g => '<option value="' + g.id + '">' + g.nombre + ' (' + (g.nivel || '') + ')</option>').join('');
-    }
-
-    function mostrarFormularioEstudiante() {
-        document.getElementById('formEstudianteCard').classList.remove('hidden');
-        document.getElementById('tituloFormEstudiante').textContent = 'Registrar Estudiante';
-        document.getElementById('estCedulaEscolar').value = '';
-        document.getElementById('estCedulaIdentidad').value = '';
-        document.getElementById('estNombres').value = '';
-        document.getElementById('estApellidos').value = '';
-        document.getElementById('estFechaNac').value = '';
-        document.getElementById('estOrden').value = '1';
-    }
-
-    function cancelarFormEstudiante() { document.getElementById('formEstudianteCard').classList.add('hidden'); }
-
-    async function guardarEstudiante() {
-        const data = {
-            cedula_escolar: document.getElementById('estCedulaEscolar').value.trim(),
-            cedula_identidad: document.getElementById('estCedulaIdentidad').value.trim(),
-            nombres: document.getElementById('estNombres').value.trim(),
-            apellidos: document.getElementById('estApellidos').value.trim(),
-            fecha_nacimiento: document.getElementById('estFechaNac').value,
-            orden_nacimiento: parseInt(document.getElementById('estOrden').value) || 1
-        };
-        if (!data.cedula_escolar || !data.nombres || !data.apellidos) { mostrarToast('Cedula escolar, nombres y apellidos son obligatorios', true); return; }
-        try {
-            const res = await fetch('/api/portal/estudiantes', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
-            const r = await res.json();
-            if (r.success) { mostrarToast('Estudiante registrado correctamente'); cancelarFormEstudiante(); cargarDashboard(); }
-            else { mostrarToast(r.message, true); }
-        } catch(e) { mostrarToast('Error al guardar', true); }
-    }
-
-    function mostrarInscripcion(cedula) {
-        const sel = document.getElementById('insEstudiante');
-        sel.innerHTML = estudiantes.filter(e => e.estado !== 'REGULAR').map(e => '<option value="' + e.cedula_escolar + '" ' + (e.cedula_escolar === cedula ? 'selected' : '') + '>' + e.nombres + ' ' + e.apellidos + ' (' + e.cedula_escolar + ')</option>').join('');
-        document.getElementById('formInscripcionCard').classList.remove('hidden');
-    }
-
-    function cancelarInscripcion() { document.getElementById('formInscripcionCard').classList.add('hidden'); }
-
-    async function inscribirEstudiante() {
-        const cedula_escolar = document.getElementById('insEstudiante').value;
-        const id_grado = parseInt(document.getElementById('insGrado').value);
-        if (!cedula_escolar) { mostrarToast('Selecciona un estudiante', true); return; }
-        try {
-            const res = await fetch('/api/portal/inscripcion', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cedula_escolar, id_grado}) });
-            const r = await res.json();
-            if (r.success) { mostrarToast('Inscripcion realizada exitosamente'); cancelarInscripcion(); cargarDashboard(); }
-            else { mostrarToast(r.message, true); }
-        } catch(e) { mostrarToast('Error al inscribir', true); }
+            estudiantes.map(e => '<tr><td>' + e.cedula_escolar + '</td><td>' + e.nombres + ' ' + e.apellidos + '</td><td>' + e.grado + '</td><td>' + e.periodo + '</td><td><span class="badge ' + (e.estado === 'REGULAR' ? 'badge-s' : 'badge-n') + '">' + e.estado + '</span></td><td>' +
+            (e.estado === 'REGULAR' ? '<button class="btn btn-primary btn-sm" onclick="imprimirConstancia(\'' + e.cedula_escolar + '\')"><i class="fas fa-print"></i> Imprimir constancia</button>' : '<span style="color:#636e72;font-size:0.85rem;">No inscrito</span>') +
+            '</td></tr>').join('') + '</tbody></table>';
     }
 
     function abrirModal(id) { document.getElementById(id).classList.add('open'); }
     function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
-
-    function mostrarRecuperar() {
-        document.getElementById('recCedula').value = document.getElementById('loginCedula').value;
-        document.getElementById('recEmail').value = '';
-        document.getElementById('recError').style.display = 'none';
-        document.getElementById('recSuccess').style.display = 'none';
-        abrirModal('modalRecuperar');
-    }
-
-    async function recuperarCuenta() {
-        const cedula = document.getElementById('recCedula').value.trim();
-        const email = document.getElementById('recEmail').value.trim();
-        if (!cedula || !email) { document.getElementById('recError').textContent = 'Ingresa tu cedula y tu correo electronico'; document.getElementById('recError').style.display = 'block'; return; }
-        if (email.indexOf('@') < 1 || email.indexOf('.') < 0) { document.getElementById('recError').textContent = 'El correo no parece valido'; document.getElementById('recError').style.display = 'block'; return; }
-        try {
-            const res = await fetch('/api/portal/recuperar', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cedula, email}) });
-            const data = await res.json();
-            if (data.success) { document.getElementById('recSuccess').textContent = data.message; document.getElementById('recSuccess').style.display = 'block'; document.getElementById('recError').style.display = 'none'; }
-            else { document.getElementById('recError').textContent = data.message; document.getElementById('recError').style.display = 'block'; document.getElementById('recSuccess').style.display = 'none'; }
-        } catch(e) { mostrarToast('Error de conexion', true); }
-    }
 
     async function mostrarPerfil() {
         try {

@@ -160,43 +160,6 @@ def portal_sesion():
     return jsonify({"autenticado": False})
 
 
-@api_public.route("/portal/grados", methods=["GET"])
-def portal_grados():
-    grados = models.Grado.query.all()
-    return jsonify([{"id": g.id_grado, "nombre": g.nombre, "nivel": g.nivel} for g in grados])
-
-
-@api_public.route("/portal/estudiantes", methods=["POST"])
-def portal_crear_estudiante():
-    cedula_rep = session.get('portal_rep_cedula')
-    if not cedula_rep:
-        return jsonify({"success": False, "message": "Debes iniciar sesion"}), 401
-    data = request.get_json()
-    cedula_escolar = data.get("cedula_escolar", "").strip()
-    if not cedula_escolar:
-        return jsonify({"success": False, "message": "Cedula escolar es requerida"}), 400
-    if models.Estudiante.query.get(cedula_escolar):
-        return jsonify({"success": False, "message": "Ya existe un estudiante con esta cedula escolar"}), 400
-    ci = data.get("cedula_identidad", "").strip()
-    if ci and models.Estudiante.query.filter_by(cedula_identidad=ci).first():
-        return jsonify({"success": False, "message": "Ya existe un estudiante con esta cedula de identidad"}), 400
-    try:
-        nuevo_est = models.Estudiante(
-            cedula_escolar=cedula_escolar,
-            cedula_identidad=ci or None,
-            nombres=data.get("nombres", ""),
-            apellidos=data.get("apellidos", ""),
-            fecha_nacimiento=datetime.strptime(data["fecha_nacimiento"], "%Y-%m-%d") if data.get("fecha_nacimiento") else None,
-            orden_nacimiento=data.get("orden_nacimiento", 1)
-        )
-        models.db.session.add(nuevo_est)
-        models.db.session.commit()
-        return jsonify({"success": True, "message": "Estudiante registrado correctamente"}), 201
-    except Exception as e:
-        models.db.session.rollback()
-        return jsonify({"success": False, "message": "Error al registrar: verifica los datos ingresados"}), 400
-
-
 @api_public.route("/portal/estudiantes", methods=["GET"])
 def portal_mis_estudiantes():
     cedula_rep = session.get('portal_rep_cedula')
@@ -219,44 +182,6 @@ def portal_mis_estudiantes():
             "fecha": ins.fecha_inscripcion.strftime("%d/%m/%Y") if ins.fecha_inscripcion else ""
         })
     return jsonify(resultado)
-
-
-@api_public.route("/portal/inscripcion", methods=["POST"])
-def portal_inscribir():
-    cedula_rep = session.get('portal_rep_cedula')
-    if not cedula_rep:
-        return jsonify({"success": False, "message": "Debes iniciar sesion"}), 401
-    data = request.get_json()
-    try:
-        ano_activo = models.AnoEscolar.query.filter_by(estado="ACTIVO").first()
-        if not ano_activo:
-            return jsonify({"success": False, "message": "No hay año escolar activo"}), 400
-        rep = models.Representante.query.filter_by(cedula=cedula_rep).first()
-        if not rep:
-            return jsonify({"success": False, "message": "Representante no encontrado"}), 404
-        estudiante = models.Estudiante.query.get(data["cedula_escolar"])
-        if not estudiante:
-            return jsonify({"success": False, "message": "Estudiante no encontrado. Registralo primero."}), 404
-        existe = models.Inscripcion.query.filter_by(
-            cedula_escolar=data["cedula_escolar"], id_ano_escolar=ano_activo.id_ano
-        ).first()
-        if existe:
-            return jsonify({"success": False, "message": "Este estudiante ya está inscrito en el año escolar activo"}), 400
-        inscripcion = models.Inscripcion(
-            cedula_escolar=data["cedula_escolar"],
-            id_representante=rep.id_representante,
-            id_grado=data.get("id_grado", 1),
-            id_ano_escolar=ano_activo.id_ano,
-            id_usuario=1,
-            estado='REGULAR'
-        )
-        models.db.session.add(inscripcion)
-        models.db.session.commit()
-
-        return jsonify({"success": True, "message": "Inscripcion realizada exitosamente"}), 201
-    except Exception as e:
-        models.db.session.rollback()
-        return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
 
 
 @api_public.route("/portal/perfil", methods=["GET", "PUT"])
@@ -311,34 +236,6 @@ def portal_password():
     models.db.session.commit()
 
     return jsonify({"success": True, "message": "Contrasena cambiada exitosamente"})
-
-
-@api_public.route("/portal/recuperar", methods=["POST"])
-def portal_recuperar():
-    data = request.get_json() or {}
-    cedula = (data.get('cedula') or '').strip()
-    email = (data.get('email') or '').strip().lower()
-    if not cedula or not email:
-        return jsonify({"success": False, "message": "Ingresa tu cedula y tu correo electronico"}), 400
-    if "@" not in email or "." not in email.split("@")[-1]:
-        return jsonify({"success": False, "message": "El correo no parece valido"}), 400
-
-    user = models.Usuario.query.filter_by(usuario=cedula, rol='representante').first()
-    if not user:
-        return jsonify({"success": False, "message": "No se encontro una cuenta con esta cedula"}), 404
-    rep = models.Representante.query.filter_by(cedula=cedula).first()
-    if not rep:
-        return jsonify({"success": False, "message": "Representante no encontrado"}), 404
-
-    email_registrado = (rep.email or '').strip().lower()
-    if email_registrado and email_registrado != email:
-        return jsonify({"success": False, "message": "El correo no coincide con el registrado para esta cedula"}), 400
-    if not email_registrado:
-        rep.email = email
-        models.db.session.commit()
-
-    return jsonify({"success": True,
-                    "message": "Solicitud registrada. Contacte a la institucion para restablecer su contraseña."})
 
 
 @api_public.route("/restablecer", methods=["POST"])
