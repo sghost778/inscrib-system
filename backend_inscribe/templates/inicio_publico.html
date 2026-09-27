@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Escuela José Manuel Cova Maza</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
+    <link rel="icon" href="{{ url_for('static', filename='escudo.jpg') }}" type="image/jpeg">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; color: #2d3436; }
@@ -62,7 +62,7 @@
 
 <nav>
     <div class="logo">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        <img src="{{ url_for('static', filename='escudo.jpg') }}" alt="Logo">
         <span id="navTitle">Escuela José Manuel Cova Maza</span>
     </div>
     <div class="menu" id="navMenu">
@@ -119,15 +119,15 @@
         <div>
             <div class="contacto-detalle">
                 <i class="fas fa-map-marker-alt"></i>
-                <div><h4>Dirección</h4><p id="homeAddress">Ciudad Bolivar, Estado Bolivar, Venezuela</p></div>
+                <div><h4>Dirección</h4><p id="homeAddress">Calle Democracia entre la Calle Nueva y la Calle Eulalia Buroz</p></div>
             </div>
             <div class="contacto-detalle">
                 <i class="fas fa-phone"></i>
-                <div><h4>Teléfono</h4><p id="homePhone">+58 412-1234567</p></div>
+                <div><h4>Teléfono</h4><p id="homePhone">0283-2550033 / 2559655</p></div>
             </div>
             <div class="contacto-detalle">
                 <i class="fas fa-envelope"></i>
-                <div><h4>Email</h4><p id="homeEmail">contacto@uecovamaza.edu.ve</p></div>
+                <div><h4>Email</h4><p id="homeEmail">u.e.covamaza@gmail.com</p></div>
             </div>
             <div class="contacto-detalle">
                 <i class="fas fa-clock"></i>
@@ -135,7 +135,7 @@
             </div>
         </div>
         <div class="contacto-form">
-            <h3 style="margin-bottom:15px;">Envanos un mensaje</h3>
+            <h3 style="margin-bottom:15px;">Envíanos un mensaje</h3>
             <input type="text" id="cNombre" placeholder="Tu nombre">
             <input type="email" id="cEmail" placeholder="Tu correo electronico">
             <input type="text" id="cTelefono" placeholder="Tu telefono (opcional)">
@@ -220,10 +220,8 @@
                 heroImg.style.objectFit = 'cover';
                 heroImg.style.display = 'block';
             } else {
-                heroImg.src = "{{ url_for('static', filename='imagen.png') }}";
-                heroImg.style.objectFit = 'contain';
-                heroImg.style.maxWidth = '320px';
-                heroImg.style.maxHeight = '320px';
+                heroImg.src = "{{ url_for('static', filename='fachada.jpg') }}";
+                heroImg.style.objectFit = 'cover';
                 heroImg.style.display = 'block';
             }
             if (cfg.contact_address) document.getElementById('homeAddress').textContent = cfg.contact_address;

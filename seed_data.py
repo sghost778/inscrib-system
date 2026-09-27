@@ -113,9 +113,9 @@ def seed_datos_iniciales():
             ("about_content", "Institucion educativa comprometida con la formacion integral."),
             ("about_mision", "Formar ciudadanos integrales con valores eticos."),
             ("about_vision", "Ser institucion de referencia nacional."),
-            ("contact_address", "Av. Principal, Puerto Ordaz, Estado Bolivar"),
-            ("contact_phone", "+58 412-1234567"),
-            ("contact_email", "info@uejmcm.edu.ve"),
+            ("contact_address", "Calle Democracia entre la Calle Nueva y la Calle Eulalia Buroz"),
+            ("contact_phone", "0283-2550033 / 2559655"),
+            ("contact_email", "u.e.covamaza@gmail.com"),
             ("contact_hours", "Lunes a Viernes: 7:00 AM - 3:00 PM"),
             ("requisitos_inscripcion", "Partida de Nacimiento\nCedula del Estudiante\n"
                                         "Cedula del Representante\nFotos tipo carnet (2)\n"

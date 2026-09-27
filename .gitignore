@@ -20,3 +20,6 @@ flask_error.txt
 # Sistema / editor
 .DS_Store
 Thumbs.db
+
+# Imagenes originales del usuario (material fuente)
+imagenes/
