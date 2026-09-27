@@ -242,6 +242,28 @@
 
             <div class="form-group">
 
+                <label>Imagen de la Escuela (se muestra en la portada del sitio)</label>
+
+                <input type="file" id="cfg_image_file" accept="image/*">
+
+                <input type="hidden" id="cfg_site_image">
+
+                <img id="cfg_image_preview" style="display:none;max-width:100%;max-height:260px;border-radius:10px;margin-top:10px;border:1px solid #edf2f7;">
+
+                <div style="margin-top:8px;display:flex;gap:8px;">
+
+                    <button type="button" class="btn btn-outline btn-sm" onclick="subirImagenSitio()"><i class="fas fa-upload"></i> Elegir Imagen</button>
+
+                    <button type="button" class="btn btn-outline btn-sm" onclick="quitarImagenSitio()"><i class="fas fa-trash"></i> Quitar</button>
+
+                </div>
+
+                <p style="font-size:0.78rem;color:#94a3b8;margin-top:6px;">Pulsa "Elegir Imagen", selecciona la foto y luego "Guardar Configuración" para aplicarla.</p>
+
+            </div>
+
+            <div class="form-group">
+
                 <label>Título de Sección Nosotros</label>
 
                 <input type="text" id="cfg_about_title" value="?Quienes Somos?">
@@ -696,7 +718,7 @@
 
                 'contact_address', 'contact_phone', 'contact_email', 'contact_hours',
 
-                'requisitos_inscripcion'
+                'requisitos_inscripcion', 'site_image'
 
             ];
 
@@ -707,6 +729,22 @@
                 if (el && config[f]) el.value = config[f];
 
             });
+
+            const prev = document.getElementById('cfg_image_preview');
+
+            if (config.site_image) {
+
+                prev.src = config.site_image;
+
+                prev.style.display = 'block';
+
+            } else {
+
+                prev.style.display = 'none';
+
+                prev.removeAttribute('src');
+
+            }
 
         } catch(e) { console.error(e); }
 
@@ -724,7 +762,7 @@
 
             'contact_address', 'contact_phone', 'contact_email', 'contact_hours',
 
-            'requisitos_inscripcion'
+            'requisitos_inscripcion', 'site_image'
 
         ];
 
@@ -756,7 +794,83 @@
 
             if (r.success) mostrarToast('Configuracion guardada correctamente');
 
+            else mostrarToast(r.message || 'No se pudo guardar. Inicia sesion nuevamente e intenta otra vez.', true);
+
         } catch(e) { mostrarToast('Error al guardar', true); }
+
+    }
+
+
+
+    function subirImagenSitio() {
+
+        const input = document.getElementById('cfg_image_file');
+
+        const file = input.files && input.files[0];
+
+        if (!file) { mostrarToast('Primero selecciona una imagen con "Elegir Imagen"', true); return; }
+
+        if (!file.type.startsWith('image/')) { mostrarToast('El archivo debe ser una imagen', true); return; }
+
+        const reader = new FileReader();
+
+        reader.onload = e => {
+
+            const img = new Image();
+
+            img.onload = () => {
+
+                const maxW = 1200;
+
+                let w = img.width, h = img.height;
+
+                if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+
+                const canvas = document.createElement('canvas');
+
+                canvas.width = w; canvas.height = h;
+
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+                document.getElementById('cfg_site_image').value = dataUrl;
+
+                const prev = document.getElementById('cfg_image_preview');
+
+                prev.src = dataUrl;
+
+                prev.style.display = 'block';
+
+                mostrarToast('Imagen lista. Pulsa "Guardar Configuracion" para aplicarla en el sitio.');
+
+            };
+
+            img.onerror = () => mostrarToast('No se pudo leer la imagen', true);
+
+            img.src = e.target.result;
+
+        };
+
+        reader.readAsDataURL(file);
+
+    }
+
+
+
+    function quitarImagenSitio() {
+
+        document.getElementById('cfg_site_image').value = '';
+
+        document.getElementById('cfg_image_file').value = '';
+
+        const prev = document.getElementById('cfg_image_preview');
+
+        prev.removeAttribute('src');
+
+        prev.style.display = 'none';
+
+        mostrarToast('Imagen quitada. Pulsa "Guardar Configuracion" para aplicar el cambio.');
 
     }
 

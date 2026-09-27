@@ -22,6 +22,7 @@
         .hero p { font-size: 1.2rem; opacity: 0.9; max-width: 700px; margin: 0 auto 30px; }
         .hero .btn { display: inline-block; background: white; color: var(--primary); padding: 14px 35px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 1rem; transition: 0.3s; }
         .hero .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .hero .hero-img { display: block; max-width: 680px; width: 100%; height: auto; max-height: 340px; object-fit: cover; margin: 0 auto 30px; border-radius: 18px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); }
         section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
         section h2 { font-size: 2rem; margin-bottom: 40px; text-align: center; color: #2d3436; }
         section h2 i { color: var(--primary); margin-right: 10px; }
@@ -80,6 +81,7 @@
 </nav>
 
 <div class="hero">
+    <img id="heroImage" class="hero-img" alt="Escuela" style="display:none;">
     <h1 id="heroTitle">Escuela José Manuel Cova Maza</h1>
     <p id="heroDesc">Formando líderes del manana con excelencia académica y valores cristianos.</p>
     <a href="/nosotros" class="btn">Conocenos <i class="fas fa-arrow-right"></i></a>
@@ -212,6 +214,18 @@
                 document.getElementById('navTitle').textContent = cfg.site_name;
             }
             if (cfg.site_description) document.getElementById('heroDesc').textContent = cfg.site_description;
+            const heroImg = document.getElementById('heroImage');
+            if (cfg.site_image) {
+                heroImg.src = cfg.site_image;
+                heroImg.style.objectFit = 'cover';
+                heroImg.style.display = 'block';
+            } else {
+                heroImg.src = "{{ url_for('static', filename='imagen.png') }}";
+                heroImg.style.objectFit = 'contain';
+                heroImg.style.maxWidth = '320px';
+                heroImg.style.maxHeight = '320px';
+                heroImg.style.display = 'block';
+            }
             if (cfg.contact_address) document.getElementById('homeAddress').textContent = cfg.contact_address;
             if (cfg.contact_phone) document.getElementById('homePhone').textContent = cfg.contact_phone;
             if (cfg.contact_email) document.getElementById('homeEmail').textContent = cfg.contact_email;
